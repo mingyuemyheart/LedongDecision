@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#096AE5</color>
+    <color name="colorPrimaryDark">#096AE5</color>
+    <color name="colorAccent">#A3A7AC</color>
+
+    <color name="text_color1">#F0F0F0</color>
+    <color name="text_color2">#A3A7AC</color>
+    <color name="text_color3">#3b3c3d</color>
+    <color name="text_color4">#4cffffff</color>
+    <color name="light_pink">#ffd5d5</color>
+    <color name="light_blue">#c1e7ff</color>
+    <color name="light_gray">#f0eff5</color>
+    <color name="transparent">#00000000</color>
+    <color name="translucent">#80000000</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#AAAAAA</color>
+    <color name="blue">#027cfe</color>
+    <color name="yellow">#fff139</color>
+    <color name="green">#00ff00</color>
+    <color name="orange">#fd8612</color>
+    <color name="red">#AF1610</color>
+    <color name="cell_default">#00000000</color>
+    <color name="cell_pressed">#30ffffff</color>
+    <color name="typhoon_bg">#f3758c97</color>
+
+    <color name="refresh_color1">#096AE5</color>
+    <color name="refresh_color2">#A0096AE5</color>
+    <color name="refresh_color3">#80096AE5</color>
+    <color name="refresh_color4">#40096AE5</color>
+
+</resources>

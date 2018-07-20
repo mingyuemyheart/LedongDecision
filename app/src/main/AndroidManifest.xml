@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.cxwl.shawn.wuzhishan.decision">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <application
+        android:name=".common.MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- 自动更新下载完成广播 -->
+        <receiver android:name=".util.AutoUpdateBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
+            </intent-filter>
+        </receiver>
+
+        <!--高德地图-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="72fdd7ef34b44150df4242a844ac8c36"/>
+        <!-- 定位需要的服务 -->
+        <service android:name="com.amap.api.location.APSService" />
+
+        <activity
+            android:name=".activity.WelcomeActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activity.LoginActivity"
+                  android:screenOrientation="portrait"
+                  android:launchMode="singleTask"/>
+
+        <activity android:name=".activity.MainActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.PdfTitleActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.PDFActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.TyphoonRouteActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.WarningActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.WarningDetailActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.RadarActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.ProvinceActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.ForecastActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.CityActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.SettingActivity"
+                  android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.FeedbackActivity"
+                  android:screenOrientation="portrait"/>
+
+    </application>
+
+</manifest>

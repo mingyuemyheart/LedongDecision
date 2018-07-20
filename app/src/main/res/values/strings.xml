@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">五指山气象</string>
+
+    <!-- 天气表 -->
+    <string name="weather0">晴</string>
+    <string name="weather1">多云</string>
+    <string name="weather2">阴</string>
+    <string name="weather3">阵雨</string>
+    <string name="weather4">雷阵雨</string>
+    <string name="weather5">雨夹冰雹</string>
+    <string name="weather6">雨夹雪</string>
+    <string name="weather7">小雨</string>
+    <string name="weather8">中雨</string>
+    <string name="weather9">大雨</string>
+    <string name="weather10">暴雨</string>
+    <string name="weather11">大暴雨</string>
+    <string name="weather12">特大暴雨</string>
+    <string name="weather13">阵雪</string>
+    <string name="weather14">小雪</string>
+    <string name="weather15">中雪</string>
+    <string name="weather16">大雪</string>
+    <string name="weather17">暴雪</string>
+    <string name="weather18">雾</string>
+    <string name="weather19">冻雨</string>
+    <string name="weather20">沙尘暴</string>
+    <string name="weather21">小雨-中雨</string>
+    <string name="weather22">中雨-大雨</string>
+    <string name="weather23">大雨-暴雨</string>
+    <string name="weather24">暴雨-大暴雨</string>
+    <string name="weather25">大暴雨-特大暴雨</string>
+    <string name="weather26">小雪-中雪</string>
+    <string name="weather27">中雪-大雪</string>
+    <string name="weather28">大雪-暴雪</string>
+    <string name="weather29">浮尘</string>
+    <string name="weather30">扬沙</string>
+    <string name="weather31">强沙尘暴</string>
+    <string name="weather32">浓雾</string>
+    <string name="weather33">雪</string>
+    <string name="weather49">强浓雾</string>
+    <string name="weather53">霾</string>
+    <string name="weather54">中度霾</string>
+    <string name="weather55">重度霾</string>
+    <string name="weather56">严重霾</string>
+    <string name="weather57">大雾</string>
+    <string name="weather58">特强浓雾</string>
+
+    <!-- 风向表 -->
+    <string name="wind_dir0"></string>
+    <string name="wind_dir1">东北风</string>
+    <string name="wind_dir2">东风</string>
+    <string name="wind_dir3">东南风</string>
+    <string name="wind_dir4">南风</string>
+    <string name="wind_dir5">西南风</string>
+    <string name="wind_dir6">西风</string>
+    <string name="wind_dir7">西北风</string>
+    <string name="wind_dir8">北风</string>
+    <string name="wind_dir9">旋转风</string>
+
+    <!-- 风力表 -->
+    <string name="wind_force0">微风</string>
+    <string name="wind_force1">1级</string>
+    <string name="wind_force2">2级</string>
+    <string name="wind_force3">3级</string>
+    <string name="wind_force4">4级</string>
+    <string name="wind_force5">5级</string>
+    <string name="wind_force6">6级</string>
+    <string name="wind_force7">7级</string>
+    <string name="wind_force8">8级</string>
+    <string name="wind_force9">9级</string>
+    <string name="wind_force10">10级</string>
+    <string name="wind_force11">11级</string>
+    <string name="wind_force12">12级</string>
+
+    <!-- 空气质量表 -->
+    <string name="aqi0">优</string>
+    <string name="aqi1">良</string>
+    <string name="aqi2">轻度污染</string>
+    <string name="aqi3">中度污染</string>
+    <string name="aqi4">重度污染</string>
+    <string name="aqi5">严重污染</string>
+
+    <!-- 空气污染 -->
+    <string name="aqi_level1">优</string>
+    <string name="aqi_level2">良</string>
+    <string name="aqi_level3">轻度污染</string>
+    <string name="aqi_level4">中度污染</string>
+    <string name="aqi_level5">重度污染</string>
+    <string name="aqi_level6">严重污染</string>
+
+    <string name="aqi1_text">空气质量令人满意，基本无空气污染，各类人群可正常活动。</string>
+    <string name="aqi2_text">空气质量可接受，但某些污染物可能对极少数异常敏感人群健康有较弱影响，建议极少数异常敏感人群应减少户外活动。</string>
+    <string name="aqi3_text">易感人群症状有轻度加剧，健康人群出现刺激症状。建议儿童、老年人及心脏病、呼吸系统疾病患者应减少长时间、高强度的户外锻炼。</string>
+    <string name="aqi4_text">进一步加剧易感人群症状，可能对健康人群心脏、呼吸系统有影响，建议疾病患者避免长时间、高强度的户外锻练，一般人群适量减少户外运动。</string>
+    <string name="aqi5_text">心脏病和肺病患者症状显著加剧，运动耐受力降低，健康人群普遍出现症状-建议儿童、老年人和心脏病、肺病患者应停留在室内，停止户外运动，一般人群减少户外运动。</string>
+    <string name="aqi6_text">健康人群运动耐受力降低，有明显强烈症状，提前出现某些疾病-建议儿童、老年人和病人应当留在室内，避免体力消耗，一般人群应避免户外活动。</string>
+    <!-- 空气污染 -->
+
+    <!-- 单位符号 -->
+    <string name="unit_percent">%</string>
+    <string name="unit_mm">mm</string>
+    <string name="unit_hPa">hPa</string>
+    <string name="unit_degree">℃</string>
+    <string name="unit_speed">m/s</string>
+    <string name="unit_m">m</string>
+    <string name="unit_km">km</string>
+    <string name="unit_hour">小时</string>
+    <string name="unit_minute">分钟</string>
+
+    <!-- 台风路径 -->
+    <string name="typhoon_level1">热带低压</string>
+    <string name="typhoon_level2">热带风暴</string>
+    <string name="typhoon_level3">强热带风暴</string>
+    <string name="typhoon_level4">台风</string>
+    <string name="typhoon_level5">强台风</string>
+    <string name="typhoon_level6">超强台风</string>
+    <string name="typhoon_login">登陆地点</string>
+    <string name="typhoon_influnce">主要影响区域</string>
+    <string name="line_24h">24\n小\n时\n警\n戒\n线</string>
+    <string name="line_48h">48\n小\n时\n警\n戒\n线</string>
+    <string name="no_typhoon">当前无台风</string>
+    <!-- 台风路径 -->
+    <string name="chart_hour">时</string>
+    <string name="chart_north">北</string>
+    <string name="chart_north_east">东北</string>
+    <string name="chart_east">东</string>
+    <string name="chart_south_east">东南</string>
+    <string name="chart_south">南</string>
+    <string name="chart_south_west">西南</string>
+    <string name="chart_west">西</string>
+    <string name="chart_north_west">西北</string>
+    <string name="chart_china_forecast"> 中国预报\n</string>
+    <string name="chart_time1">yyyy年MM月dd日 kk时</string>
+    <string name="chart_time11111">时间：</string>
+    <string name="chart_biggest_speed">最大风速：</string>
+    <string name="chart_speed1">米/秒\n</string>
+    <string name="chart_center_pressure">中心气压：</string>
+    <string name="chart_baipa">百帕\n</string>
+    <string name="chart_yidong_direct">移动方向：</string>
+    <string name="chart_yidong_speed">移动速度：</string>
+    <string name="chart_speed2">公里/小时\n</string>
+    <string name="chart_radius1">7级风圈半径：</string>
+    <string name="chart_kilometer">公里\n</string>
+    <string name="chart_radius2">10级风圈半径：</string>
+    <string name="chart_di">第</string>
+    <string name="chart_haotaifeng">号台风</string>
+    <string name="chart_propt">提示</string>
+
+</resources>
