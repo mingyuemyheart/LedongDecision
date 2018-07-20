@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * 预警信息
  */
-
 public class WarningAdapter extends BaseAdapter {
 	
 	private Context mContext;

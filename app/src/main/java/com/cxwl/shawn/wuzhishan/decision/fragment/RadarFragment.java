@@ -18,7 +18,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.common.CONST;
 import com.cxwl.shawn.wuzhishan.decision.dto.RadarDto;
@@ -82,23 +81,23 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	 * 初始化控件
 	 */
 	private void initWidget(View view) {
-		imageView = (PhotoView) view.findViewById(R.id.imageView);
+		imageView = view.findViewById(R.id.imageView);
 		imageView.setMaxScale(8f);
 //		imageView.id = id;
-		ivPlay = (ImageView) view.findViewById(R.id.ivPlay);
+		ivPlay = view.findViewById(R.id.ivPlay);
 		ivPlay.setOnClickListener(this);
-		seekBar = (SeekBar) view.findViewById(R.id.seekBar);
+		seekBar = view.findViewById(R.id.seekBar);
 		seekBar.setOnSeekBarChangeListener(seekbarListener);
-		tvTime = (TextView) view.findViewById(R.id.tvTime);
-		llSeekBar = (LinearLayout) view.findViewById(R.id.llSeekBar);
+		tvTime = view.findViewById(R.id.tvTime);
+		llSeekBar = view.findViewById(R.id.llSeekBar);
 		tvPercent = view.findViewById(R.id.tvPercent);
 
 		this.id = getArguments().getString(CONST.COLUMN_ID);
 		this.baseUrl = getArguments().getString(CONST.WEB_URL);
 		
 		mRadarManager = new RadarManager(getActivity());
-		
-		getRadarData(baseUrl);
+
+		OkHttpList(baseUrl);
 	}
 	
 	private OnSeekBarChangeListener seekbarListener = new OnSeekBarChangeListener() {
@@ -123,7 +122,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	/**
 	 * 获取雷达图片集信息
 	 */
-	private void getRadarData(final String url) {
+	private void OkHttpList(final String url) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -214,7 +213,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 		private int state;
 		private int index;
 		private int count;
-		private boolean isTracking = false;
+		private boolean isTracking;
 		
 		public RadarThread(List<RadarDto> images) {
 			this.images = images;
@@ -363,16 +362,18 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	
 	@Override
 	public void onClick(View v) {
-		if (v.getId() == R.id.ivPlay) {
-			if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PLAYING) {
-				mRadarThread.pause();
-				ivPlay.setImageResource(R.drawable.iv_play);
-			} else if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PAUSE) {
-				mRadarThread.play();
-				ivPlay.setImageResource(R.drawable.iv_pause);
-			} else if (mRadarThread == null) {
-				startDownLoadImgs(radarList);//开始下载
-			}
+		switch (v.getId()) {
+			case R.id.ivPlay:
+				if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PLAYING) {
+					mRadarThread.pause();
+					ivPlay.setImageResource(R.drawable.iv_play);
+				} else if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PAUSE) {
+					mRadarThread.play();
+					ivPlay.setImageResource(R.drawable.iv_pause);
+				} else if (mRadarThread == null) {
+					startDownLoadImgs(radarList);//开始下载
+				}
+				break;
 		}
 	}
 

@@ -64,24 +64,23 @@ import okhttp3.Response;
  * @author shawn_sun
  *
  */
-
 public class WarningActivity extends BaseActivity implements OnClickListener, OnMapClickListener,
         OnMarkerClickListener, InfoWindowAdapter {
 	
-	private Context mContext = null;
-	private LinearLayout llBack = null;
-	private TextView tvTitle = null;
+	private Context mContext;
+	private LinearLayout llBack;
+	private TextView tvTitle;
 	private ImageView ivList,ivRefresh;
-	private MapView mapView = null;//高德地图
-	private AMap aMap = null;//高德地图
-	private Marker selectMarker = null;
+	private MapView mapView;//高德地图
+	private AMap aMap;//高德地图
+	private Marker selectMarker;
 	private List<WarningDto> warningList = new ArrayList<>();
 	private List<Marker> markers = new ArrayList<>();
-	private RelativeLayout reList = null;
-	private ListView cityListView = null;
-	private WarningAdapter cityAdapter = null;
+	private RelativeLayout reList;
+	private ListView cityListView;
+	private WarningAdapter cityAdapter;
 	private List<WarningDto> mList = new ArrayList<>();
-	private EditText etSearch = null;
+	private EditText etSearch;
 	private List<WarningDto> searchList = new ArrayList<>();
 	private List<Polyline> polylines = new ArrayList<>();//行政区划边界线
 
@@ -194,7 +193,7 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		}
 		
 		LatLng centerLatLng = new LatLng(CONST.DEFAULT_LAT, CONST.DEFAULT_LNG);
-		aMap.animateCamera(CameraUpdateFactory.newLatLng(centerLatLng));
+		aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 8.0f));
 		aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);

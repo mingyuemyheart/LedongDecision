@@ -35,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -53,7 +55,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	private Context mContext = null;
 	private EditText etUserName,etPwd;
 	private TextView tvLogin;
-	private ImageView ivLogo;
+	private ImageView ivBg,ivLogo;
 	private List<ColumnData> dataList = new ArrayList<>();
 
 	@Override
@@ -75,7 +77,17 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		etPwd = findViewById(R.id.etPwd);
 		tvLogin = findViewById(R.id.tvLogin);
 		tvLogin.setOnClickListener(this);
+		ivBg = findViewById(R.id.ivBg);
         ivLogo = findViewById(R.id.ivLogo);
+
+		//判断显示春天或者秋天背景
+		SimpleDateFormat sdf1 = new SimpleDateFormat("MMdd");
+		int current = Integer.parseInt(sdf1.format(new Date()));
+		if (current >= 301 && current <= 831) {
+			ivBg.setImageResource(R.drawable.bg_welcome);
+		}else {
+			ivBg.setImageResource(R.drawable.bg_login);
+		}
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

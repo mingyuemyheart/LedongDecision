@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -32,16 +33,18 @@ import java.util.List;
  * @author shawn_sun
  *
  */
-
 public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 	
-	private Context mContext = null;
-	private LinearLayout llBack = null;
-	private TextView tvTitle = null;
-	private LinearLayout llContainer = null;
-	private LinearLayout llContainer1 = null;
-	private MainViewPager viewPager = null;
+	private Context mContext;
+	private LinearLayout llBack;
+	private TextView tvTitle;
+	private LinearLayout llContainer;
+	private LinearLayout llContainer1;
+	private MainViewPager viewPager;
 	private List<Fragment> fragments = new ArrayList<>();
+	private HorizontalScrollView hScrollView1;
+	private int width;
+	private float density;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,12 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 		tvTitle = findViewById(R.id.tvTitle);
 		llContainer = findViewById(R.id.llContainer);
 		llContainer1 = findViewById(R.id.llContainer1);
+		hScrollView1 = findViewById(R.id.hScrollView1);
+
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		width = dm.widthPixels;
+		density = dm.density;
 		
 		String title = getIntent().getStringExtra(CONST.ACTIVITY_NAME);
 		if (title != null) {
@@ -80,8 +89,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					llContainer.setVisibility(View.GONE);
 					llContainer1.setVisibility(View.GONE);
 				}
-				DisplayMetrics dm = new DisplayMetrics();
-				getWindowManager().getDefaultDisplay().getMetrics(dm);
+				
 				llContainer.removeAllViews();
 				llContainer1.removeAllViews();
 				for (int i = 0; i < columnSize; i++) {
@@ -90,7 +98,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					TextView tvName = new TextView(mContext);
 					tvName.setGravity(Gravity.CENTER);
 					tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-					tvName.setPadding(0, (int)(dm.density*10), 0, (int)(dm.density*10));
+					tvName.setPadding(0, (int)(density*10), 0, (int)(density*10));
 					tvName.setOnClickListener(new MyOnClickListener(i));
 					if (i == 0) {
 						tvName.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -103,13 +111,13 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 					params.weight = 1.0f;
 					if (columnSize == 1) {
-						params.width = dm.widthPixels;
+						params.width = width;
 					}else if (columnSize == 2) {
-						params.width = dm.widthPixels/2;
+						params.width = width/2;
 					}else if (columnSize == 3) {
-						params.width = dm.widthPixels/3;
+						params.width = width/3;
 					}else {
-						params.width = dm.widthPixels/4;
+						params.width = width/4;
 					}
 					tvName.setLayoutParams(params);
 					llContainer.addView(tvName, i);
@@ -125,16 +133,16 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					LayoutParams params1 = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 					params1.weight = 1.0f;
 					if (columnSize == 1) {
-						params1.width = dm.widthPixels;
+						params1.width = width;
 					}else if (columnSize == 2) {
-						params1.width = dm.widthPixels/2-(int)(dm.density*20);
+						params1.width = width/2-(int)(density*20);
 					}else if (columnSize == 3) {
-						params1.width = dm.widthPixels/3-(int)(dm.density*20);
+						params1.width = width/3-(int)(density*20);
 					}else {
-						params1.width = dm.widthPixels/4-(int)(dm.density*20);
+						params1.width = width/4-(int)(density*20);
 					}
-					params1.height = (int) (dm.density*2);
-					params1.setMargins((int)(dm.density*10), 0, (int)(dm.density*10), 0);
+					params1.height = (int) (density*2);
+					params1.setMargins((int)(density*10), 0, (int)(density*10), 0);
 					tvBar.setLayoutParams(params1);
 					llContainer1.addView(tvBar, i);
 
@@ -166,6 +174,11 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 						tvName.setTextColor(getResources().getColor(R.color.text_color3));
 					}
 				}
+
+				if (llContainer.getChildCount() > 4) {
+					hScrollView1.smoothScrollTo(width/4*arg0, 0);
+				}
+
 			}
 			
 			if (llContainer1 != null) {
@@ -178,6 +191,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					}
 				}
 			}
+
 		}
 
 		@Override

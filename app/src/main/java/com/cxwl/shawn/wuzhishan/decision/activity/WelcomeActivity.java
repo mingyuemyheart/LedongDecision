@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cxwl.shawn.wuzhishan.decision.R;
@@ -26,7 +27,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -60,6 +63,16 @@ public class WelcomeActivity extends BaseActivity {
             return;
         }
         //点击Home键后再点击APP图标，APP重启而不是回到原来界面
+
+        //判断显示春天或者秋天背景
+        SimpleDateFormat sdf1 = new SimpleDateFormat("MMdd");
+        ImageView ivLogo = findViewById(R.id.ivLogo);
+        int current = Integer.parseInt(sdf1.format(new Date()));
+        if (current >= 301 && current <= 831) {
+            ivLogo.setImageResource(R.drawable.bg_welcome);
+        }else {
+            ivLogo.setImageResource(R.drawable.bg_login);
+        }
 
         initBroadCast();
     }

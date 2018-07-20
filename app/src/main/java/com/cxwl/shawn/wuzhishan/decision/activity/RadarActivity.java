@@ -34,12 +34,12 @@ import java.util.List;
  */
 public class RadarActivity extends BaseActivity implements OnClickListener {
 
-	private Context mContext = null;
-	private LinearLayout llBack = null;
-	private TextView tvTitle = null;
-	private LinearLayout llContainer = null;
-	private LinearLayout llContainer1 = null;
-	private MainViewPager viewPager = null;
+	private Context mContext;
+	private LinearLayout llBack;
+	private TextView tvTitle;
+	private LinearLayout llContainer;
+	private LinearLayout llContainer1;
+	private MainViewPager viewPager;
 	private List<Fragment> fragments = new ArrayList<>();
 
 	@Override
@@ -198,7 +198,7 @@ public class RadarActivity extends BaseActivity implements OnClickListener {
 	 * @author shawn_sun
 	 */
 	private class MyOnClickListener implements OnClickListener {
-		private int index = 0;
+		private int index;
 
 		public MyOnClickListener(int i) {
 			index = i;

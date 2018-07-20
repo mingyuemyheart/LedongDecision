@@ -13,11 +13,9 @@ import com.cxwl.shawn.wuzhishan.decision.dto.ColumnData;
 
 import java.util.List;
 
-
 /**
  * pdf文档列表
  */
-
 public class PDFListAdapter extends BaseAdapter {
 	
 	private Context mContext;

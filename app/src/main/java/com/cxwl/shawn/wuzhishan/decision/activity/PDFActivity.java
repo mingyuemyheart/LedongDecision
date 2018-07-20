@@ -32,7 +32,6 @@ import java.net.URLEncoder;
 /**
  * PDF文档
  */
-
 public class PDFActivity extends BaseActivity implements OnClickListener {
 
 	private Context mContext = null;
@@ -206,7 +205,7 @@ public class PDFActivity extends BaseActivity implements OnClickListener {
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what == 0) {
-				tvPercent.setText(msg.obj+"%");
+				tvPercent.setText(msg.obj+getString(R.string.unit_percent));
 			}
 		};
 	};

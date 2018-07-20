@@ -64,7 +64,7 @@
             android:layout_height="30dp"
             android:background="@drawable/corner_left_blue"
             android:gravity="center"
-            android:text="山西城市"
+            android:text="海南城市"
             android:textColor="@color/white"
             android:textSize="@dimen/level_4" />
 

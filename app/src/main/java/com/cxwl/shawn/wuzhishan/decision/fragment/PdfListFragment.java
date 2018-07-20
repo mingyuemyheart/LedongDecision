@@ -3,6 +3,7 @@ package com.cxwl.shawn.wuzhishan.decision.fragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,6 @@ import okhttp3.Response;
  * @author shawn_sun
  *
  */
-
 public class PdfListFragment extends Fragment {
 	
 	private ListView listView = null;
@@ -46,6 +46,7 @@ public class PdfListFragment extends Fragment {
 	private List<ColumnData> mList = new ArrayList<>();
 	private TextView tvPrompt = null;
 	private int page = 1, totalPage = 1;
+	private SwipeRefreshLayout refreshLayout;//下拉刷新布局
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,8 +57,30 @@ public class PdfListFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		initRefreshLayout(view);
 		initListView(view);
 		refresh();
+	}
+
+	/**
+	 * 初始化下拉刷新布局
+	 */
+	private void initRefreshLayout(View view) {
+		refreshLayout = view.findViewById(R.id.refreshLayout);
+		refreshLayout.setColorSchemeResources(CONST.color1, CONST.color2, CONST.color3, CONST.color4);
+		refreshLayout.setProgressViewEndTarget(true, 400);
+		refreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				refreshLayout.setRefreshing(true);
+			}
+		});
+		refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				refresh();
+			}
+		});
 	}
 
 	private void refresh() {
@@ -67,6 +90,7 @@ public class PdfListFragment extends Fragment {
 			String[] array = url.split("/");
 			url = url.replace("/"+array[array.length-1], "/"+page);
 		}
+		mList.clear();
 		OkHttpList(url);
 	}
 
@@ -168,6 +192,9 @@ public class PdfListFragment extends Fragment {
 										e.printStackTrace();
 									}
 								}
+
+								refreshLayout.setRefreshing(false);
+
 							}
 						});
 					}
