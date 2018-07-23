@@ -15,7 +15,7 @@ import java.io.InputStream;
 public class DBManager {
 	private final int BUFFER_SIZE = 400000;
 	private static final String PACKAGE_NAME = "com.cxwl.shawn.wuzhishan.decision";
-	public static final String DB_NAME = "stations.db";
+	public static final String DB_NAME = "stations1.db";
 	public static final String TABLE_NAME1 = "SITES";//站点监测站表名称
 	public static final String TABLE_NAME2 = "WARNING_GUIDE";//预警指南表名称
 	public static final String TABLE_NAME3 = "WARNING_ID";//预警id表名称
@@ -45,7 +45,7 @@ public class DBManager {
 		File file = new File(dbFile);
 		if (!file.exists()) {
 			// // 打开raw中得数据库文件，获得stream流
-			InputStream stream = this.mContext.getResources().openRawResource(R.raw.stations);
+			InputStream stream = this.mContext.getResources().openRawResource(R.raw.stations1);
 			try {
 				// 将获取到的stream 流写入道data中
 				FileOutputStream outputStream = new FileOutputStream(dbFile);

@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -22,9 +24,20 @@ import com.cxwl.shawn.wuzhishan.decision.adapter.CityAdapter;
 import com.cxwl.shawn.wuzhishan.decision.adapter.CityFragmentAdapter;
 import com.cxwl.shawn.wuzhishan.decision.dto.CityDto;
 import com.cxwl.shawn.wuzhishan.decision.manager.DBManager;
+import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * 城市选择
@@ -60,6 +73,7 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 		initListView();
 		initPGridView();
 		initNGridView();
+//		OkHttpList();
 	}
 	
 	/**
@@ -207,6 +221,8 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 			dto.cityName = cursor.getString(cursor.getColumnIndex("city"));
 			dto.disName = cursor.getString(cursor.getColumnIndex("dis"));
 			dto.cityId = cursor.getString(cursor.getColumnIndex("cid"));
+			dto.lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+			dto.lng = cursor.getDouble(cursor.getColumnIndex("lng"));
 			cityList.add(dto);
 		}
 		if (cityList.size() > 0 && cityAdapter != null) {
@@ -241,4 +257,87 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 			break;
 		}
 	}
+
+	private void OkHttpList() {
+		final String url = "http://restapi.amap.com/v3/config/district?key=a1a4b9ae34b547cbeacf5d84f7df0657&keywords=西藏&subdistrict=2&extensions=base";
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
+					@Override
+					public void onFailure(Call call, IOException e) {
+
+					}
+
+					@Override
+					public void onResponse(Call call, Response response) throws IOException {
+						if (!response.isSuccessful()) {
+							return;
+						}
+						final String result = response.body().string();
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (!TextUtils.isEmpty(result)) {
+									try {
+										JSONObject obj = new JSONObject(result);
+										JSONArray districts = obj.getJSONArray("districts");
+										for (int i = 0; i < districts.length(); i++) {
+											JSONObject itemObj = districts.getJSONObject(i);
+											String name = itemObj.getString("name");
+											String adcode = itemObj.getString("adcode");
+											String c = itemObj.getString("center");
+											if (!TextUtils.equals(c, ",")) {
+												String[] center = itemObj.getString("center").split(",");
+												double lat = Double.parseDouble(center[1]);
+												double lng = Double.parseDouble(center[0]);
+												String sql = String.format("update warning_id set lat = %s, lng = %s where wid = %s", lat, lng, adcode)+";";
+												Log.e("districts", sql);
+											}
+
+											JSONArray districts2 = itemObj.getJSONArray("districts");
+											for (int j = 0; j < districts2.length(); j++) {
+												JSONObject itemObj2 = districts2.getJSONObject(j);
+												String name2 = itemObj2.getString("name");
+												String adcode2 = itemObj2.getString("adcode");
+												String c2 = itemObj2.getString("center");
+												if (!TextUtils.equals(c2, ",")) {
+													String[] center2 = itemObj2.getString("center").split(",");
+													double lat2 = Double.parseDouble(center2[1]);
+													double lng2 = Double.parseDouble(center2[0]);
+													String sql2 = String.format("update warning_id set lat = %s, lng = %s where wid = %s", lat2, lng2, adcode2)+";";
+													Log.e("districts", sql2);
+												}
+
+												JSONArray districts3 = itemObj2.getJSONArray("districts");
+												for (int m = 0; m < districts3.length(); m++) {
+													JSONObject itemObj3 = districts3.getJSONObject(m);
+													String name3 = itemObj3.getString("name");
+													String adcode3 = itemObj3.getString("adcode");
+													String c3 = itemObj3.getString("center");
+													if (!TextUtils.equals(c3, ",")) {
+														String[] center3 = itemObj3.getString("center").split(",");
+														double lat3 = Double.parseDouble(center3[1]);
+														double lng3 = Double.parseDouble(center3[0]);
+														String sql3 = String.format("update warning_id set lat = %s, lng = %s where wid = %s", lat3, lng3, adcode3)+";";
+														Log.e("districts", sql3);
+													}
+												}
+
+											}
+										}
+
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						});
+
+					}
+				});
+			}
+		}).start();
+	}
+
 }

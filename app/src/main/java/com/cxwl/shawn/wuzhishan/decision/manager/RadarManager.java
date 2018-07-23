@@ -21,8 +21,8 @@ public class RadarManager {
 	private LoadThread mLoadThread;
 	
 	public interface RadarListener {
-		public static final int RESULT_SUCCESSED = 1;
-		public static final int RESULT_FAILED = 2;
+		int RESULT_SUCCESSED = 1;
+		int RESULT_FAILED = 2;
 		void onResult(int result, List<RadarDto> images);
 		void onProgress(String url, int progress);
 	}
@@ -42,7 +42,7 @@ public class RadarManager {
 	
 	private class LoadThread extends Thread {
 		private List<RadarDto> radars;
-		private String id = null;
+		private String id;
 		private RadarListener listener;
 		private int count;
 		
@@ -86,7 +86,7 @@ public class RadarManager {
 					FileOutputStream os = new FileOutputStream(file);
 			    	InputStream is = connection.getInputStream();
 			    	byte[] buffer = new byte[8 * 1024];
-			    	int read = -1;
+			    	int read;
 			    	while ((read = is.read(buffer)) != -1) {
 						os.write(buffer, 0, read);
 					}

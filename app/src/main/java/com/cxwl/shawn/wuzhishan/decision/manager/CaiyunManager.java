@@ -85,7 +85,7 @@ public class CaiyunManager {
 					FileOutputStream os = new FileOutputStream(file);
 			    	InputStream is = connection.getInputStream();
 			    	byte[] buffer = new byte[8 * 1024];
-			    	int read = -1;
+			    	int read;
 			    	while ((read = is.read(buffer)) != -1) {
 						os.write(buffer, 0, read);
 					}
