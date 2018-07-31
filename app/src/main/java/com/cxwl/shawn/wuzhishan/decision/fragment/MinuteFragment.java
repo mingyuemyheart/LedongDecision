@@ -56,8 +56,7 @@ import com.cxwl.shawn.wuzhishan.decision.manager.CaiyunManager;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 import com.cxwl.shawn.wuzhishan.decision.view.MinuteFallView;
-
-import net.tsz.afinal.FinalBitmap;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -734,8 +733,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 										if (!obj.isNull("cutlineUrl")) {//图例
 											String imgUrl = obj.getString("cutlineUrl");
 											if (!TextUtils.isEmpty(imgUrl)) {
-												FinalBitmap finalBitmap = FinalBitmap.create(getActivity());
-												finalBitmap.display(ivChart, imgUrl, null, 0);
+												Picasso.with(getActivity()).load(imgUrl).into(ivChart);
 												if (proName.contains("海南")) {
 													ivChart.setVisibility(View.VISIBLE);
 												}

@@ -43,9 +43,9 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.okio:okio:1.14.1'
-    implementation files('libs/scene-final.jar')
     implementation files('libs/picasso-2.5.2.jar')
-    implementation files('libs/commons-codec-1.7.jar')//base64
+    implementation files('libs/commons-codec-1.7.jar')
+    //base64
     implementation project(':android-pdf-viewer')
     implementation files('libs/uk-co-senab-photoview.jar')
     implementation files('libs/AMap3DMap_5.7.0_AMapSearch_5.7.0_AMapLocation_3.7.0_20171229.jar')

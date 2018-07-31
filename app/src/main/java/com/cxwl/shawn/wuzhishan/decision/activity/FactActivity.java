@@ -60,8 +60,7 @@ import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 import com.cxwl.shawn.wuzhishan.decision.view.MainViewPager;
 import com.cxwl.shawn.wuzhishan.decision.view.ScrollviewListview;
-
-import net.tsz.afinal.FinalBitmap;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -386,12 +385,12 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.setOnCameraChangeListener(this);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
-//		aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
-//			@Override
-//			public void onMapLoaded() {
-//				aMap.showMapText(false);
-//			}
-//		});
+		aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
+			@Override
+			public void onMapLoaded() {
+				aMap.showMapText(false);
+			}
+		});
 
 		TextView tvMapNumber = findViewById(R.id.tvMapNumber);
 		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
@@ -409,18 +408,18 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 			}
 		});
 
-//		LatLngBounds bounds = new LatLngBounds.Builder()
-////		.include(new LatLng(57.9079, 71.9282))
-////		.include(new LatLng(3.9079, 134.8656))
-//		.include(new LatLng(1, 66))
-//		.include(new LatLng(60, 153))
-//		.build();
-//		aMap.addGroundOverlay(new GroundOverlayOptions()
-//			.anchor(0.5f, 0.5f)
-//			.positionFromBounds(bounds)
-//			.image(BitmapDescriptorFactory.fromResource(R.drawable.bg_empty))
-//			.transparency(0.0f));
-//		aMap.runOnDrawFrame();
+		LatLngBounds bounds = new LatLngBounds.Builder()
+//		.include(new LatLng(57.9079, 71.9282))
+//		.include(new LatLng(3.9079, 134.8656))
+		.include(new LatLng(1, 66))
+		.include(new LatLng(60, 153))
+		.build();
+		aMap.addGroundOverlay(new GroundOverlayOptions()
+			.anchor(0.5f, 0.5f)
+			.positionFromBounds(bounds)
+			.image(BitmapDescriptorFactory.fromResource(R.drawable.bg_empty))
+			.transparency(0.0f));
+		aMap.runOnDrawFrame();
 
 	}
 
@@ -626,8 +625,7 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 										}
 
 										if (!obj.isNull("cutlineUrl")) {
-											FinalBitmap finalBitmap = FinalBitmap.create(mContext);
-											finalBitmap.display(ivChart, obj.getString("cutlineUrl"), null, 0);
+											Picasso.with(mContext).load(obj.getString("cutlineUrl")).into(ivChart);
 										}
 
 										if (!obj.isNull("times")) {
