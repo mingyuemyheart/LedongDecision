@@ -1,13 +1,12 @@
 package com.cxwl.shawn.wuzhishan.decision.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
@@ -15,27 +14,28 @@ import android.widget.TextView;
 
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.common.CONST;
+import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * PDF文档
  */
 public class PDFActivity extends BaseActivity implements OnClickListener {
 
-	private Context mContext = null;
-	private LinearLayout llBack = null;
+	private LinearLayout llBack;
 	private TextView tvTitle,tvPercent;
 	private PDFView pdfView;
 
@@ -43,7 +43,6 @@ public class PDFActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pdf);
-		mContext = this;
 		initWidget();
 		initPDFView();
 	}
@@ -55,7 +54,7 @@ public class PDFActivity extends BaseActivity implements OnClickListener {
 		tvPercent = findViewById(R.id.tvPercent);
 
 		String title = getIntent().getStringExtra(CONST.ACTIVITY_NAME);
-		if (title != null) {
+		if (!TextUtils.isEmpty(title)) {
 			tvTitle.setText(title);
 		}
 	}
@@ -75,8 +74,7 @@ public class PDFActivity extends BaseActivity implements OnClickListener {
     // 完整的判断中文汉字和符号
     private String isChinese(String strName) {
         char[] ch = strName.toCharArray();
-        for (int i = 0; i < ch.length; i++) {
-            char c = ch[i];
+        for (char c : ch) {
             if (isChinese(c)) {
             	try {
 					strName = strName.replace(c+"", URLEncoder.encode(c+"", "UTF-8"));
@@ -100,112 +98,96 @@ public class PDFActivity extends BaseActivity implements OnClickListener {
 			pdfUrl = isChinese(pdfUrl);
 		}
 
-		asynLoadPdf(pdfUrl);
+		OkHttpFile(pdfUrl);
 	}
 
-	/**
-	 * 异步下载pdf文件
-	 * @param pdfUrl pdf地址
-	 */
-	private void asynLoadPdf(String pdfUrl) {
-		AsynLoadTask task = new AsynLoadTask(new AsynLoadCompleteListener() {
+	private void OkHttpFile(final String url) {
+		new Thread(new Runnable() {
 			@Override
-			public void loadComplete(File file) {
-				if (file != null) {
-					tvPercent.setVisibility(View.GONE);
-					pdfView.fromFile(file)
-							.defaultPage(0)
-							.scrollHandle(new DefaultScrollHandle(PDFActivity.this))
-							.load();
-				}
+			public void run() {
+				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
+					@Override
+					public void onFailure(Call call, IOException e) {
+
+					}
+
+					@Override
+					public void onResponse(Call call, Response response) throws IOException {
+						if (!response.isSuccessful()) {
+							return;
+						}
+						InputStream is = null;
+						FileOutputStream fos = null;
+						try {
+							is = response.body().byteStream();//获取输入流
+							float total = response.body().contentLength();//获取文件大小
+							if(is != null){
+								File files = new File(Environment.getExternalStorageDirectory()+"/Wuzhishan");
+								if (!files.exists()) {
+									files.mkdirs();
+								}
+								String filePath = files.getAbsolutePath()+"/"+"1.pdf";
+								fos = new FileOutputStream(filePath);
+								byte[] buf = new byte[1024];
+								int ch = -1;
+								int process = 0;
+								while ((ch = is.read(buf)) != -1) {
+									fos.write(buf, 0, ch);
+									process += ch;
+
+									int percent = (int) Math.floor((process / total * 100));
+									Log.e("percent", process+"--"+total+"--"+percent);
+									Message msg = handler.obtainMessage(1001);
+									msg.what = 1001;
+									msg.obj = filePath;
+									msg.arg1 = percent;
+									handler.sendMessage(msg);
+
+								}
+
+							}
+							fos.flush();
+							fos.close();// 下载完成
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							if (is != null) {
+								is.close();
+							}
+							if (fos != null) {
+								fos.close();
+							}
+						}
+
+					}
+				});
 			}
-		}, pdfUrl);
-        task.execute();
-	}
-
-	private interface AsynLoadCompleteListener {
-		void loadComplete(File file);
-	}
-
-	private class AsynLoadTask extends AsyncTask<Void, File, File> {
-
-		private String url;
-		private AsynLoadCompleteListener completeListener;
-
-		private AsynLoadTask(AsynLoadCompleteListener completeListener, String url) {
-			this.url = url;
-			this.completeListener = completeListener;
-		}
-
-		@Override
-		protected void onPreExecute() {
-		}
-
-		@Override
-		protected void onProgressUpdate(File... values) {
-		}
-
-		@Override
-		protected File doInBackground(Void... params) {
-			return downLoadPdf(url);
-		}
-
-		@Override
-		protected void onPostExecute(File file) {
-			if (completeListener != null) {
-				completeListener.loadComplete(file);
-            }
-		}
-	}
-
-	/**
-	 * 下载pdf文件
-	 * @param pdfUrl
-	 * @return
-	 */
-	private File downLoadPdf(String pdfUrl) {
-		try {
-			URL u = new URL(pdfUrl);
-			File file = new File(Environment.getExternalStorageDirectory()+"/Wuzhishan");
-			if (!file.exists()) {
-				file.mkdirs();
-			}
-			String path = file.getAbsolutePath()+"/"+"1.pdf";
-			byte[] buffer = new byte[1024 * 8];
-			int read;
-			int ava = 0;
-//			long start = System.currentTimeMillis();
-			HttpURLConnection urlcon = (HttpURLConnection) u.openConnection();
-			double fileLength = (double) urlcon.getContentLength();
-			BufferedInputStream bin = new BufferedInputStream(u.openStream());
-			BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(path));
-			while ((read = bin.read(buffer)) > -1) {
-				bout.write(buffer, 0, read);
-				ava += read;
-				int percent = (int) Math.floor((ava / fileLength * 100));
-				Message msg = new Message();
-				msg.what = 0;
-				msg.obj = percent;
-				handler.sendMessage(msg);
-//				dialog.setProgress(a);
-//				long speed = ava / (System.currentTimeMillis() - start);
-			}
-			bout.flush();
-			bout.close();
-			return new File(path);
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+		}).start();
 	}
 
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			if (msg.what == 0) {
-				tvPercent.setText(msg.obj+getString(R.string.unit_percent));
+			if (msg.what == 1001) {
+				if (tvPercent == null || pdfView == null) {
+					return;
+				}
+				int percent = msg.arg1;
+				tvPercent.setText(percent+getString(R.string.unit_percent));
+				if (percent >= 100) {
+					tvPercent.setVisibility(View.GONE);
+					String filePath = msg.obj+"";
+					if (!TextUtils.isEmpty(filePath)) {
+						File file = new File(msg.obj+"");
+						if (file.exists()) {
+							pdfView.fromFile(file)
+									.defaultPage(0)
+									.scrollHandle(new DefaultScrollHandle(PDFActivity.this))
+									.load();
+						}
+					}
+				}
 			}
 		};
 	};

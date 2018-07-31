@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,11 +29,9 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.OnMapClickListener;
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.MapView;
+import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
-import com.amap.api.maps.model.Circle;
-import com.amap.api.maps.model.CircleOptions;
 import com.amap.api.maps.model.GroundOverlay;
 import com.amap.api.maps.model.GroundOverlayOptions;
 import com.amap.api.maps.model.LatLng;
@@ -54,7 +51,6 @@ import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.MinuteFallDto;
-import com.cxwl.shawn.wuzhishan.decision.dto.ShawnRainDto;
 import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import com.cxwl.shawn.wuzhishan.decision.manager.CaiyunManager;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
@@ -72,6 +68,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -81,13 +78,11 @@ import okhttp3.Response;
 /**
  * 逐小时预报
  */
-public class MinuteFragment extends Fragment implements OnClickListener, CaiyunManager.RadarListener,
-        OnMapClickListener, OnGeocodeSearchListener, AMapLocationListener {
+public class MinuteFragment extends Fragment implements OnClickListener, OnMapClickListener, OnGeocodeSearchListener, AMapLocationListener {
 	
-	private MapView mMapView;
+	private TextureMapView mMapView;
 	private AMap aMap;
-	private List<MinuteFallDto> mList = new ArrayList<>();
-	private List<MinuteFallDto> images = new ArrayList<>();
+	private List<MinuteFallDto> caiyunList = new ArrayList<>();//彩云数据
 	private GroundOverlay mOverlay = null;
 	private CaiyunManager mRadarManager;
 	private RadarThread mRadarThread;
@@ -95,34 +90,25 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	private static final int HANDLER_PROGRESS = 2;
 	private static final int HANDLER_LOAD_FINISHED = 3;
 	private static final int HANDLER_PAUSE = 4;
-	private LinearLayout llSeekBar = null;
-	private ImageView ivPlay = null;
+	private LinearLayout llSeekBar,llContainer3,llLegend;
+	private ImageView ivPlay,ivRank,ivLegend;
 	private SeekBar seekBar = null;
-	private TextView tvTime = null;
-    private Marker clickMarker = null;
-	private GeocodeSearch geocoderSearch = null;
-	private TextView tvAddr = null;//地址信息
-	private TextView tvRain = null;//降雨信息
-	private LinearLayout llContainer3 = null;
+	private TextView tvTime,tvAddr,tvRain;
+    private Marker clickMarker;
+	private GeocodeSearch geocoderSearch;
 	private int width = 0;
-	private LinearLayout llLegend = null;
-	private ImageView ivRank = null;
-	private ImageView ivLegend = null;
     private AMapLocationClientOption mLocationOption = null;//声明mLocationOption对象
     private AMapLocationClient mLocationClient = null;//声明AMapLocationClient类对象
     private String proName = "";
     
     //降水实况
-    private ImageView ivSwitch = null;
-    private TextView tvLayerName = null;
-    private ImageView ivChart = null;
-	private List<ShawnRainDto> nameList = new ArrayList<>();
-	private List<Text> texts = new ArrayList<>();//等值线
+	private TextView tvLayerName;
+	private ImageView ivSwitch,ivChart;
+	private List<Text> valueTexts = new ArrayList<>();//等值线
+	private List<Polygon> rainPolygons = new ArrayList<>();//降水图层
 	private List<Text> cityNames = new ArrayList<>();//城市名称
-	private List<Circle> circles = new ArrayList<>();//城市名称下方黑点
-	private List<Polygon> polygons = new ArrayList<>();//降水图层
-	private List<Polyline> polylines = new ArrayList<>();//行政区划边界线
-	private String layerResult = null;//降水图层数据
+	private List<Polyline> adcodePolylines = new ArrayList<>();//行政区划边界线
+	private String layerResult;//降水图层数据
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,12 +124,12 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	}
 
 	private void initMap(Bundle bundle, View view) {
-		mMapView = view.findViewById(R.id.map);
+		mMapView = view.findViewById(R.id.mapView);
 		mMapView.onCreate(bundle);
 		if (aMap == null) {
 			aMap = mMapView.getMap();
 		}
-		aMap.moveCamera(CameraUpdateFactory.zoomTo(8.0f));
+		aMap.moveCamera(CameraUpdateFactory.zoomTo(10.0f));
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
 		aMap.setOnMapClickListener(this);
@@ -181,6 +167,8 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 		mRadarManager = new CaiyunManager(getActivity());
 		
 		startLocation();
+        OkHttpRainFact();
+        OkHttpCaiyunRain();
 	}
 	
 	/**
@@ -204,7 +192,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	public void onLocationChanged(AMapLocation amapLocation) {
         if (amapLocation != null && amapLocation.getErrorCode() == 0) {
             LatLng latLng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
-            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8.0f));
+            aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10.0f));
             addMarkerToMap(latLng);
 
             proName = amapLocation.getProvince();
@@ -222,25 +210,23 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
                 llLegend.setVisibility(View.VISIBLE);
             }
 
-            OkHttpRainFact();
-            OkHttpCaiyunRain();
         }
 	}
 
 	private void addMarkerToMap(LatLng latLng) {
 		MarkerOptions options = new MarkerOptions();
 		options.position(latLng);
-		options.anchor(0.5f, 0.5f);
-		Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.iv_map_location),
-				(int)(CommonUtil.dip2px(getActivity(), 15)), (int)(CommonUtil.dip2px(getActivity(), 15)));
+		options.anchor(0.5f, 1.0f);
+		Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.iv_map_click_map),
+				(int)(CommonUtil.dip2px(getActivity(), 21)), (int)(CommonUtil.dip2px(getActivity(), 32)));
 		if (bitmap != null) {
 			options.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 		}else {
-			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.iv_map_location));
+			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.iv_map_click_map));
 		}
 		clickMarker = aMap.addMarker(options);
-		OkHttpMinute(latLng.longitude, latLng.latitude);
 		searchAddrByLatLng(latLng.latitude, latLng.longitude);
+		OkHttpMinute(latLng.longitude, latLng.latitude);
 	}
 	
 	/**
@@ -271,35 +257,32 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 								if (!TextUtils.isEmpty(result)) {
 									try {
 										JSONObject object = new JSONObject(result);
-										if (object != null) {
-											if (!object.isNull("result")) {
-												JSONObject obj = object.getJSONObject("result");
-												if (!obj.isNull("minutely")) {
-													JSONObject objMin = obj.getJSONObject("minutely");
-													if (!objMin.isNull("description")) {
-														String rain = objMin.getString("description");
-														if (!TextUtils.isEmpty(rain)) {
-															tvRain.setText(rain.replace("小彩云", ""));
-															tvRain.setVisibility(View.VISIBLE);
-														}else {
-															tvRain.setVisibility(View.GONE);
-														}
+										if (!object.isNull("result")) {
+											JSONObject obj = object.getJSONObject("result");
+											if (!obj.isNull("minutely")) {
+												JSONObject objMin = obj.getJSONObject("minutely");
+												if (!objMin.isNull("description")) {
+													String rain = objMin.getString("description");
+													if (!TextUtils.isEmpty(rain)) {
+														tvRain.setText(rain.replace("小彩云", ""));
+														tvRain.setVisibility(View.VISIBLE);
+													}else {
+														tvRain.setVisibility(View.GONE);
 													}
-													if (!objMin.isNull("precipitation_2h")) {
-														JSONArray array = objMin.getJSONArray("precipitation_2h");
-														int size = array.length();
-														List<WeatherDto> minuteList = new ArrayList<>();
-														for (int i = 0; i < size; i++) {
-															WeatherDto dto = new WeatherDto();
-															dto.minuteFall = (float) array.getDouble(i);
-															minuteList.add(dto);
-														}
+												}
+												if (!objMin.isNull("precipitation_2h")) {
+													JSONArray array = objMin.getJSONArray("precipitation_2h");
+													List<WeatherDto> minuteList = new ArrayList<>();
+													for (int i = 0; i < array.length(); i++) {
+														WeatherDto dto = new WeatherDto();
+														dto.minuteFall = (float) array.getDouble(i);
+														minuteList.add(dto);
+													}
 
-														MinuteFallView minuteFallView = new MinuteFallView(getActivity());
-														minuteFallView.setData(minuteList, tvRain.getText().toString());
-														llContainer3.removeAllViews();
-														llContainer3.addView(minuteFallView, width, (int)(CommonUtil.dip2px(getActivity(), 120)));
-													}
+													MinuteFallView minuteFallView = new MinuteFallView(getActivity());
+													minuteFallView.setData(minuteList, tvRain.getText().toString());
+													llContainer3.removeAllViews();
+													llContainer3.addView(minuteFallView, width, (int)(CommonUtil.dip2px(getActivity(), 120)));
 												}
 											}
 										}
@@ -398,22 +381,23 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 										if (!obj.isNull("status")) {
 											if (obj.getString("status").equals("ok")) {//鎴愬姛
 												if (!obj.isNull("radar_img")) {
-													mList.clear();
+													caiyunList.clear();
 													JSONArray array = new JSONArray(obj.getString("radar_img"));
 													for (int i = 0; i < array.length(); i++) {
 														JSONArray array0 = array.getJSONArray(i);
 														MinuteFallDto dto = new MinuteFallDto();
-														dto.setImgUrl(array0.optString(0));
-														dto.setTime(array0.optLong(1));
+														dto.imgUrl = array0.optString(0);
+														dto.time = array0.optLong(1);
 														JSONArray itemArray = array0.getJSONArray(2);
-														dto.setP1(itemArray.optDouble(0));
-														dto.setP2(itemArray.optDouble(1));
-														dto.setP3(itemArray.optDouble(2));
-														dto.setP4(itemArray.optDouble(3));
-														mList.add(dto);
+														dto.p1 = itemArray.optDouble(0);
+														dto.p2 = itemArray.optDouble(1);
+														dto.p3 = itemArray.optDouble(2);
+														dto.p4 = itemArray.optDouble(3);
+														caiyunList.add(dto);
+
 													}
-													if (mList.size() > 0) {
-														startDownLoadImgs(mList);
+													if (caiyunList.size() > 0) {
+														startDownLoadImgs(caiyunList);
 													}
 												}
 											}
@@ -435,42 +419,32 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 			mRadarThread.cancel();
 			mRadarThread = null;
 		}
- 		mRadarManager.loadImagesAsyn(list, this);
-	}
-	
-	@Override
-	public void onResult(int result, List<MinuteFallDto> images) {
-		mHandler.sendEmptyMessage(HANDLER_LOAD_FINISHED);
-		if (result == CaiyunManager.RadarListener.RESULT_SUCCESSED) {
-//			if (mRadarThread != null) {
-//				mRadarThread.cancel();
-//				mRadarThread = null;
-//			}
-//			mRadarThread = new RadarThread(images);
-//			mRadarThread.start();
-			
-			this.images.clear();
-			this.images.addAll(images);
-			
-			if (!proName.contains("海南")) {
-				//把最新的一张降雨图片覆盖在地图上
-				MinuteFallDto radar = images.get(images.size()-1);
-				Message message = mHandler.obtainMessage();
-				message.what = HANDLER_SHOW_RADAR;
-				message.obj = radar;
-				message.arg1 = 100;
-				message.arg2 = 100;
-				mHandler.sendMessage(message);
+ 		mRadarManager.loadImagesAsyn(list, new CaiyunManager.RadarListener() {
+			@Override
+			public void onResult(int result, List<MinuteFallDto> images) {
+				mHandler.sendEmptyMessage(HANDLER_LOAD_FINISHED);
+				if (result == CaiyunManager.RadarListener.RESULT_SUCCESSED) {
+					if (!proName.contains("海南")) {
+						//把最新的一张降雨图片覆盖在地图上
+						MinuteFallDto radar = images.get(images.size()-1);
+						Message message = mHandler.obtainMessage();
+						message.what = HANDLER_SHOW_RADAR;
+						message.obj = radar;
+						message.arg1 = images.size()-1;
+						message.arg2 = images.size()-1;
+						mHandler.sendMessage(message);
+					}
+				}
 			}
-		}
-	}
 
-	@Override
-	public void onProgress(String url, int progress) {
-		Message msg = new Message();
-		msg.obj = progress;
-		msg.what = HANDLER_PROGRESS;
-		mHandler.sendMessage(msg);
+			@Override
+			public void onProgress(String url, int progress) {
+				Message msg = new Message();
+				msg.obj = progress;
+				msg.what = HANDLER_PROGRESS;
+				mHandler.sendMessage(msg);
+			}
+		});
 	}
 	
 	private void showRadar(Bitmap bitmap, double p1, double p2, double p3, double p4) {
@@ -502,13 +476,13 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 			case HANDLER_SHOW_RADAR:
 				if (msg.obj != null) {
 					MinuteFallDto dto = (MinuteFallDto) msg.obj;
-					if (dto.getPath() != null) {
-						Bitmap bitmap = BitmapFactory.decodeFile(dto.getPath());
+					if (!TextUtils.isEmpty(dto.path)) {
+						Bitmap bitmap = BitmapFactory.decodeFile(dto.path);
 						if (bitmap != null) {
-							showRadar(bitmap, dto.getP1(), dto.getP2(), dto.getP3(), dto.getP4());
+							showRadar(bitmap, dto.p1, dto.p2, dto.p3, dto.p4);
 						}
 					}
-					changeProgress(dto.getTime(), msg.arg2, msg.arg1);
+					changeProgress(dto.time, msg.arg2, msg.arg1);
 				}
 				break;
 			case HANDLER_PROGRESS:
@@ -537,6 +511,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	};
 
 	private class RadarThread extends Thread {
+
 		static final int STATE_NONE = 0;
 		static final int STATE_PLAYING = 1;
 		static final int STATE_PAUSE = 2;
@@ -545,9 +520,9 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 		private int state;
 		private int index;
 		private int count;
-		private boolean isTracking = false;
+		private boolean isTracking;
 
-		public RadarThread(List<MinuteFallDto> images) {
+		private RadarThread(List<MinuteFallDto> images) {
 			this.images = images;
 			this.count = images.size();
 			this.index = 0;
@@ -555,7 +530,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 			this.isTracking = false;
 		}
 
-		public int getCurrentState() {
+		private int getCurrentState() {
 			return state;
 		}
 
@@ -607,13 +582,13 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 			}
 		}
 
-		public void cancel() {
+		private void cancel() {
 			this.state = STATE_CANCEL;
 		}
-		public void pause() {
+		private void pause() {
 			this.state = STATE_PAUSE;
 		}
-		public void play() {
+		private void play() {
 			this.state = STATE_PLAYING;
 		}
 
@@ -638,7 +613,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 			seekBar.setMax(max);
 			seekBar.setProgress(progress);
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
 		String value = time + "000";
 		Date date = new Date(Long.valueOf(value));
 		tvTime.setText(sdf.format(date));
@@ -659,8 +634,8 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 					mRadarThread.cancel();
 					mRadarThread = null;
 				}
-				if (!images.isEmpty()) {
-					mRadarThread = new RadarThread(images);
+				if (!caiyunList.isEmpty()) {
+					mRadarThread = new RadarThread(caiyunList);
 					mRadarThread.start();
 				}
 			}
@@ -685,29 +660,27 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 					mRadarThread.cancel();
 					mRadarThread = null;
 				}
-				if (layerResult != null) {
-					drawDataToMap(layerResult);
-				}
-				aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(19.211397,109.795324), 7.8f));
+				drawLayers();
+				aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.839912351848645,109.52564612030983), 10.3f));
 			}else {
 				ivSwitch.setImageResource(R.drawable.iv_hour_rain);
 				ivChart.setVisibility(View.GONE);
 				tvLayerName.setVisibility(View.GONE);
 				llSeekBar.setVisibility(View.VISIBLE);
 				llLegend.setVisibility(View.VISIBLE);
-				removeCityNames();
 				removeTexts();
+				removeRainPolygons();
+				removeCityNames();
 				removePolylines();
-				removePolygons();
 
-				if (!images.isEmpty()) {
+				if (!caiyunList.isEmpty()) {
 					//把最新的一张降雨图片覆盖在地图上
-					MinuteFallDto radar = images.get(images.size()-1);
+					MinuteFallDto radar = caiyunList.get(caiyunList.size()-1);
 					Message message = mHandler.obtainMessage();
 					message.what = HANDLER_SHOW_RADAR;
 					message.obj = radar;
-					message.arg1 = 100;
-					message.arg2 = 100;
+					message.arg1 = caiyunList.size()-1;
+					message.arg2 = caiyunList.size()-1;
 					mHandler.sendMessage(message);
 				}
 			}
@@ -718,7 +691,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	 * 请求降水实况
 	 */
 	private void OkHttpRainFact() {
-		final String url = "http://59.50.130.88:8888/decision-admin/dates/getallid?tim=";
+		final String url = "http://59.50.130.88:8888/decision-admin/dates/getwzs?type=js&tim=";
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -740,6 +713,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 								if (!TextUtils.isEmpty(result)) {
 									try {
 										JSONObject obj = new JSONObject(result);
+
 										if (!obj.isNull("times")) {
 											JSONArray array = new JSONArray(obj.getString("times"));
 											for (int i = 0; i < array.length(); i++) {
@@ -751,16 +725,20 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 														if (proName.contains("海南")) {
 															tvLayerName.setVisibility(View.VISIBLE);
 														}
+														break;
 													}
 												}
 											}
 										}
 
-										if (!obj.isNull("cutlineUrl")) {
-											FinalBitmap finalBitmap = FinalBitmap.create(getActivity());
-											finalBitmap.display(ivChart, obj.getString("cutlineUrl"), null, 0);
-											if (proName.contains("海南")) {
-												ivChart.setVisibility(View.VISIBLE);
+										if (!obj.isNull("cutlineUrl")) {//图例
+											String imgUrl = obj.getString("cutlineUrl");
+											if (!TextUtils.isEmpty(imgUrl)) {
+												FinalBitmap finalBitmap = FinalBitmap.create(getActivity());
+												finalBitmap.display(ivChart, imgUrl, null, 0);
+												if (proName.contains("海南")) {
+													ivChart.setVisibility(View.VISIBLE);
+												}
 											}
 										}
 
@@ -773,18 +751,8 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 									} catch (JSONException e) {
 										e.printStackTrace();
 									}
-								}else {
-									drawCityName();
-									removePolygons();
-//				progressBar.setVisibility(View.GONE);
-//				tvToast.setVisibility(View.VISIBLE);
-//				new Handler().postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						tvToast.setVisibility(View.GONE);
-//					}
-//				}, 1000);
 								}
+
 							}
 						});
 					}
@@ -814,23 +782,9 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 							public void run() {
 								if (!TextUtils.isEmpty(result)) {
 									layerResult = result;
-									if (result != null) {
-										if (proName.contains("海南")) {
-											drawDataToMap(result);
-										}
+									if (proName.contains("海南")) {
+										drawLayers();
 									}
-//			else {
-//				drawCityName();
-//				removePolygons();
-////				progressBar.setVisibility(View.GONE);
-////				tvToast.setVisibility(View.VISIBLE);
-////				new Handler().postDelayed(new Runnable() {
-////					@Override
-////					public void run() {
-////						tvToast.setVisibility(View.GONE);
-////					}
-////				}, 1000);
-//			}
 								}
 							}
 						});
@@ -840,249 +794,134 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 		}).start();
 	}
 
-	private void removePolygons() {
-		for (int i = 0; i < polygons.size(); i++) {
-			polygons.get(i).remove();
-		}
-		polygons.clear();
-	}
+	/**
+	 * 绘制所有图层、等值线等数据
+	 */
+	private void drawLayers() {
+		drawRainPolygons();
 
-	private void removeTexts() {
-		for (int i = 0; i < texts.size(); i++) {
-			texts.get(i).remove();
-		}
-		texts.clear();
+		removeCityNames();
+		removePolylines();
+		CommonUtil.drawAllDistrict(getActivity(), aMap, 0xff72e5f3, cityNames, adcodePolylines);
 	}
 
 	/**
-	 * 回执区域
+	 * 清除等值线
 	 */
-	private void drawDataToMap(String result) {
-		if (TextUtils.isEmpty(result) || aMap == null) {
-			return;
+	private void removeTexts() {
+		for (int i = 0; i < valueTexts.size(); i++) {
+			valueTexts.get(i).remove();
 		}
-		removeTexts();
-		removePolygons();
-
-		try {
-			JSONObject obj = new JSONObject(result);
-			JSONArray array = obj.getJSONArray("l");
-			int length = array.length();
-//			if (length > 200) {
-//				length = 200;
-//			}
-			for (int i = 0; i < length; i++) {
-				JSONObject itemObj = array.getJSONObject(i);
-				JSONArray c = itemObj.getJSONArray("c");
-				int r = c.getInt(0);
-				int g = c.getInt(1);
-				int b = c.getInt(2);
-				int a = (int) (c.getInt(3)*255*1.0);
-
-				double centerLat = 0;
-				double centerLng = 0;
-				String p = itemObj.getString("p");
-				if (!TextUtils.isEmpty(p)) {
-					String[] points = p.split(";");
-					PolygonOptions polygonOption = new PolygonOptions();
-					polygonOption.fillColor(Color.argb(a, r, g, b));
-					polygonOption.strokeColor(Color.BLACK);
-					polygonOption.strokeWidth(1);
-					for (int j = 0; j < points.length; j++) {
-						String[] value = points[j].split(",");
-						double lat = Double.valueOf(value[1]);
-						double lng = Double.valueOf(value[0]);
-						polygonOption.add(new LatLng(lat, lng));
-						if (j == points.length/2) {
-							centerLat = lat;
-							centerLng = lng;
-						}
-					}
-					Polygon polygon = aMap.addPolygon(polygonOption);
-					polygons.add(polygon);
-				}
-
-				if (!itemObj.isNull("v")) {
-					int v = itemObj.getInt("v");
-					TextOptions options = new TextOptions();
-					options.position(new LatLng(centerLat, centerLng));
-					options.fontColor(Color.BLACK);
-					options.fontSize(20);
-					options.text(v+"");
-					options.backgroundColor(Color.TRANSPARENT);
-					Text text = aMap.addText(options);
-					texts.add(text);
-				}
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		Message msg = new Message();
-		msg.what = 100;
-		handler.sendMessage(msg);
+		valueTexts.clear();
 	}
 
+	/**
+	 * 清除实况图层
+	 */
+	private void removeRainPolygons() {
+		for (int i = 0; i < rainPolygons.size(); i++) {
+			rainPolygons.get(i).remove();
+		}
+		rainPolygons.clear();
+	}
+
+	/**
+	 * 清除城市名称
+	 */
 	private void removeCityNames() {
 		for (int i = 0; i < cityNames.size(); i++) {
 			cityNames.get(i).remove();
 		}
 		cityNames.clear();
-
-		for (int i = 0; i < circles.size(); i++) {
-			circles.get(i).remove();
-		}
-		circles.clear();
 	}
 
-	private void removePolylines() {
-		for (int i = 0; i < polylines.size(); i++) {
-			polylines.get(i).remove();
-		}
-		polylines.clear();
-	}
-
-	@SuppressLint("HandlerLeak")
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case 100:
-//				tvHistory.setVisibility(View.VISIBLE);
-//				tvDetail.setVisibility(View.VISIBLE);
-//				ivChart.setVisibility(View.VISIBLE);
-//				progressBar.setVisibility(View.GONE);
-				drawCityName();
-				break;
-			case 101:
-				for (int i = 0; i < nameList.size(); i++) {
-					ShawnRainDto dto = nameList.get(i);
-					TextOptions options = new TextOptions();
-					options.position(new LatLng(dto.lat+0.05, dto.lng));
-					options.fontColor(Color.BLACK);
-					options.fontSize(20);
-					options.text(dto.cityName);
-					options.backgroundColor(Color.TRANSPARENT);
-					Text text = aMap.addText(options);
-					cityNames.add(text);
-					
-					CircleOptions cOptions = new CircleOptions();
-					cOptions.center(new LatLng(dto.lat, dto.lng));
-					cOptions.fillColor(Color.BLACK);
-					cOptions.radius(50.0f);
-					Circle circle = aMap.addCircle(cOptions);
-					circles.add(circle);
-				}
-				
-				removePolylines();
-				CommonUtil.drawAllDistrict(getActivity(), aMap, 0xff72e5f3, polylines);
-				break;
-
-			default:
-				break;
-			}
-		};
-	};
-	
 	/**
-     * 异步解析五中天气现象数据并绘制在地图上
-     */
-	private void drawCityName() {
-		removeCityNames();
-		if (aMap == null) {
+	 * 清除行政区划边界
+	 */
+	private void removePolylines() {
+		for (int i = 0; i < adcodePolylines.size(); i++) {
+			adcodePolylines.get(i).remove();
+		}
+		adcodePolylines.clear();
+	}
+
+	/**
+	 * 绘制实况图层
+	 */
+	private void drawRainPolygons() {
+		removeTexts();
+		removeRainPolygons();
+
+		if (TextUtils.isEmpty(layerResult)) {
 			return;
 		}
-		String result = CommonUtil.getFromAssets(getActivity(), "hnGeo2.json");
-		if (!TextUtils.isEmpty(result)) {
-			AsynLoadTaskDistrict task = new AsynLoadTaskDistrict(result);  
-			task.execute();
-		}
-	}
-	
-	private class AsynLoadTaskDistrict extends AsyncTask<Void, Void, Void> {
-		
-		private String result;
-		
-		private AsynLoadTaskDistrict(String result) {
-			this.result = result;
-		}
 
-		@Override
-		protected void onPreExecute() {
-			//开始执行
-		}
-		
-		@Override
-		protected void onProgressUpdate(Void... values) {
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			//执行完毕
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				JSONObject obj = new JSONObject(result);
-//				if (!obj.isNull("polyline")) {
-//					String polyline = obj.getString("polyline");
-//					String[] array1 = polyline.split("\\|");
-//					for (int i = 0; i < 1; i++) {
-//						String[] array2 = array1[i].split(";");
-//						PolygonOptions polylineOption = new PolygonOptions();
-//						polylineOption.strokeColor(0xff999999);
-//						for (int j = 0; j < array2.length; j++) {
-//							String[] array3 = array2[i].split(",");
-//							if (!TextUtils.isEmpty(array3[0]) && !TextUtils.isEmpty(array3[1])) {
-//								double lng = Double.valueOf(array3[0]);
-//								double lat = Double.valueOf(array3[1]);
-//								polylineOption.add(new LatLng(lat, lng));
-//							}
-//						}
-//						aMap.addPolygon(polylineOption);
-//					}
-//				}
-				if (!obj.isNull("districts")) {
-					JSONArray array = obj.getJSONArray("districts");
-					nameList.clear();
-					for (int i = 0; i < array.length(); i++) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					JSONObject obj = new JSONObject(layerResult);
+					JSONArray array = obj.getJSONArray("l");
+					int length = array.length();
+					for (int i = 0; i < length; i++) {
 						JSONObject itemObj = array.getJSONObject(i);
-						ShawnRainDto dto = new ShawnRainDto();
-						if (!itemObj.isNull("name")) {
-							String name = itemObj.getString("name");
-							if (name.contains("五指山")) {
-								dto.cityName = name.substring(0, 3);
-							}else {
-								dto.cityName = name.substring(0, 2);
+						JSONArray c = itemObj.getJSONArray("c");
+						int r = c.getInt(0);
+						int g = c.getInt(1);
+						int b = c.getInt(2);
+						int a = (int) (c.getInt(3)*255*1.0);
+
+						double centerLat = 0;
+						double centerLng = 0;
+						String p = itemObj.getString("p");
+						if (!TextUtils.isEmpty(p)) {
+							String[] points = p.split(";");
+							PolygonOptions polygonOption = new PolygonOptions();
+							polygonOption.fillColor(Color.argb(a, r, g, b));
+							polygonOption.strokeColor(Color.BLACK);
+							polygonOption.strokeWidth(1);
+							for (int j = 0; j < points.length; j++) {
+								String[] value = points[j].split(",");
+								double lat = Double.valueOf(value[1]);
+								double lng = Double.valueOf(value[0]);
+								polygonOption.add(new LatLng(lat, lng));
+								if (j == points.length/2) {
+									centerLat = lat;
+									centerLng = lng;
+								}
 							}
+							Polygon polygon = aMap.addPolygon(polygonOption);
+							rainPolygons.add(polygon);
 						}
-						if (!itemObj.isNull("center")) {
-							String[] latLng = itemObj.getString("center").split(",");
-							dto.lng = Double.valueOf(latLng[0]);
-							dto.lat = Double.valueOf(latLng[1]);
+
+						if (!itemObj.isNull("v")) {
+							int v = itemObj.getInt("v");
+							TextOptions options = new TextOptions();
+							options.position(new LatLng(centerLat, centerLng));
+							options.fontColor(Color.BLACK);
+							options.fontSize(25);
+							options.text(v+"");
+							options.backgroundColor(Color.TRANSPARENT);
+							Text text = aMap.addText(options);
+							valueTexts.add(text);
 						}
-						nameList.add(dto);
 					}
-					
-					Message msg = new Message();
-					msg.what = 101;
-					handler.sendMessage(msg);
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} catch (JSONException e) {
-				e.printStackTrace();
 			}
-			return null;
-		}
+		}).start();
 	}
-	
+
 	/**
 	 * 方法必须重写
 	 */
 	@Override
 	public void onResume() {
 		super.onResume();
-		mMapView.onResume();
+		if (mMapView != null) {
+			mMapView.onResume();
+		}
 	}
 
 	/**
@@ -1091,7 +930,9 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	@Override
 	public void onPause() {
 		super.onPause();
-		mMapView.onPause();
+		if (mMapView != null) {
+			mMapView.onPause();
+		}
 	}
 
 	/**
@@ -1100,7 +941,9 @@ public class MinuteFragment extends Fragment implements OnClickListener, CaiyunM
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		mMapView.onSaveInstanceState(outState);
+		if (mMapView != null) {
+			mMapView.onSaveInstanceState(outState);
+		}
 	}
 
 	@Override

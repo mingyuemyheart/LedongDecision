@@ -14,8 +14,8 @@
         android:textColor="@color/text_color3"
         android:textSize="@dimen/level_4"/>
 
-    <com.amap.api.maps.MapView
-        android:id="@+id/map"
+    <com.amap.api.maps.TextureMapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tvTitle"/>

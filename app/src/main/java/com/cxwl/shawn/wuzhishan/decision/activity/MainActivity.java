@@ -514,7 +514,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                         intent.putExtras(bundle);
                         startActivity(intent);
                     }else if (TextUtils.equals(dto.id, "9")) {//实况资料
-                        Toast.makeText(mContext, "开发中，敬请期待", Toast.LENGTH_SHORT).show();
+                        intent = new Intent(mContext, FactActivity.class);
+                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("data", dto);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 }
             }

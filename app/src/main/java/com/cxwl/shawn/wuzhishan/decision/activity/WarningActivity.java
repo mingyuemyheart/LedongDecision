@@ -37,7 +37,6 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.animation.ScaleAnimation;
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.adapter.WarningAdapter;
@@ -82,7 +81,6 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 	private List<WarningDto> mList = new ArrayList<>();
 	private EditText etSearch;
 	private List<WarningDto> searchList = new ArrayList<>();
-	private List<Polyline> polylines = new ArrayList<>();//行政区划边界线
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,19 +112,9 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 			tvTitle.setText(title);
 		}
 
-		removePolylines();
-		CommonUtil.drawAllDistrict(mContext, aMap, 0xff72e5f3, polylines);
-
 		OkHttpWarning();
     }
 
-	private void removePolylines() {
-		for (int i = 0; i < polylines.size(); i++) {
-			polylines.get(i).remove();
-		}
-		polylines.clear();
-	}
-	
 	private TextWatcher watcher = new TextWatcher() {
 		@Override
 		public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -136,9 +124,6 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		}
 		@Override
 		public void afterTextChanged(Editable arg0) {
-			if (arg0.toString() == null) {
-				return;
-			}
 			searchList.clear();
 			if (!TextUtils.isEmpty(arg0.toString().trim())) {
 				for (int i = 0; i < warningList.size(); i++) {
@@ -229,53 +214,51 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 								if (!TextUtils.isEmpty(result)) {
 									try {
 										JSONObject object = new JSONObject(result);
-										if (object != null) {
-											if (!object.isNull("w")) {
-												warningList.clear();
-												mList.clear();
-												JSONArray jsonArray = object.getJSONArray("w");
-												for (int i = 0; i < jsonArray.length(); i++) {
-													WarningDto dto = new WarningDto();
-													JSONObject itemObj = jsonArray.getJSONObject(i);
-													String w1 = itemObj.getString("w1");
-													String w2 = itemObj.getString("w2");
-                                                    String w4 = itemObj.getString("w4");
-													String w5 = itemObj.getString("w5");
-                                                    String w6 = itemObj.getString("w6");
-													String w7 = itemObj.getString("w7");
-													String w8 = itemObj.getString("w8");
-													String w9 = itemObj.getString("w9");
-													String w11 = itemObj.getString("w11");
+										if (!object.isNull("w")) {
+											warningList.clear();
+											mList.clear();
+											JSONArray jsonArray = object.getJSONArray("w");
+											for (int i = 0; i < jsonArray.length(); i++) {
+												WarningDto dto = new WarningDto();
+												JSONObject itemObj = jsonArray.getJSONObject(i);
+												String w1 = itemObj.getString("w1");
+												String w2 = itemObj.getString("w2");
+												String w4 = itemObj.getString("w4");
+												String w5 = itemObj.getString("w5");
+												String w6 = itemObj.getString("w6");
+												String w7 = itemObj.getString("w7");
+												String w8 = itemObj.getString("w8");
+												String w9 = itemObj.getString("w9");
+												String w11 = itemObj.getString("w11");
 
-													dto.name = w1+w2+"发布"+w5+w7+"预警";
-													dto.time = w8;
-                                                    dto.type = "icon_warning_"+w4;
-                                                    dto.color = w6;
-													dto.content = w9;
+												dto.name = w1+w2+"发布"+w5+w7+"预警";
+												dto.time = w8;
+												dto.type = "icon_warning_"+w4;
+												dto.color = w6;
+												dto.content = w9;
 
-													String[] latLngs = getResources().getStringArray(R.array.wuzhishan_hotCity);
-													for (int j = 0; j < latLngs.length; j++) {
-														String[] itemArray = latLngs[j].split(",");
-														String value;
-														if (!TextUtils.isEmpty(w2)) {
-															value = w2;
-														}else {
-															value = w11;
-														}
-														if (value.contains(itemArray[1]) || itemArray[1].contains(value)) {
-															if (!TextUtils.isEmpty(itemArray[3]) && !TextUtils.isEmpty(itemArray[2])) {
-																dto.lat = itemArray[3];
-																dto.lng = itemArray[2];
-																break;
-															}
+												String[] latLngs = getResources().getStringArray(R.array.wuzhishan_hotCity);
+												for (int j = 0; j < latLngs.length; j++) {
+													String[] itemArray = latLngs[j].split(",");
+													String value;
+													if (!TextUtils.isEmpty(w2)) {
+														value = w2;
+													}else {
+														value = w11;
+													}
+													if (value.contains(itemArray[1]) || itemArray[1].contains(value)) {
+														if (!TextUtils.isEmpty(itemArray[3]) && !TextUtils.isEmpty(itemArray[2])) {
+															dto.lat = itemArray[3];
+															dto.lng = itemArray[2];
+															break;
 														}
 													}
-
-													warningList.add(dto);
-													mList.add(dto);
 												}
-												addMarkersToMap(warningList, markers);
+
+												warningList.add(dto);
+												mList.add(dto);
 											}
+											addMarkersToMap(warningList, markers);
 										}
 									} catch (JSONException e) {
 										e.printStackTrace();
@@ -331,7 +314,7 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 				builder.include(new LatLng(Double.parseDouble(dto.lat), Double.parseDouble(dto.lng)));
 	    	}
 	    	
-	    	View view = inflater.inflate(R.layout.warning_marker_view, null);
+	    	View view = inflater.inflate(R.layout.marker_warning_icon, null);
 	    	ImageView ivMarker = view.findViewById(R.id.ivMarker);
 	    	
 	    	Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+dto.type+dto.color+CONST.imageSuffix);
@@ -371,7 +354,7 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 	@Override
 	public View getInfoContents(final Marker marker) {
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.warning_marker_info, null);
+		View view = inflater.inflate(R.layout.marker_info_warning_icon, null);
 		ListView mListView;
 		WarningAdapter mAdapter;
 		final List<WarningDto> infoList = new ArrayList<>();
@@ -425,7 +408,7 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 	private void startAnimation(boolean flag, final RelativeLayout reList) {
 		//列表动画
 		AnimationSet animationSet = new AnimationSet(true);
-		TranslateAnimation animation = null;
+		TranslateAnimation animation;
 		if (flag == false) {
 			animation = new TranslateAnimation(
 					Animation.RELATIVE_TO_SELF,0f,
@@ -501,6 +484,50 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 
 		default:
 			break;
+		}
+	}
+
+	/**
+	 * 方法必须重写
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mapView != null) {
+			mapView.onResume();
+		}
+	}
+
+	/**
+	 * 方法必须重写
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (mapView != null) {
+			mapView.onPause();
+		}
+	}
+
+	/**
+	 * 方法必须重写
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (mapView != null) {
+			mapView.onSaveInstanceState(outState);
+		}
+	}
+
+	/**
+	 * 方法必须重写
+	 */
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (mapView != null) {
+			mapView.onDestroy();
 		}
 	}
 

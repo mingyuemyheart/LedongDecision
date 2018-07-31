@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.CityDto;
 
 import java.util.List;
 
+/**
+ * 城市列表
+ */
 public class CityAdapter extends BaseAdapter {
 	
 	private Context mContext;
@@ -23,8 +25,6 @@ public class CityAdapter extends BaseAdapter {
 	private final class ViewHolder{
 		TextView tvName;
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	public CityAdapter(Context context, List<CityDto> mArrayList) {
 		mContext = context;
@@ -49,6 +49,7 @@ public class CityAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.adapter_city_search, null);
 			mHolder = new ViewHolder();

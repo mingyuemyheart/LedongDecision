@@ -15,7 +15,7 @@
     <color name="translucent">#80000000</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="gray">#AAAAAA</color>
+    <color name="gray">#cccccc</color>
     <color name="blue">#027cfe</color>
     <color name="yellow">#fff139</color>
     <color name="green">#00ff00</color>
@@ -24,6 +24,15 @@
     <color name="cell_default">#00000000</color>
     <color name="cell_pressed">#30ffffff</color>
     <color name="typhoon_bg">#f3758c97</color>
+
+    <color name="snow">#8D98B3</color>
+    <color name="rain">#29A308</color>
+    <color name="fog">#59FFFF</color>
+    <color name="shachen">#FD6801</color>
+    <color name="mai">#C99B14</color>
+    <color name="baoyu">#0100FC</color>
+    <color name="gaowen">#FE5804</color>
+    <color name="builder">#d87a80</color>
 
     <color name="refresh_color1">#096AE5</color>
     <color name="refresh_color2">#A0096AE5</color>

@@ -1,10 +1,5 @@
 package com.cxwl.shawn.wuzhishan.decision.view;
 
-/**
- * 一周预报曲线图
- */
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
@@ -27,22 +21,21 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * 一周预报曲线图
+ */
 public class WeeklyView extends View {
 	
-	private Context mContext = null;
+	private Context mContext;
 	private List<WeatherDto> tempList = new ArrayList<>();
-	private int maxTemp = 0;//最高温度
-	private int minTemp = 0;//最低温度
-	private Paint lineP = null;//画线画笔
-	private Paint textP = null;//写字画笔
-	private Paint roundP = null;//aqi背景颜色画笔
-	private Bitmap lowBit = null;//低温图标
-	private Bitmap highBit = null;//高温图标
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd");
-	private int totalDivider = 0;
-	private int itemDivider = 1;
+	private int maxTemp,minTemp;
+	private Paint lineP,textP,roundP;//画线画笔
+	private Bitmap lowBit,highBit;//低温图标
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd", Locale.CHINA);
+	private int totalDivider = 0, itemDivider = 1;
 	private long foreTime, currentTime;
 	
 	public WeeklyView(Context context) {
@@ -104,13 +97,7 @@ public class WeeklyView extends View {
 				}
 			}
 
-			if (maxTemp > 0 && minTemp > 0) {
-				totalDivider = maxTemp-minTemp;
-			}else if (maxTemp >= 0 && minTemp <= 0) {
-				totalDivider = maxTemp-minTemp;
-			}else if (maxTemp < 0 && minTemp < 0) {
-				totalDivider = Math.abs(maxTemp+minTemp);
-			}
+			totalDivider = maxTemp-minTemp;
 			if (totalDivider <= 5) {
 				itemDivider = 1;
 			}else if (totalDivider > 5 && totalDivider <= 15) {
@@ -159,7 +146,7 @@ public class WeeklyView extends View {
 			tempList.set(i, dto);
 		}
 		
-		for (int i = 0; i < tempList.size(); i++) {
+		for (int i = 0; i < size; i++) {
 			WeatherDto dto = tempList.get(i);
 			
 			//绘制周几、日期、天气现象和天气现象图标

@@ -36,10 +36,8 @@ import java.util.List;
 public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 	
 	private Context mContext;
-	private LinearLayout llBack;
+	private LinearLayout llBack,llContainer,llContainer1;
 	private TextView tvTitle;
-	private LinearLayout llContainer;
-	private LinearLayout llContainer1;
 	private MainViewPager viewPager;
 	private List<Fragment> fragments = new ArrayList<>();
 	private HorizontalScrollView hScrollView1;
@@ -82,8 +80,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 		if (getIntent().hasExtra("data")) {
 			ColumnData data = getIntent().getParcelableExtra("data");
 			if (data != null) {
-				List<ColumnData> columnList = new ArrayList<>();
-				columnList.addAll(data.child);
+				List<ColumnData> columnList = new ArrayList<>(data.child);
 				int columnSize = columnList.size();
 				if (columnSize <= 1) {
 					llContainer.setVisibility(View.GONE);
@@ -208,7 +205,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 	 * @author shawn_sun
 	 */
 	private class MyOnClickListener implements View.OnClickListener {
-		private int index = 0;
+		private int index;
 
 		public MyOnClickListener(int i) {
 			index = i;

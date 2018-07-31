@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,24 +24,14 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 /**
- * Depiction: 获取天气信息，目前主要用来调用国家局的接口
- * <p>
- * Modify:
- * <p>
- * Author: Kevin Lynn
- * <p>
- * Create Date：2015年12月1日 下午1:29:06
- * <p>
- * 
- * @version 1.0
- * @since 1.0
+ * 获取天气数据，判断是否为海南本地数据
  */
 public class FetchWeather {
 
-	public final static String APP_ID  = "a1b42a4dccd7493f";
-	public final static String APP_KEY = "chinaweather_jcb_webapi_data";
+	private final static String APP_ID  = "a1b42a4dccd7493f";
+	private final static String APP_KEY = "chinaweather_jcb_webapi_data";
+	private static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
 	
 	public FetchWeather() {
 	}
@@ -107,7 +98,7 @@ public class FetchWeather {
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		map.put("areaid", cityId);
 		map.put("type", type);
-		map.put("date", getDateParam());
+		map.put("date", sdf1.format(new Date()));
 		String url = getAuthUrl("http://hfapi.tianqi.cn/data/?", map);
 		return url;
 	}
@@ -143,7 +134,7 @@ public class FetchWeather {
 		}).start();
 	}
 	
-	public static String getAuthUrl(String url, LinkedHashMap<String, String> map) {
+	private static String getAuthUrl(String url, LinkedHashMap<String, String> map) {
 		String URLpre = url + buildParams(map);
 		String publicKey = URLpre + "&appid=" + APP_ID;
 		byte[] signature = getSignature(APP_KEY, publicKey);
@@ -151,8 +142,8 @@ public class FetchWeather {
 		String key = URLEncoder.encode(encodeByte);
 		return URLpre + "&appid=" + APP_ID.substring(0, 6) + "&key=" + key;
 	}
-	
-	public static byte[] getSignature(String key, String data) {
+
+	private static byte[] getSignature(String key, String data) {
 		byte[] rawHmac = null;
 		byte[] keyBytes = key.getBytes();
 		try {
@@ -165,8 +156,8 @@ public class FetchWeather {
 		}
 		return rawHmac;
 	}
-	
-	public static String encodeByte(byte[] src) {
+
+	private static String encodeByte(byte[] src) {
 		try {
 			byte[] encodeBase64 = Base64.encodeBase64(src);
 			String encodeStr = new String(encodeBase64, "UTF-8");
@@ -195,11 +186,6 @@ public class FetchWeather {
 			params.append(key + "=" + value + "&");
 		}
 		return params.toString().substring(0, params.toString().length() - 1);
-	}
-	
-	public static String getDateParam() {
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmm");
-		return format.format(new Date(System.currentTimeMillis()));
 	}
 	
 	private OnFetchWeatherListener onFetchWeatherListener;

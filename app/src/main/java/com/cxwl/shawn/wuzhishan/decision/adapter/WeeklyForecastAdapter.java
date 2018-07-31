@@ -15,28 +15,24 @@ import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * 15天预报
+ */
 public class WeeklyForecastAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private List<WeatherDto> mArrayList;
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd");
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM/dd", Locale.CHINA);
 	public long foreTime, currentTime;
 	
 	private final class ViewHolder{
-		TextView tvWeek;
-		TextView tvDate;
-		TextView tvHighPhe;
-		ImageView ivHighPhe;
-		TextView tvHighTemp;
-		TextView tvLowPhe;
-		ImageView ivLowPhe;
-		TextView tvLowTemp;
+		TextView tvWeek,tvDate,tvHighPhe,tvLowPhe,tvHighTemp,tvLowTemp;
+		ImageView ivHighPhe,ivLowPhe;
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	public WeeklyForecastAdapter(Context context, List<WeatherDto> mArrayList) {
 		mContext = context;
@@ -61,6 +57,7 @@ public class WeeklyForecastAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.adapter_forecast, null);
 			mHolder = new ViewHolder();
@@ -78,14 +75,8 @@ public class WeeklyForecastAdapter extends BaseAdapter {
 		}
 		
 		WeatherDto dto = mArrayList.get(position);
-		if (position == 0) {
-			mHolder.tvWeek.setText("今天");
-		}else {
-			String week = dto.week;
-			mHolder.tvWeek.setText(dto.week);
-		}
 
-		String week = dto.week;
+		String week;
 		if (currentTime > foreTime) {
 			if (position == 0) {
 				week = "昨天";
@@ -94,7 +85,7 @@ public class WeeklyForecastAdapter extends BaseAdapter {
 			}else if (position == 2) {
 				week = "明天";
 			}else {
-				week = "周"+week.substring(week.length()-1, week.length());
+				week = dto.week;
 			}
 		}else {
 			if (position == 0) {
@@ -102,7 +93,7 @@ public class WeeklyForecastAdapter extends BaseAdapter {
 			}else if (position == 1) {
 				week = "明天";
 			}else {
-				week = "周"+week.substring(week.length()-1, week.length());
+				week = dto.week;
 			}
 		}
 		mHolder.tvWeek.setText(week);

@@ -18,6 +18,9 @@ import com.cxwl.shawn.wuzhishan.decision.manager.DataCleanManager;
 import com.cxwl.shawn.wuzhishan.decision.util.AutoUpdateUtil;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 
+/**
+ * 设置界面
+ */
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
     private Context mContext;
@@ -49,10 +52,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvLogout.setOnClickListener(this);
 
         try {
-            String cache = DataCleanManager.getCacheSize(mContext);
-            if (cache != null) {
-                tvCache.setText(cache);
-            }
+            tvCache.setText(DataCleanManager.getCacheSize(mContext));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,10 +91,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 dialog.dismiss();
                 DataCleanManager.clearCache(mContext);
                 try {
-                    String cache = DataCleanManager.getCacheSize(mContext);
-                    if (cache != null) {
-                        tvCache.setText(cache);
-                    }
+                    tvCache.setText(DataCleanManager.getCacheSize(mContext));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

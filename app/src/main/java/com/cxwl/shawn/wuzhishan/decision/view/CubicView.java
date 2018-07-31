@@ -1,9 +1,5 @@
 package com.cxwl.shawn.wuzhishan.decision.view;
 
-/**
- * 绘制平滑曲线
- */
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -25,18 +21,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+/**
+ * 绘制平滑曲线
+ */
 public class CubicView extends View {
 	
-	private Context mContext = null;
-	private SimpleDateFormat sdf0 = new SimpleDateFormat("yyyyMMddHHmm");
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH时");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("HH");
+	private Context mContext;
+	private SimpleDateFormat sdf0 = new SimpleDateFormat("yyyyMMddHHmm", Locale.CHINA);
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH时", Locale.CHINA);
+	private SimpleDateFormat sdf2 = new SimpleDateFormat("HH", Locale.CHINA);
 	private List<WeatherDto> tempList = new ArrayList<>();
-	private float maxTemp = 0;//最高温度
-	private float minTemp = 0;//最低温度
-	private Paint lineP = null;//画线画笔
-	private Paint textP = null;//写字画笔
+	private float maxTemp,minTemp;
+	private Paint lineP,textP;
 	private float totalDivider = 0;
 	private int itemDivider = 1;
 	
@@ -163,7 +161,7 @@ public class CubicView extends View {
 		}
 		
 		float halfX = (tempList.get(1).x - tempList.get(0).x)/2;
-		for (int i = 0; i < tempList.size(); i++) {
+		for (int i = 0; i < size; i++) {
 			WeatherDto dto = tempList.get(i);
 			
 			//绘制曲线上每个时间点marker

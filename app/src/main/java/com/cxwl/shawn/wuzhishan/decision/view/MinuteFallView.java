@@ -1,9 +1,5 @@
 package com.cxwl.shawn.wuzhishan.decision.view;
 
-/**
- * 分钟级降水图
- */
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +12,6 @@ import android.media.ThumbnailUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
@@ -24,19 +19,17 @@ import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 分钟级降水图
+ */
 public class MinuteFallView extends View {
 	
-	private Context mContext = null;
+	private Context mContext ;
 	private List<WeatherDto> tempList = new ArrayList<>();
-	private float maxValue = 0;
-	private float minValue = 0;
-	private Paint lineP = null;//画线画笔
-	private Paint textP = null;//写字画笔
+	private float maxValue,minValue;
+	private Paint lineP,textP;//画线画笔
 	private float level1 = 0.05f, level2 = 0.15f, level3 = 0.35f;//0.05-0.15是小雨，0.15-0.35是中雨, 0.35以上是大雨
-	private String type = null;
-	private String rain_level1 = "小雨";
-	private String rain_level2 = "中雨";
-	private String rain_level3 = "大雨";
+	private String rain_level1 = "小雨",rain_level2 = "中雨",rain_level3 = "大雨";
 	private Bitmap bitmap1, bitmap2, bitmap3;
 	
 	public MinuteFallView(Context context) {
@@ -78,7 +71,6 @@ public class MinuteFallView extends View {
 	 * 对cubicView进行赋值
 	 */
 	public void setData(List<WeatherDto> dataList, String type) {
-		this.type = type;
 		if (type.contains("雪")) {
 			rain_level1 = "小雪";
 			rain_level2 = "中雪";
@@ -126,8 +118,7 @@ public class MinuteFallView extends View {
 		float rightMargin = CommonUtil.dip2px(mContext, 10);
 		float topMargin = CommonUtil.dip2px(mContext, 10);
 		float bottomMargin = CommonUtil.dip2px(mContext, 20);
-		float chartMaxH = chartH * maxValue / (Math.abs(maxValue)+ Math.abs(minValue));//同时存在正负值时，正值高度
-		
+
 		int size = tempList.size();
 		//获取曲线上每个温度点的坐标
 		for (int i = 0; i < size; i++) {
@@ -135,17 +126,7 @@ public class MinuteFallView extends View {
 			dto.x = (chartW/(size-1))*i + leftMargin;
 			
 			float value = tempList.get(i).minuteFall;
-			if (value >= 0) {
-				dto.y = chartMaxH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-				if (minValue >= 0) {
-					dto.y = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-				}
-			}else {
-				dto.y = chartMaxH + chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-				if (maxValue < 0) {
-					dto.y = chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-				}
-			}
+			dto.y = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
 			tempList.set(i, dto);
 		}
 		
@@ -190,17 +171,7 @@ public class MinuteFallView extends View {
 		//绘制小雨与中雨的分割线
 		float dividerY = 0;
 		float value = level2;
-		if (value >= 0) {
-			dividerY = chartMaxH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (minValue >= 0) {
-				dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}else {
-			dividerY = chartMaxH + chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (maxValue < 0) {
-				dividerY = chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}
+		dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
 		lineP.setStrokeWidth(CommonUtil.dip2px(mContext, 0.5f));
 		lineP.setColor(0x60ffffff);
 		canvas.drawLine(leftMargin, dividerY, w-rightMargin, dividerY, lineP);
@@ -214,17 +185,7 @@ public class MinuteFallView extends View {
 		//绘制中雨与大雨的分割线
 		dividerY = 0;
 		value = level3;
-		if (value >= 0) {
-			dividerY = chartMaxH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (minValue >= 0) {
-				dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}else {
-			dividerY = chartMaxH + chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (maxValue < 0) {
-				dividerY = chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}
+		dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
 		lineP.setStrokeWidth(CommonUtil.dip2px(mContext, 0.5f));
 		lineP.setColor(0x60ffffff);
 		canvas.drawLine(leftMargin, dividerY, w-rightMargin, dividerY, lineP);
@@ -241,17 +202,7 @@ public class MinuteFallView extends View {
 		//绘制分钟刻度线
 		dividerY = 0;
 		value = 0;
-		if (value >= 0) {
-			dividerY = chartMaxH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (minValue >= 0) {
-				dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}else {
-			dividerY = chartMaxH + chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			if (maxValue < 0) {
-				dividerY = chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
-			}
-		}
+		dividerY = chartH - chartH* Math.abs(value)/(Math.abs(maxValue)+ Math.abs(minValue)) + topMargin;
 		lineP.setStrokeWidth(CommonUtil.dip2px(mContext, 1));
 		lineP.setColor(Color.WHITE);
 		canvas.drawLine(leftMargin, dividerY, w-rightMargin, dividerY, lineP);

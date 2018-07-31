@@ -60,8 +60,8 @@
         android:layout_below="@+id/reSecond"
         android:background="#e8eff5" >
 
-        <com.amap.api.maps.MapView
-            android:id="@+id/map"
+        <com.amap.api.maps.TextureMapView
+            android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -137,7 +137,7 @@
                     android:minHeight="2dip"
                     android:progress="100"
                     android:thumbOffset="0dp"
-                    android:progressDrawable="@drawable/seekbar_drawable"
+                    android:progressDrawable="@drawable/seekbar_progress_drawable"
                     android:thumb="@drawable/seekbar_thumb" />
 
                 <TextView

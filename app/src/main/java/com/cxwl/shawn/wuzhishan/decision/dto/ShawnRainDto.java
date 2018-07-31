@@ -22,11 +22,11 @@ public class ShawnRainDto implements Parcelable {
 	public double lat;
 	public String title;
 	public String icon1, icon2;
-	public List<ShawnRainDto> itemList = new ArrayList<ShawnRainDto>();
+	public List<ShawnRainDto> itemList = new ArrayList<>();
 	
 	public String rainLevel;
 	public String count;
-	public List<ShawnRainDto> areaList = new ArrayList<ShawnRainDto>();//地图下方列表
+	public List<ShawnRainDto> areaList = new ArrayList<>();//地图下方列表
 	
 	public float factRain;//实况降水
 	public float factTemp;//实况温度

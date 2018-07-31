@@ -18,8 +18,9 @@ public class WindData {
 	public double y0 = 0;
 	public double x1 = 0;
 	public double y1 = 0;
-	public String filetime = null;
+	public String filetime;
 	public List<WindDto> dataList = new ArrayList<>();
-	public LatLng latLngStart = null;
-	public LatLng latLngEnd = null;
+	public LatLng latLngStart;
+	public LatLng latLngEnd;
+
 }

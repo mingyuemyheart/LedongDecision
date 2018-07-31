@@ -16,8 +16,8 @@ import com.cxwl.shawn.wuzhishan.decision.dto.WarningDto;
  */
 public class WarningDetailActivity extends BaseActivity implements OnClickListener {
 	
-	private Context mContext = null;
-	private LinearLayout llBack = null;
+	private Context mContext;
+	private LinearLayout llBack;
 	private TextView tvTitle,tvName,tvTime,tvIntro;
 
 	@Override

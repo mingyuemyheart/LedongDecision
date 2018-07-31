@@ -18,6 +18,7 @@ import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 预警信息
@@ -27,17 +28,14 @@ public class WarningAdapter extends BaseAdapter {
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private List<WarningDto> mArrayList;
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
+	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
 	private boolean isMarkerCell;
 	
 	private final class ViewHolder {
 		ImageView imageView;//预警icon
-		TextView tvName;//预警信息名称
-		TextView tvTime;//时间
+		TextView tvName,tvTime;
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	public WarningAdapter(Context context, List<WarningDto> mArrayList, boolean isMarkerCell) {
 		mContext = context;
@@ -63,8 +61,9 @@ public class WarningAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
-			if (isMarkerCell == false) {
+			if (!isMarkerCell) {
 				convertView = mInflater.inflate(R.layout.adapter_warning, null);
 			}else {
 				convertView = mInflater.inflate(R.layout.adapter_warning_marker_info, null);
@@ -87,7 +86,7 @@ public class WarningAdapter extends BaseAdapter {
 		mHolder.imageView.setImageBitmap(bitmap);
 		
 		if (!TextUtils.isEmpty(dto.name)) {
-			if (isMarkerCell == false) {
+			if (!isMarkerCell) {
 				mHolder.tvName.setText(dto.name);
 			}else {
 				if (dto.name.contains("解除")) {

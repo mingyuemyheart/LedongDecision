@@ -56,8 +56,7 @@ public class CaiyunManager {
 			int len = count = radars.size();
 			for (int i = 0; i < len ; i++) {
 				MinuteFallDto radar = radars.get(i);
-				String url = radar.getImgUrl();
-				loadImage(i, url, radars);
+				loadImage(i, radar.imgUrl, radars);
 			}
 		}
 		

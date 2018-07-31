@@ -13,6 +13,9 @@ import com.cxwl.shawn.wuzhishan.decision.dto.CityDto;
 
 import java.util.List;
 
+/**
+ * 城市列表
+ */
 public class CityFragmentAdapter extends BaseAdapter {
 	
 	private Context mContext;
@@ -22,8 +25,6 @@ public class CityFragmentAdapter extends BaseAdapter {
 	private final class ViewHolder{
 		TextView tvName;
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	public CityFragmentAdapter(Context context, List<CityDto> mArrayList) {
 		mContext = context;
@@ -48,6 +49,7 @@ public class CityFragmentAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.adapter_city_nation, null);
 			mHolder = new ViewHolder();

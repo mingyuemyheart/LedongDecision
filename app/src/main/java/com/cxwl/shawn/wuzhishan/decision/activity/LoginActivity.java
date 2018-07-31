@@ -1,9 +1,5 @@
 package com.cxwl.shawn.wuzhishan.decision.activity;
 
-/**
- * 登录界面
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -222,7 +218,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 																editor.putString(CONST.UserInfo.uId, uid);
 																editor.putString(CONST.UserInfo.userName, etUserName.getText().toString());
 																editor.putString(CONST.UserInfo.passWord, etPwd.getText().toString());
-																editor.commit();
+																editor.apply();
 
 																CONST.USERNAME = etUserName.getText().toString();
 																CONST.PASSWORD = etPwd.getText().toString();

@@ -118,7 +118,6 @@
     <string name="line_24h">24\n小\n时\n警\n戒\n线</string>
     <string name="line_48h">48\n小\n时\n警\n戒\n线</string>
     <string name="no_typhoon">当前无台风</string>
-    <!-- 台风路径 -->
     <string name="chart_hour">时</string>
     <string name="chart_north">北</string>
     <string name="chart_north_east">东北</string>
@@ -144,5 +143,17 @@
     <string name="chart_di">第</string>
     <string name="chart_haotaifeng">号台风</string>
     <string name="chart_propt">提示</string>
+
+    <!-- 天气统计 -->
+    <string name="no_statics">未统计</string>
+    <string name="from">自</string>
+    <string name="to">至</string>
+    <string name="highest_temp">日最高气温</string>
+    <string name="lowest_temp">日最低气温</string>
+    <string name="max_speed">日最大风速</string>
+    <string name="max_fall">日最大降水量</string>
+    <string name="lx_no_fall">连续无降水日数</string>
+    <string name="lx_no_mai">连续霾日数</string>
+    <string name="lx_gaowen">连续高温日数</string>
 
 </resources>

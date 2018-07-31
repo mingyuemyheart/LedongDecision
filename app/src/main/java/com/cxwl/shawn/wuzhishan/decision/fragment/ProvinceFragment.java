@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.amap.api.maps.CameraUpdateFactory;
-import com.amap.api.maps.MapView;
+import com.amap.api.maps.TextureMapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
@@ -27,6 +27,7 @@ import com.cxwl.shawn.wuzhishan.decision.common.CONST;
 import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import com.cxwl.shawn.wuzhishan.decision.util.FetchWeather;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
+import com.cxwl.shawn.wuzhishan.decision.view.MyDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -50,12 +52,13 @@ import okhttp3.Response;
 public class ProvinceFragment extends Fragment implements OnMarkerClickListener {
 	
 	private TextView tvTitle,tvMapNumber;
-	private MapView mMapView;
+	private TextureMapView mMapView;
 	private AMap aMap;
-	private List<WeatherDto> mList = new ArrayList<>();
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH");
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy年MM月dd日HH时");
+	private List<WeatherDto> dataList = new ArrayList<>();
+	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH", Locale.CHINA);
+	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+	private SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy年MM月dd日HH时", Locale.CHINA);
+	private MyDialog mDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,17 +69,34 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initWidget(view);
+		showDialog();
 		initMap(savedInstanceState, view);
+		initWidget(view);
+	}
+
+	private void showDialog() {
+		if (mDialog == null) {
+			mDialog = new MyDialog(getActivity());
+		}
+		mDialog.show();
+	}
+
+	private void cancelDialog() {
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
 	}
 
 	private void initWidget(View view){
 		tvTitle = view.findViewById(R.id.tvTitle);
 		tvMapNumber = view.findViewById(R.id.tvMapNumber);
+		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
+
+		OkHttpStations();
 	}
 	
 	private void initMap(Bundle bundle, View view) {
-		mMapView = view.findViewById(R.id.map);
+		mMapView = view.findViewById(R.id.mapView);
 		mMapView.onCreate(bundle);
 		if (aMap == null) {
 			aMap = mMapView.getMap();
@@ -85,21 +105,6 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
 		aMap.setOnMarkerClickListener(this);
-
-		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
-
-		OkHttpStations();
-	}
-
-	@Override
-	public boolean onMarkerClick(Marker marker) {
-		Intent intent = new Intent(getActivity(), ForecastActivity.class);
-		intent.putExtra("cityId", marker.getTitle());
-		intent.putExtra("cityName", marker.getSnippet());
-		intent.putExtra("lat", marker.getPosition().latitude);
-		intent.putExtra("lng", marker.getPosition().longitude);
-		startActivity(intent);
-		return true;
 	}
 	
 	/**
@@ -130,7 +135,7 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 							public void run() {
 								if (!TextUtils.isEmpty(result)) {
 									try {
-										mList.clear();
+										dataList.clear();
 										JSONObject obj = new JSONObject(result);
 										if (!obj.isNull("list")) {
 											JSONArray array = obj.getJSONArray("list");
@@ -148,13 +153,13 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 													dto.lat = geoArray.getDouble(1);
 													dto.lng = geoArray.getDouble(0);
 												}
-												mList.add(dto);
+												dataList.add(dto);
 											}
 										}
 
-										if (mList.size() > 0) {
-											for (int i = 0; i < mList.size(); i++) {
-												WeatherDto dto = mList.get(i);
+										if (dataList.size() > 0) {
+											for (int i = 0; i < dataList.size(); i++) {
+												WeatherDto dto = dataList.get(i);
 												getAllWeather(dto);
 											}
 										}
@@ -163,6 +168,7 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 									}
 
 								}
+								cancelDialog();
 							}
 						});
 					}
@@ -232,7 +238,7 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 		options.title(dto.cityId);
 		options.snippet(dto.cityName);
 		options.position(new LatLng(dto.lat, dto.lng));
-		View mView = inflater.inflate(R.layout.layout_travel_marker, null);
+		View mView = inflater.inflate(R.layout.marker_province_station, null);
 		TextView tvName = mView.findViewById(R.id.tvName);
 		TextView tvTemp = mView.findViewById(R.id.tvTemp);
 		ImageView ivPhe = mView.findViewById(R.id.ivPhe);
@@ -252,9 +258,7 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 				drawable = getResources().getDrawable(R.drawable.phenomenon_drawable_night);
 			}
 			drawable.setLevel(Integer.valueOf(dto.factPheCode));
-			if (drawable != null) {
-				ivPhe.setBackground(drawable);
-			}
+			ivPhe.setBackground(drawable);
 
 		}
 		options.icon(BitmapDescriptorFactory.fromView(mView));
@@ -267,6 +271,17 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 		.include(new LatLng(19.54339,110.797648)).build();
 		aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
     }
+
+	@Override
+	public boolean onMarkerClick(Marker marker) {
+		Intent intent = new Intent(getActivity(), ForecastActivity.class);
+		intent.putExtra("cityId", marker.getTitle());
+		intent.putExtra("cityName", marker.getSnippet());
+		intent.putExtra("lat", marker.getPosition().latitude);
+		intent.putExtra("lng", marker.getPosition().longitude);
+		startActivity(intent);
+		return true;
+	}
 	
 	/**
 	 * 方法必须重写
@@ -274,7 +289,9 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	@Override
 	public void onResume() {
 		super.onResume();
-		mMapView.onResume();
+		if (mMapView != null) {
+			mMapView.onResume();
+		}
 	}
 
 	/**
@@ -283,7 +300,9 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	@Override
 	public void onPause() {
 		super.onPause();
-		mMapView.onPause();
+		if (mMapView != null) {
+			mMapView.onPause();
+		}
 	}
 
 	/**
@@ -292,7 +311,9 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		mMapView.onSaveInstanceState(outState);
+		if (mMapView != null) {
+			mMapView.onSaveInstanceState(outState);
+		}
 	}
 
 	/**
@@ -301,7 +322,9 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mMapView.onDestroy();
+		if (mMapView != null) {
+			mMapView.onDestroy();
+		}
 	}
 
 }

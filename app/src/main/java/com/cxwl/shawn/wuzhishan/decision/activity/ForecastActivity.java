@@ -10,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -22,6 +21,7 @@ import com.cxwl.shawn.wuzhishan.decision.util.FetchWeather;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 import com.cxwl.shawn.wuzhishan.decision.util.WeatherUtil;
 import com.cxwl.shawn.wuzhishan.decision.view.CubicView;
+import com.cxwl.shawn.wuzhishan.decision.view.ScrollviewListview;
 import com.cxwl.shawn.wuzhishan.decision.view.WeeklyView;
 
 import org.json.JSONArray;
@@ -56,10 +56,10 @@ public class ForecastActivity extends BaseActivity implements OnClickListener {
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmm");
 	private SimpleDateFormat sdf3 = new SimpleDateFormat("yyyyMMdd");
 	private int width = 0;
-	private ListView mListView = null;//一周预报列表listview
-	private WeeklyForecastAdapter mAdapter = null;
+	private ScrollviewListview mListView;//一周预报列表listview
+	private WeeklyForecastAdapter mAdapter;
 	private List<WeatherDto> weeklyList = new ArrayList<>();
-	private HorizontalScrollView hScrollView2 = null;
+	private HorizontalScrollView hScrollView2;
 	private double lat = 0, lng = 0;
 	private String l7, l5, l1, l4, l3, l2, l10;//基本站
 	private String nl7, nl5, nl1, nl4, nl3, nl2, nl10;//最近站
@@ -309,7 +309,6 @@ public class ForecastActivity extends BaseActivity implements OnClickListener {
 														}
 
 														if (weeklyList.size() > 0 && mAdapter != null) {
-															CommonUtil.setListViewHeightBasedOnChildren(mListView);
 															mAdapter.foreTime = time;
 															mAdapter.currentTime = currentDate;
 															mAdapter.notifyDataSetChanged();
@@ -424,9 +423,7 @@ public class ForecastActivity extends BaseActivity implements OnClickListener {
 					drawable = getResources().getDrawable(R.drawable.phenomenon_drawable_night);
 				}
 				drawable.setLevel(Integer.valueOf(l5));
-				if (drawable != null) {
-					ivPhe.setBackground(drawable);
-				}
+				ivPhe.setBackground(drawable);
 				tvPhe.setText(getString(WeatherUtil.getWeatherId(Integer.valueOf(l5))));
 			}
 
@@ -461,9 +458,7 @@ public class ForecastActivity extends BaseActivity implements OnClickListener {
 					drawable = getResources().getDrawable(R.drawable.phenomenon_drawable_night);
 				}
 				drawable.setLevel(Integer.valueOf(nl5));
-				if (drawable != null) {
-					ivPhe.setBackground(drawable);
-				}
+				ivPhe.setBackground(drawable);
 				tvPhe.setText(getString(WeatherUtil.getWeatherId(Integer.valueOf(nl5))));
 			}
 
@@ -484,7 +479,6 @@ public class ForecastActivity extends BaseActivity implements OnClickListener {
 				tvPressure.setText("气压"+" "+nl10 + getString(R.string.unit_hPa));
 			}
 		}
-		flag = !flag;
 	}
 
 	@Override

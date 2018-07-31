@@ -34,7 +34,7 @@ public class OkHttpUtil {
      * //设置请求超时时间
      * @param timeOut
      */
-    public static void setConnectTimeOut(long timeOut) {
+    private static void setConnectTimeOut(long timeOut) {
         builder.connectTimeout(timeOut, TimeUnit.SECONDS);
     }
 
@@ -42,7 +42,7 @@ public class OkHttpUtil {
      * //设置读取超时时间
      * @param timeOut
      */
-    public static void setReadTimeOut(long timeOut) {
+    private static void setReadTimeOut(long timeOut) {
         builder.readTimeout(timeOut, TimeUnit.SECONDS);
     }
 
@@ -50,7 +50,7 @@ public class OkHttpUtil {
      * //设置写入超时时间
      * @param timeOut
      */
-    public static void setWriteTimeOut(long timeOut) {
+    private static void setWriteTimeOut(long timeOut) {
         builder.writeTimeout(timeOut, TimeUnit.SECONDS);
     }
 
@@ -116,8 +116,10 @@ public class OkHttpUtil {
      * @param request
      * @param responseCallback
      */
-    public static void enqueue(Request request, Callback responseCallback){
-        okHttpClient.newCall(request).enqueue(responseCallback);
+    public static Call enqueue(Request request, Callback responseCallback){
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(responseCallback);
+        return call;
     }
 
 }

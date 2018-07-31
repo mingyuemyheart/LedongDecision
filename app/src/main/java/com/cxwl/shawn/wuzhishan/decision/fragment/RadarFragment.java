@@ -2,6 +2,10 @@ package com.cxwl.shawn.wuzhishan.decision.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,8 +29,6 @@ import com.cxwl.shawn.wuzhishan.decision.manager.RadarManager;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
 import com.cxwl.shawn.wuzhishan.decision.view.PhotoView;
 
-import net.tsz.afinal.FinalBitmap;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,35 +50,52 @@ import okhttp3.Response;
 public class RadarFragment extends Fragment implements OnClickListener, RadarManager.RadarListener {
 	
 	private List<RadarDto> radarList = new ArrayList<>();
-	private PhotoView imageView = null;
-	private RadarManager mRadarManager = null;
-	private RadarThread mRadarThread = null;
+	private PhotoView imageView;
+	private RadarManager mRadarManager;
+	private RadarThread mRadarThread;
 	private static final int HANDLER_SHOW_RADAR = 1;
 	private static final int HANDLER_PROGRESS = 2;
 	private static final int HANDLER_LOAD_FINISHED = 3;
 	private static final int HANDLER_PAUSE = 4;
-	private LinearLayout llSeekBar = null;
-	private ImageView ivPlay = null;
-	private SeekBar seekBar = null;
-	private TextView tvTime = null;
+	private LinearLayout llSeekBar;
+	private ImageView ivPlay;
+	private SeekBar seekBar;
+	private TextView tvTime,tvPercent;
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM月dd日HH时mm分");
-	private String id = null;
-	private String baseUrl = null;
-	private TextView tvPercent;
+	private String id,baseUrl,index;
+	private MyBroadCastReceiver mReceiver;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_radar, null);
 		return view;
 	}
-	
+
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		initBroadCast();
 		initWidget(view);
 	}
-	
+
+	private void initBroadCast() {
+		this.index = getArguments().getString("index");
+		mReceiver = new MyBroadCastReceiver();
+		IntentFilter intentFilter = new IntentFilter();
+		intentFilter.addAction(RadarFragment.class.getName()+index);
+		getActivity().registerReceiver(mReceiver, intentFilter);
+	}
+
+	private class MyBroadCastReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (TextUtils.equals(intent.getAction(), RadarFragment.class.getName()+index)) {
+				OkHttpList(baseUrl);
+			}
+		}
+	}
+
 	/**
 	 * 初始化控件
 	 */
@@ -92,12 +111,15 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 		llSeekBar = view.findViewById(R.id.llSeekBar);
 		tvPercent = view.findViewById(R.id.tvPercent);
 
-		this.id = getArguments().getString(CONST.COLUMN_ID);
-		this.baseUrl = getArguments().getString(CONST.WEB_URL);
-		
 		mRadarManager = new RadarManager(getActivity());
 
-		OkHttpList(baseUrl);
+		this.id = getArguments().getString(CONST.COLUMN_ID);
+		this.baseUrl = getArguments().getString(CONST.WEB_URL);
+
+		//默认第一个fragment加载
+		if (TextUtils.equals(index, "0")) {
+			OkHttpList(baseUrl);
+		}
 	}
 	
 	private OnSeekBarChangeListener seekbarListener = new OnSeekBarChangeListener() {
@@ -123,6 +145,9 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	 * 获取雷达图片集信息
 	 */
 	private void OkHttpList(final String url) {
+		if (TextUtils.isEmpty(url)) {
+			return;
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -153,12 +178,6 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 											dto.time = itemObj.getString("n");
 											dto.id = id;
 											radarList.add(dto);
-
-											if (i == 0) {
-												FinalBitmap finalBitmap = FinalBitmap.create(getActivity());
-												finalBitmap.display(imageView, dto.url, null, 0);
-												changeProgress(dto.time, array.length(), array.length());
-											}
 										}
 
 										if (radarList.size() <= 0) {
@@ -193,19 +212,31 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	public void onResult(int result, List<RadarDto> images) {
 		mHandler.sendEmptyMessage(HANDLER_LOAD_FINISHED);
 		if (result == RadarManager.RadarListener.RESULT_SUCCESSED) {
-			if (mRadarThread != null) {
-				mRadarThread.cancel();
-				mRadarThread = null;
-			}
-			if (images.size() > 0) {
-				mRadarThread = new RadarThread(images);
-				mRadarThread.start();
+//			if (mRadarThread != null) {
+//				mRadarThread.cancel();
+//				mRadarThread = null;
+//			}
+//			if (images.size() > 0) {
+//				mRadarThread = new RadarThread(images);
+//				mRadarThread.start();
+//			}
+			for (int i = 0; i < images.size(); i++) {
+				RadarDto dto = images.get(i);
+				if (i == images.size()-1) {
+					Message message = mHandler.obtainMessage();
+					message.what = HANDLER_SHOW_RADAR;
+					message.obj = dto;
+					message.arg1 = images.size()-1;
+					message.arg2 = images.size()-1;
+					mHandler.sendMessage(message);
+					break;
+				}
 			}
 		}
 	}
 	
 	private class RadarThread extends Thread {
-		static final int STATE_NONE = 0;
+
 		static final int STATE_PLAYING = 1;
 		static final int STATE_PAUSE = 2;
 		static final int STATE_CANCEL = 3;
@@ -215,22 +246,21 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 		private int count;
 		private boolean isTracking;
 		
-		public RadarThread(List<RadarDto> images) {
+		private RadarThread(List<RadarDto> images) {
 			this.images = images;
 			this.count = images.size();
 			this.index = 0;
-			this.state = STATE_NONE;
+			this.state = STATE_PLAYING;
 			this.isTracking = false;
 		}
-		
-		public int getCurrentState() {
+
+		private int getCurrentState() {
 			return state;
 		}
 		
 		@Override
 		public void run() {
 			super.run();
-			this.state = STATE_PLAYING;
 			while (true) {
 				if (state == STATE_CANCEL) {
 					break;
@@ -271,25 +301,22 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 				mHandler.sendMessage(message);
 			}
 		}
-		
-		public void cancel() {
+
+		private void cancel() {
 			this.state = STATE_CANCEL;
 		}
-		public void pause() {
+		private void pause() {
 			this.state = STATE_PAUSE;
 		}
-		public void play() {
+		private void play() {
 			this.state = STATE_PLAYING;
 		}
-		
 		public void setCurrent(int index) {
 			this.index = index;
 		}
-		
 		public void startTracking() {
 			isTracking = true;
 		}
-		
 		public void stopTracking() {
 			isTracking = false;
 			if (this.state == STATE_PAUSE) {
@@ -314,11 +341,9 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 			case HANDLER_SHOW_RADAR: 
 				if (msg.obj != null) {
 					RadarDto radar = (RadarDto) msg.obj;
-					if (radar != null) {
-						Bitmap bitmap = BitmapFactory.decodeFile(radar.url);
-						if (bitmap != null) {
-							imageView.setImageBitmap(bitmap);
-						}
+					Bitmap bitmap = BitmapFactory.decodeFile(radar.url);
+					if (bitmap != null) {
+						imageView.setImageBitmap(bitmap);
 					}
 					changeProgress(radar.time, msg.arg2, msg.arg1);
 				}
@@ -326,15 +351,14 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 			case HANDLER_PROGRESS:
 				if (msg.obj != null) {
 					int progress = (Integer) msg.obj;
-					tvPercent.setText(progress+getString(R.string.unit_percent));
+					if (tvPercent != null) {
+						tvPercent.setText(progress+getString(R.string.unit_percent));
+					}
 				}
 				break;
 			case HANDLER_LOAD_FINISHED:
 				tvPercent.setVisibility(View.GONE);
 				llSeekBar.setVisibility(View.VISIBLE);
-				if (ivPlay != null) {
-					ivPlay.setImageResource(R.drawable.iv_pause);
-				}
 				break;
 			case HANDLER_PAUSE:
 				if (ivPlay != null) {
@@ -364,16 +388,34 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.ivPlay:
-				if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PLAYING) {
-					mRadarThread.pause();
-					ivPlay.setImageResource(R.drawable.iv_play);
-				} else if (mRadarThread != null && mRadarThread.getCurrentState() == RadarThread.STATE_PAUSE) {
-					mRadarThread.play();
-					ivPlay.setImageResource(R.drawable.iv_pause);
-				} else if (mRadarThread == null) {
-					startDownLoadImgs(radarList);//开始下载
+				if (mRadarThread != null) {
+					if (mRadarThread.getCurrentState() == RadarThread.STATE_PAUSE) {
+						mRadarThread.play();
+						ivPlay.setImageResource(R.drawable.iv_pause);
+					} else {
+						mRadarThread.pause();
+						ivPlay.setImageResource(R.drawable.iv_play);
+					}
+				}else {
+					if (radarList.size() > 0) {
+						mRadarThread = new RadarThread(radarList);
+						mRadarThread.start();
+						ivPlay.setImageResource(R.drawable.iv_pause);
+					}
 				}
 				break;
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mRadarThread != null) {
+			mRadarThread.cancel();
+			mRadarThread = null;
+		}
+		if (mReceiver != null) {
+			getActivity().unregisterReceiver(mReceiver);
 		}
 	}
 

@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -174,101 +175,128 @@ public class WelcomeActivity extends BaseActivity {
                                 if (!TextUtils.isEmpty(result)) {
                                     try {
                                         JSONObject object = new JSONObject(result);
-                                        if (object != null) {
-                                            if (!object.isNull("status")) {
-                                                String status  = object.getString("status");
-                                                if (TextUtils.equals(status, "1")) {//成功
-                                                    JSONArray array = object.getJSONArray("column");
-                                                    dataList.clear();
-                                                    for (int i = 0; i < array.length(); i++) {
-                                                        JSONObject obj = array.getJSONObject(i);
-                                                        ColumnData data = new ColumnData();
-                                                        if (!obj.isNull("id")) {
-                                                            data.columnId = obj.getString("id");
-                                                        }
-                                                        if (!obj.isNull("localviewid")) {
-                                                            data.id = obj.getString("localviewid");
-                                                        }
-                                                        if (!obj.isNull("name")) {
-                                                            data.name = obj.getString("name");
-                                                        }
-                                                        if (!obj.isNull("icon")) {
-                                                            data.icon = obj.getString("icon");
-                                                        }
-                                                        if (!obj.isNull("icon2")) {
-                                                            data.icon2 = obj.getString("icon2");
-                                                        }
-                                                        if (!obj.isNull("showtype")) {
-                                                            data.showType = obj.getString("showtype");
-                                                        }
-                                                        if (!obj.isNull("dataurl")) {
-                                                            data.dataUrl = obj.getString("dataurl");
-                                                        }
-                                                        if (!obj.isNull("child")) {
-                                                            JSONArray childArray = obj.getJSONArray("child");
-                                                            for (int j = 0; j < childArray.length(); j++) {
-                                                                JSONObject childObj = childArray.getJSONObject(j);
-                                                                ColumnData dto = new ColumnData();
-                                                                if (!childObj.isNull("id")) {
-                                                                    dto.columnId = childObj.getString("id");
-                                                                }
-                                                                if (!childObj.isNull("localviewid")) {
-                                                                    dto.id = childObj.getString("localviewid");
-                                                                }
-                                                                if (!childObj.isNull("name")) {
-                                                                    dto.name = childObj.getString("name");
-                                                                }
-                                                                if (!childObj.isNull("icon")) {
-                                                                    dto.icon = childObj.getString("icon");
-                                                                }
-                                                                if (!childObj.isNull("icon2")) {
-                                                                    dto.icon2 = childObj.getString("icon2");
-                                                                }
-                                                                if (!childObj.isNull("showtype")) {
-                                                                    dto.showType = childObj.getString("showtype");
-                                                                }
-                                                                if (!childObj.isNull("dataurl")) {
-                                                                    dto.dataUrl = childObj.getString("dataurl");
-                                                                }
-                                                                data.child.add(dto);
-                                                            }
-                                                        }
-                                                        dataList.add(data);
+                                        if (!object.isNull("status")) {
+                                            String status  = object.getString("status");
+                                            if (TextUtils.equals(status, "1")) {//成功
+                                                dataList.clear();
+                                                JSONArray array = object.getJSONArray("column");
+                                                for (int i = 0; i < array.length(); i++) {
+                                                    JSONObject obj = array.getJSONObject(i);
+                                                    ColumnData data = new ColumnData();
+                                                    if (!obj.isNull("id")) {
+                                                        data.columnId = obj.getString("id");
                                                     }
-
-                                                    if (!object.isNull("info")) {
-                                                        JSONObject obj = new JSONObject(object.getString("info"));
-                                                        if (!obj.isNull("id")) {
-                                                            String uid = obj.getString("id");
-                                                            if (!TextUtils.isEmpty(uid)) {
-                                                                //把用户信息保存在sharedPreferance里
-                                                                SharedPreferences nameShare = getSharedPreferences(CONST.USERINFO, Context.MODE_PRIVATE);
-                                                                SharedPreferences.Editor editor = nameShare.edit();
-                                                                editor.putString(CONST.UserInfo.uId, uid);
-                                                                editor.putString(CONST.UserInfo.userName, userName);
-                                                                editor.putString(CONST.UserInfo.passWord, pwd);
-                                                                editor.apply();
-
-                                                                CONST.USERNAME = userName;
-                                                                CONST.PASSWORD = pwd;
-                                                                CONST.UID = uid;
-
-                                                                cancelDialog();
-                                                                Intent intent = new Intent(mContext, MainActivity.class);
-                                                                Bundle bundle = new Bundle();
-                                                                bundle.putParcelableArrayList("dataList", (ArrayList<? extends Parcelable>) dataList);
-                                                                intent.putExtras(bundle);
-                                                                startActivity(intent);
-                                                                finish();
-
+                                                    if (!obj.isNull("localviewid")) {
+                                                        data.id = obj.getString("localviewid");
+                                                    }
+                                                    if (!obj.isNull("name")) {
+                                                        data.name = obj.getString("name");
+                                                    }
+                                                    if (!obj.isNull("icon")) {
+                                                        data.icon = obj.getString("icon");
+                                                    }
+                                                    if (!obj.isNull("icon2")) {
+                                                        data.icon2 = obj.getString("icon2");
+                                                    }
+                                                    if (!obj.isNull("showtype")) {
+                                                        data.showType = obj.getString("showtype");
+                                                    }
+                                                    if (!obj.isNull("dataurl")) {
+                                                        data.dataUrl = obj.getString("dataurl");
+                                                    }
+                                                    if (!obj.isNull("child")) {
+                                                        JSONArray childArray = obj.getJSONArray("child");
+                                                        for (int j = 0; j < childArray.length(); j++) {
+                                                            JSONObject childObj = childArray.getJSONObject(j);
+                                                            ColumnData dto = new ColumnData();
+                                                            if (!childObj.isNull("id")) {
+                                                                dto.columnId = childObj.getString("id");
                                                             }
+                                                            if (!childObj.isNull("localviewid")) {
+                                                                dto.id = childObj.getString("localviewid");
+                                                            }
+                                                            if (!childObj.isNull("name")) {
+                                                                dto.name = childObj.getString("name");
+                                                            }
+                                                            if (!childObj.isNull("icon")) {
+                                                                dto.icon = childObj.getString("icon");
+                                                            }
+                                                            if (!childObj.isNull("icon2")) {
+                                                                dto.icon2 = childObj.getString("icon2");
+                                                            }
+                                                            if (!childObj.isNull("showtype")) {
+                                                                dto.showType = childObj.getString("showtype");
+                                                            }
+                                                            if (!childObj.isNull("dataurl")) {
+                                                                dto.dataUrl = childObj.getString("dataurl");
+                                                            }
+                                                            if (!childObj.isNull("child")) {
+                                                                JSONArray childArray2 = childObj.getJSONArray("child");
+                                                                for (int m = 0; m < childArray2.length(); m++) {
+                                                                    JSONObject childObj2 = childArray2.getJSONObject(m);
+                                                                    ColumnData dto2 = new ColumnData();
+                                                                    if (!childObj.isNull("id")) {
+                                                                        dto2.columnId = childObj2.getString("id");
+                                                                    }
+                                                                    if (!childObj.isNull("localviewid")) {
+                                                                        dto2.id = childObj2.getString("localviewid");
+                                                                    }
+                                                                    if (!childObj.isNull("name")) {
+                                                                        dto2.name = childObj2.getString("name");
+                                                                    }
+                                                                    if (!childObj.isNull("icon")) {
+                                                                        dto2.icon = childObj2.getString("icon");
+                                                                    }
+                                                                    if (!childObj.isNull("icon2")) {
+                                                                        dto2.icon2 = childObj2.getString("icon2");
+                                                                    }
+                                                                    if (!childObj.isNull("showtype")) {
+                                                                        dto2.showType = childObj2.getString("showtype");
+                                                                    }
+                                                                    if (!childObj.isNull("dataurl")) {
+                                                                        dto2.dataUrl = childObj2.getString("dataurl");
+                                                                    }
+                                                                    dto.child.add(dto2);
+                                                                }
+                                                            }
+                                                            data.child.add(dto);
                                                         }
                                                     }
-                                                }else {
-                                                    cancelDialog();
-                                                    startActivity(new Intent(mContext, LoginActivity.class));
-                                                    finish();
+                                                    dataList.add(data);
                                                 }
+
+                                                if (!object.isNull("info")) {
+                                                    JSONObject obj = new JSONObject(object.getString("info"));
+                                                    if (!obj.isNull("id")) {
+                                                        String uid = obj.getString("id");
+                                                        if (!TextUtils.isEmpty(uid)) {
+                                                            //把用户信息保存在sharedPreferance里
+                                                            SharedPreferences nameShare = getSharedPreferences(CONST.USERINFO, Context.MODE_PRIVATE);
+                                                            SharedPreferences.Editor editor = nameShare.edit();
+                                                            editor.putString(CONST.UserInfo.uId, uid);
+                                                            editor.putString(CONST.UserInfo.userName, userName);
+                                                            editor.putString(CONST.UserInfo.passWord, pwd);
+                                                            editor.apply();
+
+                                                            CONST.USERNAME = userName;
+                                                            CONST.PASSWORD = pwd;
+                                                            CONST.UID = uid;
+
+                                                            cancelDialog();
+                                                            Intent intent = new Intent(mContext, MainActivity.class);
+                                                            Bundle bundle = new Bundle();
+                                                            bundle.putParcelableArrayList("dataList", (ArrayList<? extends Parcelable>) dataList);
+                                                            intent.putExtras(bundle);
+                                                            startActivity(intent);
+                                                            finish();
+
+                                                        }
+                                                    }
+                                                }
+                                            }else {
+                                                cancelDialog();
+                                                startActivity(new Intent(mContext, LoginActivity.class));
+                                                finish();
                                             }
                                         }
                                     } catch (JSONException e) {

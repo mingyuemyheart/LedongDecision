@@ -365,13 +365,13 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 		}
 		MarkerOptions options = new MarkerOptions();
 		options.position(latLng);
-		options.anchor(0.5f, 0.5f);
-		Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.iv_map_location),
-				(int)(CommonUtil.dip2px(mContext, 15)), (int)(CommonUtil.dip2px(mContext, 15)));
+		options.anchor(0.5f, 1.0f);
+		Bitmap bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeResource(getResources(), R.drawable.iv_map_click_map),
+				(int)(CommonUtil.dip2px(mContext, 21)), (int)(CommonUtil.dip2px(mContext, 32)));
 		if (bitmap != null) {
 			options.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 		}else {
-			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.iv_map_location));
+			options.icon(BitmapDescriptorFactory.fromResource(R.drawable.iv_map_click_map));
 		}
 		if (locationMarker != null) {
 			locationMarker.remove();
@@ -480,11 +480,11 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 	}
 
 	/**
-	 * 绘制警戒线提示问题
+	 * 绘制警戒线提示文字
 	 */
 	private void drawWarningText(String text, int textColor, LatLng latLng) {
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.typhoon_line_markview, null);
+		View view = inflater.inflate(R.layout.marker_typhoon_line_text, null);
 		TextView tvLine = view.findViewById(R.id.tvLine);
 		tvLine.setText(text);
 		tvLine.setTextColor(textColor);
@@ -1218,7 +1218,7 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 		options.anchor(0.5f, 0.5f);
 		options.position(new LatLng(start.lat, start.lng));
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.typhoon_point, null);
+		View view = inflater.inflate(R.layout.marker_typhoon_point, null);
 		ImageView ivPoint = view.findViewById(R.id.ivPoint);
 		if (TextUtils.equals(start.type, "1")) {
 			ivPoint.setImageResource(R.drawable.typhoon_level1);
@@ -1244,7 +1244,7 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 				}
 			}
 			if (isAdd == false) {
-				View textView = inflater.inflate(R.layout.typhoon_line_markview, null);
+				View textView = inflater.inflate(R.layout.marker_typhoon_line_text, null);
 				TextView tvLine = (TextView) textView.findViewById(R.id.tvLine);
 				if (time != null) {
 					tvLine.setText(time);
@@ -1301,8 +1301,8 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 						.fillColor(0x30ffffff).strokeWidth(5));
 			}
 
-			View timeView = inflater.inflate(R.layout.layout_marker_time, null);
-			TextView tvTime = (TextView) timeView.findViewById(R.id.tvTime);
+			View timeView = inflater.inflate(R.layout.marker_typhoon_time, null);
+			TextView tvTime = timeView.findViewById(R.id.tvTime);
 			if (!TextUtils.isEmpty(start.time)) {
 				try {
 					tvTime.setText(sdf5.format(sdf2.parse(start.time)));
@@ -1364,7 +1364,7 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 				ranging();
 			}
 		}else {
-			View timeView = inflater.inflate(R.layout.layout_marker_time, null);
+			View timeView = inflater.inflate(R.layout.marker_typhoon_time, null);
 			TextView tvTime = (TextView) timeView.findViewById(R.id.tvTime);
 			if (!TextUtils.isEmpty(start.time)) {
 				try {
@@ -1552,7 +1552,7 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		MarkerOptions options = new MarkerOptions();
 		options.position(latLng);
-		View mView = inflater.inflate(R.layout.layout_range_marker, null);
+		View mView = inflater.inflate(R.layout.marker_typhoon_range, null);
 		TextView tvName = mView.findViewById(R.id.tvName);
 		tvName.setText("距离台风"+getDistance(longitude1, latitude1, longitude2, latitude2)+"公里");
 
@@ -1695,7 +1695,7 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 	@Override
 	public View getInfoContents(Marker arg0) {
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.typhoon_marker_view, null);
+		View view = inflater.inflate(R.layout.marker_typhoon_icon, null);
 		TextView tvName = view.findViewById(R.id.tvName);
 		TextView tvInfo = view.findViewById(R.id.tvInfo);
 		ImageView ivDelete = view.findViewById(R.id.ivDelete);
@@ -1788,13 +1788,13 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 													for (int i = 0; i < array.length(); i++) {
 														JSONArray array0 = array.getJSONArray(i);
 														MinuteFallDto dto = new MinuteFallDto();
-														dto.setImgUrl(array0.optString(0));
-														dto.setTime(array0.optLong(1));
+														dto.imgUrl = array0.optString(0);
+														dto.time = array0.optLong(1);
 														JSONArray itemArray = array0.getJSONArray(2);
-														dto.setP1(itemArray.optDouble(0));
-														dto.setP2(itemArray.optDouble(1));
-														dto.setP3(itemArray.optDouble(2));
-														dto.setP4(itemArray.optDouble(3));
+														dto.p1 = itemArray.optDouble(0);
+														dto.p2 = itemArray.optDouble(1);
+														dto.p3 = itemArray.optDouble(2);
+														dto.p4 = itemArray.optDouble(3);
 														radarList.add(dto);
 													}
 
@@ -1845,11 +1845,9 @@ public class TyphoonRouteActivity extends BaseActivity implements OnClickListene
 							try {
 								Bitmap bitmap = BitmapFactory.decodeFile(dto.path);
 								if (bitmap != null) {
-									showRadar(bitmap, dto.getP1(), dto.getP2(), dto.getP3(), dto.getP4());
+									showRadar(bitmap, dto.p1, dto.p2, dto.p3, dto.p4);
 								}
 							} catch (Exception e) {
-								e.printStackTrace();
-							} catch (OutOfMemoryError e) {
 								e.printStackTrace();
 							}
 						}

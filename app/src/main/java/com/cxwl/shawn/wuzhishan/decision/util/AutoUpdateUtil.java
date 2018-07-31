@@ -47,7 +47,7 @@ public class AutoUpdateUtil {
 	 * 获取版本号
 	 * @return 当前应用的版本号
 	 */
-	public static int getVersionCode(Context context) {
+	private static int getVersionCode(Context context) {
 	    try {
 	        PackageManager manager = context.getPackageManager();
 	        PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
@@ -118,7 +118,7 @@ public class AutoUpdateUtil {
 											msg.obj = dto;
 											handler.sendMessage(msg);
 										}else {
-											if (flag == false) {
+											if (!flag) {
 												Toast.makeText(mContext, "已经是最新版本", Toast.LENGTH_SHORT).show();
 											}
 										}
@@ -211,7 +211,7 @@ public class AutoUpdateUtil {
 		long refernece = dManager.enqueue(request);
 //		// 把当前下载的ID保存起来
 		SharedPreferences sPreferences = mContext.getSharedPreferences("downloadplato", 0);
-		sPreferences.edit().putLong("plato", refernece).commit();
+		sPreferences.edit().putLong("plato", refernece).apply();
 
 	} 
 

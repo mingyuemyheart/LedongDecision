@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cxwl.shawn.wuzhishan.decision.R;
@@ -23,10 +22,7 @@ public class TyphoonYearAdapter extends BaseAdapter {
 	
 	private final class ViewHolder{
 		TextView tvYear;
-		RelativeLayout reLayout;
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	public TyphoonYearAdapter(Context context, List<TyphoonDto> mArrayList) {
 		mContext = context;
@@ -59,11 +55,11 @@ public class TyphoonYearAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.typhoon_year_cell, null);
+			convertView = mInflater.inflate(R.layout.adapter_typhoon_year, null);
 			mHolder = new ViewHolder();
 			mHolder.tvYear = convertView.findViewById(R.id.tvYear);
-			mHolder.reLayout = convertView.findViewById(R.id.reLayout);
 			convertView.setTag(mHolder);
 		}else {
 			mHolder = (ViewHolder) convertView.getTag();
@@ -73,10 +69,10 @@ public class TyphoonYearAdapter extends BaseAdapter {
 		mHolder.tvYear.setText(String.valueOf(dto.yearly)+"年");
 		
 		if (!isSelected.isEmpty()) {
-			if (isSelected.get(position) == false) {
-				mHolder.reLayout.setBackgroundResource(R.drawable.bg_typhoon_year);
+			if (!isSelected.get(position)) {
+				convertView.setBackgroundResource(R.drawable.bg_typhoon_year);
 			}else {
-				mHolder.reLayout.setBackgroundResource(R.drawable.bg_typhoon_year_press);
+				convertView.setBackgroundResource(R.drawable.bg_typhoon_year_press);
 			}
 		}
 		

@@ -36,10 +36,8 @@ import java.util.List;
 public class ProvinceActivity extends BaseActivity implements OnClickListener {
 
 	private Context mContext = null;
-	private LinearLayout llBack = null;
+	private LinearLayout llBack,llContainer,llContainer1;
 	private TextView tvTitle = null;
-	private LinearLayout llContainer = null;
-	private LinearLayout llContainer1 = null;
 	private MainViewPager viewPager = null;
 	private List<Fragment> fragments = new ArrayList<>();
 
@@ -73,8 +71,7 @@ public class ProvinceActivity extends BaseActivity implements OnClickListener {
 		if (getIntent().hasExtra("data")) {
 			ColumnData data = getIntent().getParcelableExtra("data");
 			if (data != null) {
-				List<ColumnData> columnList = new ArrayList<>();
-				columnList.addAll(data.child);
+				List<ColumnData> columnList = new ArrayList<>(data.child);
 				int columnSize = columnList.size();
 				if (columnSize <= 1) {
 					llContainer.setVisibility(View.GONE);
@@ -151,7 +148,7 @@ public class ProvinceActivity extends BaseActivity implements OnClickListener {
 				}
 
 				viewPager = findViewById(R.id.viewPager);
-				viewPager.setSlipping(true);//设置ViewPager是否可以滑动
+				viewPager.setSlipping(false);//设置ViewPager是否可以滑动
 				viewPager.setOffscreenPageLimit(fragments.size());
 				viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
 				viewPager.setAdapter(new MyPagerAdapter());
@@ -201,7 +198,7 @@ public class ProvinceActivity extends BaseActivity implements OnClickListener {
 	private class MyOnClickListener implements OnClickListener {
 		private int index;
 
-		public MyOnClickListener(int i) {
+		private MyOnClickListener(int i) {
 			index = i;
 		}
 

@@ -3,6 +3,7 @@ package com.cxwl.shawn.wuzhishan.decision.activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -35,12 +36,11 @@ import java.util.List;
 public class RadarActivity extends BaseActivity implements OnClickListener {
 
 	private Context mContext;
-	private LinearLayout llBack;
+	private LinearLayout llBack,llContainer,llContainer1;
 	private TextView tvTitle;
-	private LinearLayout llContainer;
-	private LinearLayout llContainer1;
 	private MainViewPager viewPager;
 	private List<Fragment> fragments = new ArrayList<>();
+	private String BROADCAST_ACTION_NAME = "";//四个fragment广播名字
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +143,7 @@ public class RadarActivity extends BaseActivity implements OnClickListener {
 
 					RadarFragment fragment = new RadarFragment();
 					Bundle bundle = new Bundle();
+					bundle.putString("index", i+"");
 					bundle.putString(CONST.COLUMN_ID, dto.columnId);
 					bundle.putString(CONST.WEB_URL, dto.dataUrl);
 					fragment.setArguments(bundle);
@@ -154,6 +155,7 @@ public class RadarActivity extends BaseActivity implements OnClickListener {
 				viewPager.setOffscreenPageLimit(fragments.size());
 				viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
 				viewPager.setAdapter(new MyPagerAdapter());
+
 			}
 		}
 	}
@@ -161,6 +163,14 @@ public class RadarActivity extends BaseActivity implements OnClickListener {
 	public class MyOnPageChangeListener implements OnPageChangeListener {
 		@Override
 		public void onPageSelected(int arg0) {
+			String fragmentName = RadarFragment.class.getName()+arg0;
+			if (!BROADCAST_ACTION_NAME.contains(fragmentName)) {
+				Intent intent = new Intent();
+				intent.setAction(fragmentName);
+				sendBroadcast(intent);
+				BROADCAST_ACTION_NAME += fragmentName;
+			}
+
 			if (llContainer != null) {
 				for (int i = 0; i < llContainer.getChildCount(); i++) {
 					TextView tvName = (TextView) llContainer.getChildAt(i);

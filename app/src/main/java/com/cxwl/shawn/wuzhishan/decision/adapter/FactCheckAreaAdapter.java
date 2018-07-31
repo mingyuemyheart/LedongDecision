@@ -13,19 +13,20 @@ import com.cxwl.shawn.wuzhishan.decision.dto.ShawnRainDto;
 
 import java.util.List;
 
-public class DialogDetailAdapter extends BaseAdapter {
+/**
+ * 实况资料-查询-选择区域
+ */
+public class FactCheckAreaAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private LayoutInflater mInflater;
 	private List<ShawnRainDto> mArrayList;
 	
 	private final class ViewHolder{
-		TextView tvTime;
+		TextView tvArea;
 	}
 	
-	private ViewHolder mHolder = null;
-	
-	public DialogDetailAdapter(Context context, List<ShawnRainDto> mArrayList) {
+	public FactCheckAreaAdapter(Context context, List<ShawnRainDto> mArrayList) {
 		mContext = context;
 		this.mArrayList = mArrayList;
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,11 +48,12 @@ public class DialogDetailAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.dialog_detail_cell, null);
+			convertView = mInflater.inflate(R.layout.adapter_fact_check_area, null);
 			mHolder = new ViewHolder();
-			mHolder.tvTime = convertView.findViewById(R.id.tvTime);
+			mHolder.tvArea = convertView.findViewById(R.id.tvArea);
 			convertView.setTag(mHolder);
 		}else {
 			mHolder = (ViewHolder) convertView.getTag();
@@ -59,10 +61,9 @@ public class DialogDetailAdapter extends BaseAdapter {
 		
 		ShawnRainDto dto = mArrayList.get(position);
 		
-		if (!TextUtils.isEmpty(dto.timeString)) {
-			mHolder.tvTime.setText(dto.timeString);
+		if (!TextUtils.isEmpty(dto.area)) {
+			mHolder.tvArea.setText(dto.area);
 		}
-		
 		return convertView;
 	}
 

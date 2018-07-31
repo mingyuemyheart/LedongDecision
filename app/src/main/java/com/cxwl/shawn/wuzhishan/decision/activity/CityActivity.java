@@ -103,10 +103,6 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 		}
 		@Override
 		public void afterTextChanged(Editable arg0) {
-			if (arg0.toString() == null) {
-				return;
-			}
-
 			cityList.clear();
 			if (arg0.toString().trim().equals("")) {
 				mListView.setVisibility(View.GONE);
@@ -118,7 +114,6 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 				llGroup.setVisibility(View.GONE);
 				getCityInfo(arg0.toString().trim());
 			}
-
 		}
 	};
 	
@@ -210,10 +205,8 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 		cityList.clear();
 		DBManager dbManager = new DBManager(mContext);
 		dbManager.openDateBase();
-		dbManager.closeDatabase();
 		SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(DBManager.DB_PATH + "/" + DBManager.DB_NAME, null);
-		Cursor cursor;
-		cursor = database.rawQuery("select * from "+DBManager.TABLE_NAME3+" where pro like "+"\"%"+keyword+"%\""+" or city like "+"\"%"+keyword+"%\""+" or dis like "+"\"%"+keyword+"%\"",null);
+		Cursor cursor = database.rawQuery("select * from "+DBManager.TABLE_NAME3+" where pro like "+"\"%"+keyword+"%\""+" or city like "+"\"%"+keyword+"%\""+" or dis like "+"\"%"+keyword+"%\"",null);
 		for (int i = 0; i < cursor.getCount(); i++) {
 			cursor.moveToPosition(i);
 			CityDto dto = new CityDto();
@@ -225,6 +218,7 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 			dto.lng = cursor.getDouble(cursor.getColumnIndex("lng"));
 			cityList.add(dto);
 		}
+		dbManager.closeDatabase();
 		if (cityList.size() > 0 && cityAdapter != null) {
 			cityAdapter.notifyDataSetChanged();
 		}

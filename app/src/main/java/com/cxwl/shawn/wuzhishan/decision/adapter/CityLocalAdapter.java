@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.CityDto;
 
@@ -26,8 +25,6 @@ public class CityLocalAdapter extends BaseAdapter implements StickyGridHeadersSi
 		this.mArrayList = mArrayList;
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
-	
-	private ViewHolder mHolder = null;
 	
 	private class ViewHolder {
 		TextView tvCityName;
@@ -50,6 +47,7 @@ public class CityLocalAdapter extends BaseAdapter implements StickyGridHeadersSi
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			mHolder = new ViewHolder();
 			convertView = mInflater.inflate(R.layout.adapter_city_content, null);
@@ -65,8 +63,6 @@ public class CityLocalAdapter extends BaseAdapter implements StickyGridHeadersSi
 		return convertView;
 	}
 	
-	private HeaderViewHolder mHeaderHolder = null;
-
 	private class HeaderViewHolder {
 		TextView tvName;
 	}
@@ -78,6 +74,7 @@ public class CityLocalAdapter extends BaseAdapter implements StickyGridHeadersSi
 
 	@Override
 	public View getHeaderView(int position, View convertView, ViewGroup parent) {
+		HeaderViewHolder mHeaderHolder;
 		if (convertView == null) {
 			mHeaderHolder = new HeaderViewHolder();
 			convertView = mInflater.inflate(R.layout.adapter_city_header, null);

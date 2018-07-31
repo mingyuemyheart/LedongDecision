@@ -26,8 +26,6 @@ public class PDFListAdapter extends BaseAdapter {
 		TextView tvTitle,tvTime;
 	}
 	
-	private ViewHolder mHolder = null;
-	
 	public PDFListAdapter(Context context, List<ColumnData> mArrayList) {
 		mContext = context;
 		this.mArrayList = mArrayList;
@@ -51,6 +49,7 @@ public class PDFListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.adapter_pdf_list, null);
 			mHolder = new ViewHolder();

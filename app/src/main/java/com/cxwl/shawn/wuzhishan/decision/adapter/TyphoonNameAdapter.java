@@ -27,8 +27,6 @@ public class TyphoonNameAdapter extends BaseAdapter {
 		TextView tvName;
 	}
 	
-	private ViewHolder mHolder = null;
-	
 	public TyphoonNameAdapter(Context context, List<TyphoonDto> mArrayList) {
 		mContext = context;
 		this.mArrayList = mArrayList;
@@ -56,8 +54,9 @@ public class TyphoonNameAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.typhoon_name_cell, null);
+			convertView = mInflater.inflate(R.layout.adapter_typhoon_name, null);
 			mHolder = new ViewHolder();
 			mHolder.ivStatus = convertView.findViewById(R.id.ivStatus);
 			mHolder.tvName = convertView.findViewById(R.id.tvName);
@@ -74,7 +73,7 @@ public class TyphoonNameAdapter extends BaseAdapter {
 		}
 		
 		if (!isSelected.isEmpty() && isSelected.get(position) != null) {
-			if (isSelected.get(position) == false) {
+			if (!isSelected.get(position)) {
 				mHolder.ivStatus.setImageResource(R.drawable.bg_checkbox);
 			}else {
 				mHolder.ivStatus.setImageResource(R.drawable.bg_checkbox_selected);

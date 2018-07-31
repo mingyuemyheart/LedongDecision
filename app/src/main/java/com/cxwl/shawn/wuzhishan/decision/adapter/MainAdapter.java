@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,8 +31,6 @@ public class MainAdapter extends BaseAdapter {
 		ImageView icon;
 	}
 	
-	private ViewHolder mHolder = null;
-	
 	public MainAdapter(Context context, List<ColumnData> mArrayList) {
 		mContext = context;
 		this.mArrayList = mArrayList;
@@ -57,6 +54,7 @@ public class MainAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewHolder mHolder;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.adapter_main, null);
 			mHolder = new ViewHolder();
@@ -85,8 +83,6 @@ public class MainAdapter extends BaseAdapter {
 			}
 
 		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
