@@ -31,9 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -48,10 +46,8 @@ import okhttp3.Response;
  */
 public class LoginActivity extends BaseActivity implements OnClickListener {
 	
-	private Context mContext = null;
+	private Context mContext;
 	private EditText etUserName,etPwd;
-	private TextView tvLogin;
-	private ImageView ivBg,ivLogo;
 	private List<ColumnData> dataList = new ArrayList<>();
 
 	@Override
@@ -71,19 +67,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	private void initWidget() {
 		etUserName = findViewById(R.id.etUserName);
 		etPwd = findViewById(R.id.etPwd);
-		tvLogin = findViewById(R.id.tvLogin);
+		TextView tvLogin = findViewById(R.id.tvLogin);
 		tvLogin.setOnClickListener(this);
-		ivBg = findViewById(R.id.ivBg);
-        ivLogo = findViewById(R.id.ivLogo);
-
-		//判断显示春天或者秋天背景
-		SimpleDateFormat sdf1 = new SimpleDateFormat("MMdd");
-		int current = Integer.parseInt(sdf1.format(new Date()));
-		if (current >= 301 && current <= 831) {
-			ivBg.setImageResource(R.drawable.bg_welcome);
-		}else {
-			ivBg.setImageResource(R.drawable.bg_login);
-		}
+		ImageView ivLogo = findViewById(R.id.ivLogo);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -145,105 +131,103 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 								if (!TextUtils.isEmpty(result)) {
 									try {
 										JSONObject object = new JSONObject(result);
-										if (object != null) {
-											if (!object.isNull("status")) {
-												String status  = object.getString("status");
-												if (TextUtils.equals(status, "1")) {//成功
-													JSONArray array = object.getJSONArray("column");
-													dataList.clear();
-													for (int i = 0; i < array.length(); i++) {
-														JSONObject obj = array.getJSONObject(i);
-														ColumnData data = new ColumnData();
-														if (!obj.isNull("id")) {
-															data.columnId = obj.getString("id");
-														}
-														if (!obj.isNull("localviewid")) {
-															data.id = obj.getString("localviewid");
-														}
-														if (!obj.isNull("name")) {
-															data.name = obj.getString("name");
-														}
-														if (!obj.isNull("icon")) {
-															data.icon = obj.getString("icon");
-														}
-														if (!obj.isNull("icon2")) {
-															data.icon2 = obj.getString("icon2");
-														}
-														if (!obj.isNull("showtype")) {
-															data.showType = obj.getString("showtype");
-														}
-														if (!obj.isNull("dataurl")) {
-															data.dataUrl = obj.getString("dataurl");
-														}
-														if (!obj.isNull("child")) {
-															JSONArray childArray = obj.getJSONArray("child");
-															for (int j = 0; j < childArray.length(); j++) {
-																JSONObject childObj = childArray.getJSONObject(j);
-																ColumnData dto = new ColumnData();
-																if (!childObj.isNull("id")) {
-																	dto.columnId = childObj.getString("id");
-																}
-																if (!childObj.isNull("localviewid")) {
-																	dto.id = childObj.getString("localviewid");
-																}
-																if (!childObj.isNull("name")) {
-																	dto.name = childObj.getString("name");
-																}
-																if (!childObj.isNull("icon")) {
-																	dto.icon = childObj.getString("icon");
-																}
-																if (!childObj.isNull("icon2")) {
-																	dto.icon2 = childObj.getString("icon2");
-																}
-																if (!childObj.isNull("showtype")) {
-																	dto.showType = childObj.getString("showtype");
-																}
-																if (!childObj.isNull("dataurl")) {
-																	dto.dataUrl = childObj.getString("dataurl");
-																}
-																data.child.add(dto);
+										if (!object.isNull("status")) {
+											String status  = object.getString("status");
+											if (TextUtils.equals(status, "1")) {//成功
+												JSONArray array = object.getJSONArray("column");
+												dataList.clear();
+												for (int i = 0; i < array.length(); i++) {
+													JSONObject obj = array.getJSONObject(i);
+													ColumnData data = new ColumnData();
+													if (!obj.isNull("id")) {
+														data.columnId = obj.getString("id");
+													}
+													if (!obj.isNull("localviewid")) {
+														data.id = obj.getString("localviewid");
+													}
+													if (!obj.isNull("name")) {
+														data.name = obj.getString("name");
+													}
+													if (!obj.isNull("icon")) {
+														data.icon = obj.getString("icon");
+													}
+													if (!obj.isNull("icon2")) {
+														data.icon2 = obj.getString("icon2");
+													}
+													if (!obj.isNull("showtype")) {
+														data.showType = obj.getString("showtype");
+													}
+													if (!obj.isNull("dataurl")) {
+														data.dataUrl = obj.getString("dataurl");
+													}
+													if (!obj.isNull("child")) {
+														JSONArray childArray = obj.getJSONArray("child");
+														for (int j = 0; j < childArray.length(); j++) {
+															JSONObject childObj = childArray.getJSONObject(j);
+															ColumnData dto = new ColumnData();
+															if (!childObj.isNull("id")) {
+																dto.columnId = childObj.getString("id");
 															}
-														}
-														dataList.add(data);
-													}
-
-													if (!object.isNull("info")) {
-														JSONObject obj = new JSONObject(object.getString("info"));
-														if (!obj.isNull("id")) {
-															String uid = obj.getString("id");
-															if (!TextUtils.isEmpty(uid)) {
-																//把用户信息保存在sharedPreferance里
-																SharedPreferences nameShare = getSharedPreferences(CONST.USERINFO, Context.MODE_PRIVATE);
-																Editor editor = nameShare.edit();
-																editor.putString(CONST.UserInfo.uId, uid);
-																editor.putString(CONST.UserInfo.userName, etUserName.getText().toString());
-																editor.putString(CONST.UserInfo.passWord, etPwd.getText().toString());
-																editor.apply();
-
-																CONST.USERNAME = etUserName.getText().toString();
-																CONST.PASSWORD = etPwd.getText().toString();
-																CONST.UID = uid;
-
-																cancelDialog();
-																Intent intent = new Intent(mContext, MainActivity.class);
-																Bundle bundle = new Bundle();
-																bundle.putParcelableArrayList("dataList", (ArrayList<? extends Parcelable>) dataList);
-																intent.putExtras(bundle);
-																startActivity(intent);
-																finish();
-
+															if (!childObj.isNull("localviewid")) {
+																dto.id = childObj.getString("localviewid");
 															}
+															if (!childObj.isNull("name")) {
+																dto.name = childObj.getString("name");
+															}
+															if (!childObj.isNull("icon")) {
+																dto.icon = childObj.getString("icon");
+															}
+															if (!childObj.isNull("icon2")) {
+																dto.icon2 = childObj.getString("icon2");
+															}
+															if (!childObj.isNull("showtype")) {
+																dto.showType = childObj.getString("showtype");
+															}
+															if (!childObj.isNull("dataurl")) {
+																dto.dataUrl = childObj.getString("dataurl");
+															}
+															data.child.add(dto);
 														}
 													}
-												}else {
-													//失败
-													if (!object.isNull("msg")) {
-														final String msg = object.getString("msg");
-														if (msg != null) {
-															Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+													dataList.add(data);
+												}
+
+												if (!object.isNull("info")) {
+													JSONObject obj = new JSONObject(object.getString("info"));
+													if (!obj.isNull("id")) {
+														String uid = obj.getString("id");
+														if (!TextUtils.isEmpty(uid)) {
+															//把用户信息保存在sharedPreferance里
+															SharedPreferences nameShare = getSharedPreferences(CONST.USERINFO, Context.MODE_PRIVATE);
+															Editor editor = nameShare.edit();
+															editor.putString(CONST.UserInfo.uId, uid);
+															editor.putString(CONST.UserInfo.userName, etUserName.getText().toString());
+															editor.putString(CONST.UserInfo.passWord, etPwd.getText().toString());
+															editor.apply();
+
+															CONST.USERNAME = etUserName.getText().toString();
+															CONST.PASSWORD = etPwd.getText().toString();
+															CONST.UID = uid;
+
+															cancelDialog();
+															Intent intent = new Intent(mContext, MainActivity.class);
+															Bundle bundle = new Bundle();
+															bundle.putParcelableArrayList("dataList", (ArrayList<? extends Parcelable>) dataList);
+															intent.putExtras(bundle);
+															startActivity(intent);
+															finish();
+
 														}
-														cancelDialog();
 													}
+												}
+											}else {
+												//失败
+												if (!object.isNull("msg")) {
+													final String msg = object.getString("msg");
+													if (msg != null) {
+														Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+													}
+													cancelDialog();
 												}
 											}
 										}

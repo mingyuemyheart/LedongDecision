@@ -38,7 +38,7 @@
 
         <activity
             android:name=".activity.WelcomeActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:theme="@style/SplashTheme"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>

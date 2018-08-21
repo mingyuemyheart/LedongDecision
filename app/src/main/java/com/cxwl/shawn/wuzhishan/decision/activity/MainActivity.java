@@ -45,35 +45,34 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, AMapLocationListener,
-        MyApplication.NavigationListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener, AMapLocationListener, MyApplication.NavigationListener{
 
     private Context mContext;
     private RelativeLayout reTitle,reFact;
     private GridView gridView = null;
     private MainAdapter mAdapter = null;
     private ArrayList<ColumnData> channelList = new ArrayList<>();
-    private int width, height, gridViewHeight;
+    private int height, gridViewHeight;
     private long mExitTime;//记录点击完返回按钮后的long型时间
-    private TextView tvCity,tvLocation,tvPhe,tvTemp,tvForecast,tvPressure,tvWind,tvHumidity,tvAqi,tvFifth,tvTime;
-    private ImageView ivControl,ivPhe;
+    private TextView tvLocation,tvPhe,tvTemp,tvForecast,tvPressure,tvWind,tvHumidity,tvAqi,tvTime;
+    private ImageView ivPhe;
     private AMapLocationClientOption mLocationOption;//声明mLocationOption对象
     private AMapLocationClient mLocationClient;//声明AMapLocationClient类对象
     private String cityName = "五指山", cityId = "101310222";
     private double lat = CONST.DEFAULT_LAT, lng = CONST.DEFAULT_LNG;
-    private SimpleDateFormat sdf2 = new SimpleDateFormat("HH");
-    private SimpleDateFormat sdf3 = new SimpleDateFormat("MM月dd日");
+    private SimpleDateFormat sdf2 = new SimpleDateFormat("HH", Locale.CHINA);
+    private SimpleDateFormat sdf3 = new SimpleDateFormat("MM月dd日", Locale.CHINA);
     private SwipeRefreshLayout refreshLayout;//下拉刷新布局
 
     @Override
@@ -186,7 +185,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         reTitle = findViewById(R.id.reTitle);
         reFact = findViewById(R.id.reFact);
-        tvCity = findViewById(R.id.tvCity);
+        TextView tvCity = findViewById(R.id.tvCity);
         tvCity.setOnClickListener(this);
         tvCity.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvLocation = findViewById(R.id.tvLocation);
@@ -197,11 +196,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         tvWind = findViewById(R.id.tvWind);
         tvHumidity = findViewById(R.id.tvHumidity);
         tvAqi = findViewById(R.id.tvAqi);
-        tvFifth = findViewById(R.id.tvFifth);
+        TextView tvFifth = findViewById(R.id.tvFifth);
         tvFifth.setOnClickListener(this);
         tvTime = findViewById(R.id.tvTime);
         ivPhe = findViewById(R.id.ivPhe);
-        ivControl = findViewById(R.id.ivControl);
+        ImageView ivControl = findViewById(R.id.ivControl);
         ivControl.setOnClickListener(this);
 
         getDeviceWidthHeight();
@@ -211,7 +210,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void getDeviceWidthHeight() {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        width = dm.widthPixels;
         height = dm.heightPixels;
     }
 
@@ -257,7 +255,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
                 mLocationOption.setNeedAddress(true);//设置是否返回地址信息（默认返回地址信息）
                 mLocationOption.setOnceLocation(true);//设置是否只定位一次,默认为false
-                mLocationOption.setWifiActiveScan(true);//设置是否强制刷新WIFI，默认为强制刷新
                 mLocationOption.setMockEnable(true);//设置是否允许模拟位置,默认为false，不允许模拟位置
                 mLocationOption.setInterval(100000);//设置定位间隔,单位毫秒,默认为2000ms
             }
@@ -367,21 +364,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
                                         if (!l.isNull("l5")) {
                                             String pheCode = WeatherUtil.lastValue(l.getString("l5"));
-                                            Drawable drawable = null;
-                                            try {
-                                                long current = sdf2.parse(sdf2.format(new Date())).getTime();
+                                            Drawable drawable;
+                                                int current = Integer.parseInt(sdf2.format(new Date()));
                                                 if (current >= 6 && current < 18) {
                                                     drawable = getResources().getDrawable(R.drawable.phenomenon_drawable);
                                                 }else {
                                                     drawable = getResources().getDrawable(R.drawable.phenomenon_drawable_night);
                                                 }
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
+
                                             drawable.setLevel(Integer.valueOf(pheCode));
-                                            if (drawable != null) {
-                                                ivPhe.setBackground(drawable);
-                                            }
+                                            ivPhe.setBackground(drawable);
                                             tvPhe.setText(getString(WeatherUtil.getWeatherId(Integer.valueOf(pheCode))));
                                         }
 

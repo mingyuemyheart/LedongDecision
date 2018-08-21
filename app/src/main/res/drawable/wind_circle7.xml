@@ -13,7 +13,7 @@
     <corners
         android:radius="12dp" />
     <solid
-        android:color="#90000000" />
+        android:color="@color/transparent" />
     <stroke
         android:width="2dp"
         android:color="@color/yellow" />
