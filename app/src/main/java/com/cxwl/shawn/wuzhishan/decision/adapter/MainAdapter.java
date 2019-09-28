@@ -72,9 +72,11 @@ public class MainAdapter extends BaseAdapter {
 				mHolder.tvName.setText(dto.name);
 			}
 
-			if (!TextUtils.isEmpty(dto.icon)) {
-				Picasso.with(mContext).load(dto.icon).into(mHolder.icon);
-			}
+//			if (!TextUtils.isEmpty(dto.icon)) {
+//				Picasso.with(mContext).load(dto.icon).into(mHolder.icon);
+//			}else {
+				Picasso.with(mContext).load(String.format("http://decision-admin.tianqi.cn/Public/images/hnny/%s.png", dto.id)).into(mHolder.icon);
+//			}
 
 			if (height > 0) {
 				AbsListView.LayoutParams params = new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, height/3);

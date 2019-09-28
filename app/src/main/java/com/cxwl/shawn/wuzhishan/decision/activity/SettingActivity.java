@@ -24,8 +24,8 @@ import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 public class SettingActivity extends BaseActivity implements View.OnClickListener {
 
     private Context mContext;
-    private LinearLayout llBack,llFeedBack,llClearCache,llVersion;
-    private TextView tvTitle,tvCache,tvVersion,tvLogout;
+    private LinearLayout llBack,llFeedBack,llClearCache,llVersion,llAbout;
+    private TextView tvTitle,tvUserName,tvCache,tvVersion,tvLogout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         llBack = findViewById(R.id.llBack);
         llBack.setOnClickListener(this);
         tvTitle = findViewById(R.id.tvTitle);
-        tvTitle.setText("设置");
+        tvUserName = findViewById(R.id.tvUserName);
         llFeedBack = findViewById(R.id.llFeedBack);
         llFeedBack.setOnClickListener(this);
         llClearCache = findViewById(R.id.llClearCache);
@@ -50,6 +50,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         tvVersion = findViewById(R.id.tvVersion);
         tvLogout = findViewById(R.id.tvLogout);
         tvLogout.setOnClickListener(this);
+        llAbout = findViewById(R.id.llAbout);
+        llAbout.setOnClickListener(this);
+
+        tvTitle.setText("设置");
+        tvUserName.setText(CONST.USERNAME);
 
         try {
             tvCache.setText(DataCleanManager.getCacheSize(mContext));
@@ -149,11 +154,14 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case R.id.llFeedBack:
                 startActivity(new Intent(mContext, FeedbackActivity.class));
                 break;
+            case R.id.llAbout:
+
+                break;
             case R.id.llClearCache:
                 dialogCache();
                 break;
             case R.id.llVersion:
-                AutoUpdateUtil.checkUpdate(SettingActivity.this, mContext, "95", getString(R.string.app_name), false);
+                AutoUpdateUtil.checkUpdate(SettingActivity.this, mContext, "120", getString(R.string.app_name), false);
                 break;
             case R.id.tvLogout:
                 dialogLogout();

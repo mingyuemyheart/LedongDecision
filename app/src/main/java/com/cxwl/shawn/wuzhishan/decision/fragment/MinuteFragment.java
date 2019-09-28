@@ -1,7 +1,6 @@
 package com.cxwl.shawn.wuzhishan.decision.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -9,6 +8,7 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -800,7 +800,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 
 		removeCityNames();
 		removePolylines();
-		CommonUtil.drawAllDistrict(getActivity(), aMap, 0xff72e5f3, cityNames, adcodePolylines);
+		CommonUtil.drawAllDistrict(getActivity(), aMap, adcodePolylines);
 	}
 
 	/**

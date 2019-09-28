@@ -3,6 +3,9 @@ package com.cxwl.shawn.wuzhishan.decision.dto;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WarningDto implements Parcelable {
 
 	public String name;// 预警全名
@@ -20,6 +23,8 @@ public class WarningDto implements Parcelable {
 	public String proCount;
 	public String cityCount;
 	public String disCount;
+	public String w2,w11;
+	public List<WarningDto> child = new ArrayList<>();
 
 	//预警统计
 	public String areaName;//省、市、县（区）对应的名称
@@ -49,7 +54,6 @@ public class WarningDto implements Parcelable {
 		dest.writeString(this.name);
 		dest.writeString(this.html);
 		dest.writeString(this.time);
-		dest.writeString(this.content);
 		dest.writeString(this.lat);
 		dest.writeString(this.lng);
 		dest.writeString(this.type);
@@ -62,6 +66,9 @@ public class WarningDto implements Parcelable {
 		dest.writeString(this.proCount);
 		dest.writeString(this.cityCount);
 		dest.writeString(this.disCount);
+		dest.writeString(this.w2);
+		dest.writeString(this.w11);
+		dest.writeTypedList(this.child);
 		dest.writeString(this.areaName);
 		dest.writeString(this.areaId);
 		dest.writeString(this.shortName);
@@ -81,7 +88,6 @@ public class WarningDto implements Parcelable {
 		this.name = in.readString();
 		this.html = in.readString();
 		this.time = in.readString();
-		this.content = in.readString();
 		this.lat = in.readString();
 		this.lng = in.readString();
 		this.type = in.readString();
@@ -94,6 +100,9 @@ public class WarningDto implements Parcelable {
 		this.proCount = in.readString();
 		this.cityCount = in.readString();
 		this.disCount = in.readString();
+		this.w2 = in.readString();
+		this.w11 = in.readString();
+		this.child = in.createTypedArrayList(WarningDto.CREATOR);
 		this.areaName = in.readString();
 		this.areaId = in.readString();
 		this.shortName = in.readString();

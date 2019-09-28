@@ -4,10 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.text.Editable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,14 +21,10 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationSet;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,16 +36,17 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
-import com.amap.api.maps.model.animation.ScaleAnimation;
 import com.cxwl.shawn.wuzhishan.decision.R;
-import com.cxwl.shawn.wuzhishan.decision.adapter.WarningAdapter;
 import com.cxwl.shawn.wuzhishan.decision.common.CONST;
+import com.cxwl.shawn.wuzhishan.decision.dto.ColumnData;
 import com.cxwl.shawn.wuzhishan.decision.dto.WarningDto;
+import com.cxwl.shawn.wuzhishan.decision.fragment.PdfListFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.WarningFragment;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
+import com.cxwl.shawn.wuzhishan.decision.view.MainViewPager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +54,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -63,24 +70,24 @@ import okhttp3.Response;
  * @author shawn_sun
  *
  */
-public class WarningActivity extends BaseActivity implements OnClickListener, OnMapClickListener,
+public class WarningActivity extends FragmentActivity implements OnClickListener, OnMapClickListener,
         OnMarkerClickListener, InfoWindowAdapter {
 	
 	private Context mContext;
-	private LinearLayout llBack;
-	private TextView tvTitle;
-	private ImageView ivList,ivRefresh;
+	private ImageView ivExpand;
+	private boolean isExpand = false;
 	private MapView mapView;//高德地图
 	private AMap aMap;//高德地图
+	private List<WarningDto> dataList = new ArrayList<>();
 	private Marker selectMarker;
-	private List<WarningDto> warningList = new ArrayList<>();
+	private LinearLayout llContainer,llContainer1;
+	private HorizontalScrollView hScrollView1;
+	private int width;
+	private float density;
+	private MainViewPager viewPager;
+	private List<Fragment> fragments = new ArrayList<>();
+	private ColumnData data;
 	private List<Marker> markers = new ArrayList<>();
-	private RelativeLayout reList;
-	private ListView cityListView;
-	private WarningAdapter cityAdapter;
-	private List<WarningDto> mList = new ArrayList<>();
-	private EditText etSearch;
-	private List<WarningDto> searchList = new ArrayList<>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,84 +96,41 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		mContext = this;
 		initAmap(savedInstanceState);
 		initWidget();
-		initListView();
 	}
 	
 	/**
 	 * 初始化控件
 	 */
 	private void initWidget() {
-		llBack = findViewById(R.id.llBack);
+		LinearLayout llBack = findViewById(R.id.llBack);
 		llBack.setOnClickListener(this);
-		tvTitle = findViewById(R.id.tvTitle);
-		ivList = findViewById(R.id.ivList);
-		ivList.setOnClickListener(this);
-		ivRefresh = findViewById(R.id.ivRefresh);
-		ivRefresh.setOnClickListener(this);
-		etSearch = findViewById(R.id.etSearch);
-		etSearch.addTextChangedListener(watcher);
-		reList = findViewById(R.id.reList);
+		TextView tvTitle = findViewById(R.id.tvTitle);
+		ivExpand = findViewById(R.id.ivExpand);
+		ivExpand.setOnClickListener(this);
+		llContainer = findViewById(R.id.llContainer);
+		llContainer1 = findViewById(R.id.llContainer1);
+		hScrollView1 = findViewById(R.id.hScrollView1);
+
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		width = dm.widthPixels;
+		density = dm.density;
 
 		String title = getIntent().getStringExtra(CONST.ACTIVITY_NAME);
 		if (!TextUtils.isEmpty(title)) {
 			tvTitle.setText(title);
 		}
 
-		OkHttpWarning();
+		data = getIntent().getParcelableExtra("data");
+		if (data != null) {
+			ColumnData dto = data.child.get(0);
+			if (TextUtils.equals(dto.showType, CONST.WARNING)) {
+				OkHttpWarning(dto.dataUrl);
+			}
+			initViewPager(data);
+		}
     }
 
-	private TextWatcher watcher = new TextWatcher() {
-		@Override
-		public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		}
-		@Override
-		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		}
-		@Override
-		public void afterTextChanged(Editable arg0) {
-			searchList.clear();
-			if (!TextUtils.isEmpty(arg0.toString().trim())) {
-				for (int i = 0; i < warningList.size(); i++) {
-					WarningDto data = warningList.get(i);
-					if (data.name.contains(arg0.toString().trim())) {
-						searchList.add(data);
-					}
-				}
-				mList.clear();
-				mList.addAll(searchList);
-				if (cityAdapter != null) {
-					cityAdapter.notifyDataSetChanged();
-				}
-			}else {
-				mList.clear();
-				mList.addAll(warningList);
-				if (cityAdapter != null) {
-					cityAdapter.notifyDataSetChanged();
-				}
-			}
-		}
-	};
-	
-	/**
-	 * 初始化listview
-	 */
-	private void initListView() {
-		cityListView = findViewById(R.id.listView);
-		cityAdapter = new WarningAdapter(mContext, mList, false);
-		cityListView.setAdapter(cityAdapter);
-		cityListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				WarningDto data = mList.get(arg2);
-				Intent intentDetail = new Intent(mContext, WarningDetailActivity.class);
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("data", data);
-				intentDetail.putExtras(bundle);
-				startActivity(intentDetail);
-			}
-		});
-	}
-	
 	/**
 	 * 初始化高德地图
 	 */
@@ -185,23 +149,25 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		aMap.setOnMapClickListener(this);
 		aMap.setOnMarkerClickListener(this);
 		aMap.setInfoWindowAdapter(this);
+
+		TextView tvMapNumber = findViewById(R.id.tvMapNumber);
+		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
 	}
-	
+
 	/**
 	 * 获取预警信息
 	 */
-	private void OkHttpWarning() {
-		removeMarkers(markers);
-		final String url = getIntent().getStringExtra(CONST.WEB_URL);
+	private void OkHttpWarning(final String url) {
+		if (TextUtils.isEmpty(url)) {
+			return;
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
 					@Override
 					public void onFailure(Call call, IOException e) {
-
 					}
-
 					@Override
 					public void onResponse(Call call, Response response) throws IOException {
 						if (!response.isSuccessful()) {
@@ -215,50 +181,48 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 									try {
 										JSONObject object = new JSONObject(result);
 										if (!object.isNull("w")) {
-											warningList.clear();
-											mList.clear();
 											JSONArray jsonArray = object.getJSONArray("w");
+											dataList.clear();
 											for (int i = 0; i < jsonArray.length(); i++) {
 												WarningDto dto = new WarningDto();
 												JSONObject itemObj = jsonArray.getJSONObject(i);
 												String w1 = itemObj.getString("w1");
-												String w2 = itemObj.getString("w2");
+												dto.w2 = itemObj.getString("w2");
 												String w4 = itemObj.getString("w4");
 												String w5 = itemObj.getString("w5");
 												String w6 = itemObj.getString("w6");
 												String w7 = itemObj.getString("w7");
 												String w8 = itemObj.getString("w8");
 												String w9 = itemObj.getString("w9");
-												String w11 = itemObj.getString("w11");
+												dto.w11 = itemObj.getString("w11");
 
-												dto.name = w1+w2+"发布"+w5+w7+"预警";
+												dto.name = w1+dto.w2+"发布"+w5+w7+"预警";
 												dto.time = w8;
 												dto.type = "icon_warning_"+w4;
 												dto.color = w6;
 												dto.content = w9;
 
-												String[] latLngs = getResources().getStringArray(R.array.wuzhishan_hotCity);
-												for (int j = 0; j < latLngs.length; j++) {
-													String[] itemArray = latLngs[j].split(",");
+												String[] names = getResources().getStringArray(R.array.district_name);
+												for (int j = 0; j < names.length; j++) {
+													String[] itemArray = names[j].split(",");
 													String value;
-													if (!TextUtils.isEmpty(w2)) {
-														value = w2;
+													if (!TextUtils.isEmpty(dto.w2)) {
+														value = dto.w2;
 													}else {
-														value = w11;
+														value = dto.w11;
 													}
-													if (value.contains(itemArray[1]) || itemArray[1].contains(value)) {
-														if (!TextUtils.isEmpty(itemArray[3]) && !TextUtils.isEmpty(itemArray[2])) {
-															dto.lat = itemArray[3];
-															dto.lng = itemArray[2];
+													if (value.contains(itemArray[0]) || itemArray[0].contains(value)) {
+														if (!TextUtils.isEmpty(itemArray[2]) && !TextUtils.isEmpty(itemArray[1])) {
+															dto.lat = itemArray[2];
+															dto.lng = itemArray[1];
 															break;
 														}
 													}
 												}
 
-												warningList.add(dto);
-												mList.add(dto);
+												dataList.add(dto);
 											}
-											addMarkersToMap(warningList, markers);
+											addMarkerAndDrawDistrict();
 										}
 									} catch (JSONException e) {
 										e.printStackTrace();
@@ -271,72 +235,120 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 			}
 		}).start();
 	}
-	
-	/**
-	 * 移除地图上指定marker
-	 * @param markers
-	 */
-	private void removeMarkers(List<Marker> markers) {
+
+	private void removeMarkers() {
 		for (int i = 0; i < markers.size(); i++) {
-			final Marker marker = markers.get(i);
-			ScaleAnimation animation = new ScaleAnimation(1,0,1,0);
-			animation.setInterpolator(new LinearInterpolator());
-			animation.setDuration(300);
-			marker.setAnimation(animation);
-			marker.startAnimation();
-			marker.setAnimationListener(new ScaleAnimation.AnimationListener() {
-				@Override
-				public void onAnimationStart() {
-				}
-				@Override
-				public void onAnimationEnd() {
-					marker.remove();
-				}
-			});
+			Marker marker = markers.get(i);
+			marker.remove();
 		}
 		markers.clear();
 	}
-	
-	/**
-	 * 在地图上添加marker
-	 */
-	private void addMarkersToMap(List<WarningDto> list, List<Marker> markerList) {
-		LatLngBounds.Builder builder = LatLngBounds.builder();
-		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		for (int i = 0; i < list.size(); i++) {
-			WarningDto dto = list.get(i);
-	    	MarkerOptions optionsTemp = new MarkerOptions();
-	    	optionsTemp.title(dto.lat);
-	    	optionsTemp.snippet(dto.lng);
-	    	optionsTemp.anchor(0.5f, 0.5f);
-	    	if (!TextUtils.isEmpty(dto.lat) && !TextUtils.isEmpty(dto.lng)) {
-	    		optionsTemp.position(new LatLng(Double.valueOf(dto.lat), Double.valueOf(dto.lng)));
-				builder.include(new LatLng(Double.parseDouble(dto.lat), Double.parseDouble(dto.lng)));
-	    	}
-	    	
-	    	View view = inflater.inflate(R.layout.marker_warning_icon, null);
-	    	ImageView ivMarker = view.findViewById(R.id.ivMarker);
-	    	
-	    	Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+dto.type+dto.color+CONST.imageSuffix);
+
+	private void addMarkerAndDrawDistrict() {
+		removeMarkers();
+		for (int i = 0; i < dataList.size(); i++) {
+			WarningDto dto = dataList.get(i);
+			if (TextUtils.isEmpty(dto.lat) || TextUtils.isEmpty(dto.lng)) {
+				return;
+			}
+			MarkerOptions options = new MarkerOptions();
+			if (!TextUtils.isEmpty(dto.w2)) {
+				options.title(dto.w2);
+			}else {
+				options.title(dto.w11);
+			}
+			options.position(new LatLng(Double.parseDouble(dto.lat), Double.parseDouble(dto.lng)));
+
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View markerView = inflater.inflate(R.layout.marker_warning_icon, null);
+			ImageView ivMarker = markerView.findViewById(R.id.ivMarker);
+
+			Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+dto.type+dto.color+CONST.imageSuffix);
 			if (bitmap == null) {
 				bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+"default"+dto.color+CONST.imageSuffix);
 			}
-	    	ivMarker.setImageBitmap(bitmap);
-	    	optionsTemp.icon(BitmapDescriptorFactory.fromView(view));
-	    	
-			Marker marker = aMap.addMarker(optionsTemp);
-			markerList.add(marker);
-			ScaleAnimation animation = new ScaleAnimation(0,1,0,1);
-			animation.setInterpolator(new LinearInterpolator());
-			animation.setDuration(300);
-			marker.setAnimation(animation);
-			marker.startAnimation();
+			ivMarker.setImageBitmap(bitmap);
+			LayoutParams params = ivMarker.getLayoutParams();
+			if ("琼州海峡".contains(options.getTitle()) || "本岛西部".contains(options.getTitle()) || "本岛南部".contains(options.getTitle())
+					|| "本岛东部".contains(options.getTitle()) || "北部湾北部".contains(options.getTitle()) || "北部湾南部".contains(options.getTitle())
+					|| "中沙附近".contains(options.getTitle()) || "西沙附近".contains(options.getTitle()) || "南沙附近".contains(options.getTitle())) {
+				params.width = (int) CommonUtil.dip2px(getApplicationContext(), 30);
+				params.height = (int) CommonUtil.dip2px(getApplicationContext(), 30);
+			}else {
+				params.width = (int) CommonUtil.dip2px(getApplicationContext(), 20);
+				params.height = (int) CommonUtil.dip2px(getApplicationContext(), 20);
+			}
+			ivMarker.setLayoutParams(params);
+			options.icon(BitmapDescriptorFactory.fromView(markerView));
+			Marker marker = aMap.addMarker(options);
+			markers.add(marker);
 		}
 
-		aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+		Collections.sort(dataList, new Comparator<WarningDto>() {
+			@Override
+			public int compare(WarningDto a, WarningDto b) {
+				return a.color.compareTo(b.color);
+			}
+		});
 
+		Map<String, WarningDto> map = new HashMap<>();
+		int color = 0;
+		for (int i = 0; i < dataList.size(); i++) {
+			WarningDto data = dataList.get(i);
+			String name = data.w2;
+			if (TextUtils.isEmpty(data.w2)) {
+				name = data.w11;
+			}
+			if (map.containsKey(name)) {
+				String c = data.color;
+				if (!TextUtils.isEmpty(c)) {
+					if (color <= Integer.valueOf(c)) {
+						color = Integer.valueOf(c);
+						map.put(name, data);
+					}
+				}
+			}else {
+				map.put(name, data);
+				color = 0;
+			}
+		}
+
+		for (Map.Entry<String, WarningDto> entry : map.entrySet()) {
+//			JsonMap dto = map.get(map.keySet().iterator().next());
+			WarningDto dto = entry.getValue();
+			String c = dto.color;
+			if (!TextUtils.isEmpty(c)) {
+				int color2 = 0;
+				if (TextUtils.equals(c, "01")) {
+					color2 = getResources().getColor(R.color.blue);
+				}else if (TextUtils.equals(c, "02")) {
+					color2 = getResources().getColor(R.color.yellow);
+				}else if (TextUtils.equals(c, "03")) {
+					color2 = getResources().getColor(R.color.orange);
+				}else if (TextUtils.equals(c, "04")) {
+					color2 = getResources().getColor(R.color.red);
+				}
+				String districtName = dto.w2;
+				if (!TextUtils.isEmpty(districtName)) {
+					if (districtName.contains("陵水")) {
+						districtName = "陵水黎族自治县";
+					}else if (districtName.contains("昌江")) {
+						districtName = "昌江黎族自治县";
+					}else if (districtName.contains("白沙")) {
+						districtName = "白沙黎族自治县";
+					}else if (districtName.contains("琼中")) {
+						districtName = "琼中黎族苗族自治县";
+					}else if (districtName.contains("乐东")) {
+						districtName = "乐东黎族自治县";
+					}else if (districtName.contains("保亭")) {
+						districtName = "保亭黎族苗族自治县";
+					}
+					CommonUtil.drawWarningDistrict(getApplicationContext(), aMap, districtName, color2);
+				}
+			}
+		}
 	}
-	
+
 	@Override
 	public void onMapClick(LatLng arg0) {
 		if (selectMarker != null) {
@@ -350,56 +362,241 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		marker.showInfoWindow();
 		return true;
 	}
-	
+
 	@Override
 	public View getInfoContents(final Marker marker) {
 		LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.marker_info_warning_icon, null);
-		ListView mListView;
-		WarningAdapter mAdapter;
-		final List<WarningDto> infoList = new ArrayList<>();
-		
-		addInfoList(warningList, marker, infoList);
-		
-		mListView = view.findViewById(R.id.listView);
-		mAdapter = new WarningAdapter(mContext, infoList, true);
-		mListView.setAdapter(mAdapter);
-		LayoutParams params = mListView.getLayoutParams();
-		if (infoList.size() == 1) {
-			params.height = (int) CommonUtil.dip2px(mContext, 50);
-		}else if (infoList.size() == 2) {
-			params.height = (int) CommonUtil.dip2px(mContext, 100);
-		}else if (infoList.size() > 2){
-			params.height = (int) CommonUtil.dip2px(mContext, 150);
-		}
-		mListView.setLayoutParams(params);
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				intentDetail(infoList.get(arg2));
+		View view = inflater.inflate(R.layout.marker_warning_info, null);
+		TextView tvName = view.findViewById(R.id.tvName);
+		tvName.setText(marker.getTitle());
+
+		LinearLayout llContainer = view.findViewById(R.id.llContainer);
+
+		final List<WarningDto> tempList = new ArrayList<>();
+		for (int i = 0; i < dataList.size(); i++) {
+			WarningDto dto = dataList.get(i);
+			String title = dto.w2;
+			if (TextUtils.isEmpty(title)) {
+				title = dto.w11;
 			}
-		});
+			if (title.contains(marker.getTitle()) || marker.getTitle().contains(title)) {
+				tempList.add(dto);
+			}
+		}
+
+		llContainer.removeAllViews();
+		for (int i = 0; i < tempList.size(); i++) {
+			final WarningDto data = tempList.get(i);
+			ImageView imageView = new ImageView(getApplicationContext());
+			Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+data.type+data.color+CONST.imageSuffix);
+			if (bitmap == null) {
+				bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+"default"+data.color+CONST.imageSuffix);
+			}
+			imageView.setImageBitmap(bitmap);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)CommonUtil.dip2px(getApplicationContext(), 30), (int)CommonUtil.dip2px(getApplicationContext(), 30));
+			params.setMargins(0, 0, 15, 0);
+			imageView.setLayoutParams(params);
+			imageView.setTag(i+"");
+			llContainer.addView(imageView);
+
+			imageView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(mContext, WarningDetailActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putParcelable("data", data);
+					intent.putExtras(bundle);
+					startActivity(intent);
+				}
+			});
+		}
+
 		return view;
 	}
-	
-	private void intentDetail(WarningDto data) {
-		Intent intentDetail = new Intent(mContext, WarningDetailActivity.class);
-		intentDetail.putExtra("data", data);
-		startActivity(intentDetail);
-	}
-	
-	private void addInfoList(List<WarningDto> list, Marker marker, List<WarningDto> infoList) {
-		for (int i = 0; i < list.size(); i++) {
-			WarningDto dto = list.get(i);
-			if (TextUtils.equals(marker.getTitle(), dto.lat) && TextUtils.equals(marker.getSnippet(), dto.lng)) {
-				infoList.add(dto);
-			}
-		}
-	}
-	
+
 	@Override
 	public View getInfoWindow(Marker arg0) {
 		return null;
+	}
+
+	/**
+	 * 初始化viewPager
+	 */
+	private void initViewPager(ColumnData data) {
+		List<ColumnData> columnList = data.child;
+		int columnSize = columnList.size();
+		if (columnSize <= 1) {
+			llContainer.setVisibility(View.GONE);
+			llContainer1.setVisibility(View.GONE);
+		}
+		llContainer.removeAllViews();
+		llContainer1.removeAllViews();
+		for (int i = 0; i < columnSize; i++) {
+			ColumnData dto = columnList.get(i);
+
+			TextView tvName = new TextView(mContext);
+			tvName.setGravity(Gravity.CENTER);
+			tvName.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+			tvName.setPadding(0, (int)(density*10), 0, (int)(density*10));
+			tvName.setOnClickListener(new MyOnClickListener(i));
+			if (i == 0) {
+				tvName.setTextColor(getResources().getColor(R.color.colorPrimary));
+			}else {
+				tvName.setTextColor(getResources().getColor(R.color.text_color3));
+			}
+			if (!TextUtils.isEmpty(dto.name)) {
+				tvName.setText(dto.name);
+			}
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params.weight = 1.0f;
+			if (columnSize == 1) {
+				params.width = width;
+			}else if (columnSize == 2) {
+				params.width = width/2;
+			}else if (columnSize == 3) {
+				params.width = width/3;
+			}else {
+				params.width = width/4;
+			}
+			tvName.setLayoutParams(params);
+			llContainer.addView(tvName, i);
+
+			TextView tvBar = new TextView(mContext);
+			tvBar.setGravity(Gravity.CENTER);
+			tvBar.setOnClickListener(new MyOnClickListener(i));
+			if (i == 0) {
+				tvBar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+			}else {
+				tvBar.setBackgroundColor(getResources().getColor(R.color.transparent));
+			}
+			LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			params1.weight = 1.0f;
+			if (columnSize == 1) {
+				params1.width = width;
+			}else if (columnSize == 2) {
+				params1.width = width/2-(int)(density*20);
+			}else if (columnSize == 3) {
+				params1.width = width/3-(int)(density*20);
+			}else {
+				params1.width = width/4-(int)(density*20);
+			}
+			params1.height = (int) (density*2);
+			params1.setMargins((int)(density*10), 0, (int)(density*10), 0);
+			tvBar.setLayoutParams(params1);
+			llContainer1.addView(tvBar, i);
+
+			Fragment fragment = new WarningFragment();
+			if (TextUtils.equals(dto.showType, CONST.DOCUMENT)) {
+				fragment = new PdfListFragment();
+			}else if (TextUtils.equals(dto.showType, CONST.WARNING)) {
+				fragment = new WarningFragment();
+			}
+			Bundle bundle = new Bundle();
+			bundle.putString(CONST.WEB_URL, dto.dataUrl);
+			fragment.setArguments(bundle);
+			fragments.add(fragment);
+		}
+
+		viewPager = findViewById(R.id.viewPager);
+		viewPager.setSlipping(true);//设置ViewPager是否可以滑动
+		viewPager.setOffscreenPageLimit(fragments.size());
+		viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
+		viewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+	}
+
+	public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
+		@Override
+		public void onPageSelected(int arg0) {
+			if (llContainer != null) {
+				for (int i = 0; i < llContainer.getChildCount(); i++) {
+					TextView tvName = (TextView) llContainer.getChildAt(i);
+					if (i == arg0) {
+						tvName.setTextColor(getResources().getColor(R.color.colorPrimary));
+					}else {
+						tvName.setTextColor(getResources().getColor(R.color.text_color3));
+					}
+				}
+
+				if (llContainer.getChildCount() > 4) {
+					hScrollView1.smoothScrollTo(width/4*arg0, 0);
+				}
+
+			}
+
+			if (llContainer1 != null) {
+				for (int i = 0; i < llContainer1.getChildCount(); i++) {
+					TextView tvBar = (TextView) llContainer1.getChildAt(i);
+					if (i == arg0) {
+						tvBar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+					}else {
+						tvBar.setBackgroundColor(getResources().getColor(R.color.transparent));
+					}
+				}
+			}
+
+			ColumnData dto = data.child.get(arg0);
+			if (TextUtils.equals(dto.showType, CONST.WARNING)) {
+				OkHttpWarning(dto.dataUrl);
+			}
+
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int arg0) {
+		}
+	}
+
+	/**
+	 * 头标点击监听
+	 * @author shawn_sun
+	 */
+	private class MyOnClickListener implements View.OnClickListener {
+		private int index;
+
+		public MyOnClickListener(int i) {
+			index = i;
+		}
+
+		@Override
+		public void onClick(View v) {
+			if (viewPager != null) {
+				viewPager.setCurrentItem(index, true);
+			}
+		}
+	}
+
+	/**
+	 * @ClassName: MyPagerAdapter
+	 * @Description: TODO填充ViewPager的数据适配器
+	 * @author Panyy
+	 * @date 2013 2013年11月6日 下午2:37:47
+	 *
+	 */
+	private class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+		private MyPagerAdapter(FragmentManager fm) {
+			super(fm);
+			notifyDataSetChanged();
+		}
+
+		@Override
+		public int getCount() {
+			return fragments.size();
+		}
+
+		@Override
+		public Fragment getItem(int arg0) {
+			return fragments.get(arg0);
+		}
+
+		@Override
+		public int getItemPosition(Object object) {
+			return PagerAdapter.POSITION_NONE;
+		}
 	}
 	
 	/**
@@ -409,7 +606,7 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 		//列表动画
 		AnimationSet animationSet = new AnimationSet(true);
 		TranslateAnimation animation;
-		if (flag == false) {
+		if (!flag) {
 			animation = new TranslateAnimation(
 					Animation.RELATIVE_TO_SELF,0f,
 					Animation.RELATIVE_TO_SELF,0f,
@@ -441,45 +638,25 @@ public class WarningActivity extends BaseActivity implements OnClickListener, On
 	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (reList.getVisibility() == View.VISIBLE) {
-				startAnimation(true, reList);
-				reList.setVisibility(View.GONE);
-				ivList.setImageResource(R.drawable.iv_warning_list_unselected);
-				return false;
-			}else {
-				finish();
-			}
-		}
-		return super.onKeyDown(keyCode, event);
-	}
-	
-	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.llBack:
-			if (reList.getVisibility() == View.VISIBLE) {
-				startAnimation(true, reList);
-				reList.setVisibility(View.GONE);
-				ivList.setImageResource(R.drawable.iv_warning_list_unselected);
-			}else {
-				finish();
-			}
+			finish();
 			break;
-		case R.id.ivList:
-			if (reList.getVisibility() == View.GONE) {
-				startAnimation(false, reList);
-				reList.setVisibility(View.VISIBLE);
-				ivList.setImageResource(R.drawable.iv_warning_list_selected);
+		case R.id.ivExpand:
+			LayoutParams params = mapView.getLayoutParams();
+			if (!isExpand) {
+				ivExpand.setImageResource(R.drawable.iv_collose);
+				params.width = LayoutParams.MATCH_PARENT;
+				params.height = LayoutParams.MATCH_PARENT;
+				isExpand = true;
 			}else {
-				startAnimation(true, reList);
-				reList.setVisibility(View.GONE);
-				ivList.setImageResource(R.drawable.iv_warning_list_unselected);
+				ivExpand.setImageResource(R.drawable.iv_expand);
+				params.width = LayoutParams.MATCH_PARENT;
+				params.height = (int) CommonUtil.dip2px(getApplicationContext(), 300);
+				isExpand = false;
 			}
-			break;
-		case R.id.ivRefresh:
-			OkHttpWarning();
+			mapView.setLayoutParams(params);
 			break;
 
 		default:

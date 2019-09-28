@@ -13,8 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class DBManager {
+
 	private final int BUFFER_SIZE = 400000;
-	private static final String PACKAGE_NAME = "com.cxwl.shawn.wuzhishan.decision";
+	private static final String PACKAGE_NAME = "com.cxwl.shawn.hainan.nq";
 	public static final String DB_NAME = "stations1.db";
 	public static final String TABLE_NAME1 = "SITES";//站点监测站表名称
 	public static final String TABLE_NAME2 = "WARNING_GUIDE";//预警指南表名称

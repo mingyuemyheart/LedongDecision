@@ -22,15 +22,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvCity"
-                android:padding="10dp"
+            <LinearLayout
+                android:id="@+id/llLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="城市查询"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_3"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/ivLocation"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/iv_location_white"/>
+
+                <TextView
+                    android:id="@+id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/level_4"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -55,42 +68,27 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/divider1"
+            android:layout_below="@+id/reTitle"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#30ffffff"/>
+
         <RelativeLayout
             android:id="@+id/reFact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/reTitle"
+            android:layout_below="@+id/divider1"
+            android:paddingTop="20dp"
             android:paddingBottom="20dp"
+            android:layout_centerInParent="true"
             android:visibility="invisible">
-
-            <LinearLayout
-                android:id="@+id/llLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:id="@+id/ivLocation"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/iv_location_white"/>
-
-                <TextView
-                    android:id="@+id/tvLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/level_3"/>
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/llFact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/llLocation"
                 android:layout_marginTop="30dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -168,8 +166,13 @@
 
                     </LinearLayout>
 
-
                 </RelativeLayout>
+
+                <TextView
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="10dp"
+                    android:background="#a0ffffff"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -189,6 +192,7 @@
                         android:id="@+id/tvWind"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
                         android:textColor="@color/white"
                         android:textSize="15dp"/>
 
@@ -196,6 +200,7 @@
                         android:id="@+id/tvHumidity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
                         android:textColor="@color/white"
                         android:textSize="15dp"/>
 
@@ -203,6 +208,7 @@
                         android:id="@+id/tvAqi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
                         android:textColor="@color/white"
                         android:textSize="15dp"/>
 
@@ -216,11 +222,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/llFact"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:background="@drawable/corner_blue"
                 android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
                 android:text="15天预报>"
                 android:textColor="@color/white"
                 android:textSize="@dimen/level_4"/>
@@ -230,7 +238,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvFifth"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:textColor="#c0ffffff"
                 android:textSize="@dimen/level_4"/>

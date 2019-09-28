@@ -1,7 +1,6 @@
 package com.cxwl.shawn.wuzhishan.decision.fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,8 +63,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	private TextView tvTime,tvPercent;
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("MM月dd日HH时mm分");
-	private String id,baseUrl,index;
-	private MyBroadCastReceiver mReceiver;
+	private String columnId;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,25 +74,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		initBroadCast();
 		initWidget(view);
-	}
-
-	private void initBroadCast() {
-		this.index = getArguments().getString("index");
-		mReceiver = new MyBroadCastReceiver();
-		IntentFilter intentFilter = new IntentFilter();
-		intentFilter.addAction(RadarFragment.class.getName()+index);
-		getActivity().registerReceiver(mReceiver, intentFilter);
-	}
-
-	private class MyBroadCastReceiver extends BroadcastReceiver {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (TextUtils.equals(intent.getAction(), RadarFragment.class.getName()+index)) {
-				OkHttpList(baseUrl);
-			}
-		}
 	}
 
 	/**
@@ -113,13 +94,9 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 
 		mRadarManager = new RadarManager(getActivity());
 
-		this.id = getArguments().getString(CONST.COLUMN_ID);
-		this.baseUrl = getArguments().getString(CONST.WEB_URL);
-
-		//默认第一个fragment加载
-		if (TextUtils.equals(index, "0")) {
-			OkHttpList(baseUrl);
-		}
+		this.columnId = getArguments().getString(CONST.COLUMN_ID);
+		String baseUrl = getArguments().getString(CONST.WEB_URL);
+		OkHttpList(baseUrl);
 	}
 	
 	private OnSeekBarChangeListener seekbarListener = new OnSeekBarChangeListener() {
@@ -176,7 +153,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 											RadarDto dto = new RadarDto();
 											dto.url = itemObj.getString("i");
 											dto.time = itemObj.getString("n");
-											dto.id = id;
+											dto.id = columnId;
 											radarList.add(dto);
 										}
 
@@ -204,7 +181,7 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 			mRadarThread = null;
 		}
 		if (list.size() > 0) {
-			mRadarManager.loadImagesAsyn(list, this, id);
+			mRadarManager.loadImagesAsyn(list, this, columnId);
 		}
 	}
 	
@@ -413,9 +390,6 @@ public class RadarFragment extends Fragment implements OnClickListener, RadarMan
 		if (mRadarThread != null) {
 			mRadarThread.cancel();
 			mRadarThread = null;
-		}
-		if (mReceiver != null) {
-			getActivity().unregisterReceiver(mReceiver);
 		}
 	}
 

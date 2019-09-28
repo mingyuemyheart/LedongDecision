@@ -385,10 +385,11 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.setOnCameraChangeListener(this);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
+		aMap.showMapText(false);
 		aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
 			@Override
 			public void onMapLoaded() {
-				aMap.showMapText(false);
+				drawCityNameAndDistrict();
 			}
 		});
 
@@ -420,6 +421,61 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 			.image(BitmapDescriptorFactory.fromResource(R.drawable.bg_empty))
 			.transparency(0.0f));
 		aMap.runOnDrawFrame();
+
+	}
+
+	/**
+	 * 绘制城市名称及行政边界
+	 */
+	private void drawCityNameAndDistrict() {
+		if (aMap == null) {
+			return;
+		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				removeCityNames();
+				removePolylines();
+				String result = CommonUtil.getFromAssets(mContext, "json/all_citys.json");
+				if (!TextUtils.isEmpty(result)) {
+					try {
+						JSONObject obj = new JSONObject(result);
+						if (!obj.isNull("districts")) {
+							JSONArray array = obj.getJSONArray("districts");
+							for (int i = 0; i < array.length(); i++) {
+								JSONObject itemObj = array.getJSONObject(i);
+								ShawnRainDto dto = new ShawnRainDto();
+								if (!itemObj.isNull("name")) {
+									String name = itemObj.getString("name");
+									if (name.contains("五指山")) {
+										dto.cityName = name.substring(0, 3);
+									}else {
+										dto.cityName = name.substring(0, 2);
+									}
+								}
+								if (!itemObj.isNull("center")) {
+									String[] latLng = itemObj.getString("center").split(",");
+									dto.lng = Double.valueOf(latLng[0]);
+									dto.lat = Double.valueOf(latLng[1]);
+								}
+
+								TextOptions options = new TextOptions();
+								options.position(new LatLng(dto.lat+0.05, dto.lng));
+								options.fontColor(Color.BLACK);
+								options.fontSize(20);
+								options.text(dto.cityName);
+								options.backgroundColor(Color.TRANSPARENT);
+								aMap.addText(options);
+							}
+
+							CommonUtil.drawAllDistrict(mContext, aMap, adcodePolylines);
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
 
 	}
 
@@ -547,24 +603,24 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 		LatLng leftlatlng = aMap.getProjection().fromScreenLocation(leftPoint);
 		LatLng rightLatlng = aMap.getProjection().fromScreenLocation(rightPoint);
 
-		if (listView != null) {
-			if (listView.getVisibility() == View.VISIBLE) {
-				if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
-						|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 9.5f) {
-					aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.0f));
-				}
-			}else {
-				if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
-						|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 10.0f) {
-					aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.5f));
-				}
-			}
-		}else {
-			if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
-					|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 9.5f) {
-				aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.0f));
-			}
-		}
+//		if (listView != null) {
+//			if (listView.getVisibility() == View.VISIBLE) {
+//				if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
+//						|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 9.5f) {
+//					aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.0f));
+//				}
+//			}else {
+//				if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
+//						|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 10.0f) {
+//					aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.5f));
+//				}
+//			}
+//		}else {
+//			if (leftlatlng.latitude <= 18.000322917671003 || rightLatlng.latitude >= 19.185356618508102 || leftlatlng.longitude <= 109.13228809833528
+//					|| rightLatlng.longitude >= 109.88498568534852 || arg0.zoom < 9.5f) {
+//				aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10.0f));
+//			}
+//		}
 	}
 
 	/**
@@ -840,10 +896,6 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 	 */
 	private void drawLayers(String result) {
 		drawFactPolygons(result);
-
-		removeCityNames();
-		removePolylines();
-		CommonUtil.drawAllDistrict(mContext, aMap, 0xff72e5f3, cityNames, adcodePolylines);
 	}
 
 	/**

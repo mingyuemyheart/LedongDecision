@@ -1,11 +1,12 @@
 package com.cxwl.shawn.wuzhishan.decision.activity;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -13,7 +14,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -22,7 +22,14 @@ import android.widget.TextView;
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.common.CONST;
 import com.cxwl.shawn.wuzhishan.decision.dto.ColumnData;
+import com.cxwl.shawn.wuzhishan.decision.fragment.DisasterMonitorDayFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.DisasterMonitorWeekFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.EcologicalCropFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.MinuteFragment;
 import com.cxwl.shawn.wuzhishan.decision.fragment.PdfListFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.ProvinceFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.RadarFragment;
+import com.cxwl.shawn.wuzhishan.decision.fragment.RiceRaiseFragment;
 import com.cxwl.shawn.wuzhishan.decision.view.MainViewPager;
 
 import java.util.ArrayList;
@@ -33,7 +40,7 @@ import java.util.List;
  * @author shawn_sun
  *
  */
-public class PdfTitleActivity extends BaseActivity implements OnClickListener {
+public class PdfTitleActivity extends FragmentActivity implements OnClickListener {
 	
 	private Context mContext;
 	private LinearLayout llBack,llContainer,llContainer1;
@@ -143,18 +150,47 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 					tvBar.setLayoutParams(params1);
 					llContainer1.addView(tvBar, i);
 
-					PdfListFragment fragment = new PdfListFragment();
+					Fragment fragment = new PdfListFragment();
+					if (TextUtils.equals(dto.showType, CONST.DOCUMENT)) {
+						fragment = new PdfListFragment();
+					}else if (TextUtils.equals(dto.id, "673")) {
+						//生态气象-水稻长势
+						fragment = new RiceRaiseFragment();
+					}else if (TextUtils.equals(dto.id, "674")) {
+						//生态气象-作物适应性
+						fragment = new EcologicalCropFragment();
+					}else if (TextUtils.equals(dto.id, "650")) {
+						//全省预报-市县预报
+						fragment = new ProvinceFragment();
+					}else if (TextUtils.equals(dto.id, "651")) {
+						//全省预报-2小时降水预测
+						fragment = new MinuteFragment();
+					}else if (TextUtils.equals(dto.id, "671")) {
+						//灾害监测-逐日监测
+						fragment = new DisasterMonitorDayFragment();
+					}else if (TextUtils.equals(dto.id, "672")) {
+						//灾害监测-逐周监测
+						fragment = new DisasterMonitorWeekFragment();
+					}else if (TextUtils.equals(dto.id, "641") || TextUtils.equals(dto.id, "642")) {
+						//卫星云图
+						fragment = new RadarFragment();
+					}
 					Bundle bundle = new Bundle();
 					bundle.putString(CONST.WEB_URL, dto.dataUrl);
+					bundle.putString(CONST.COLUMN_ID, dto.id);
 					fragment.setArguments(bundle);
 					fragments.add(fragment);
 				}
 
 				viewPager = findViewById(R.id.viewPager);
-				viewPager.setSlipping(true);//设置ViewPager是否可以滑动
+				if (TextUtils.equals(data.id, "649")) {//全省预报
+					viewPager.setSlipping(false);
+				}else {
+					viewPager.setSlipping(true);
+				}
 				viewPager.setOffscreenPageLimit(fragments.size());
 				viewPager.setOnPageChangeListener(new MyOnPageChangeListener());
-				viewPager.setAdapter(new MyPagerAdapter());
+				viewPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 			}
 		}
 	}
@@ -218,7 +254,7 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * @ClassName: MyPagerAdapter
 	 * @Description: TODO填充ViewPager的数据适配器
@@ -226,10 +262,11 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 	 * @date 2013 2013年11月6日 下午2:37:47
 	 *
 	 */
-	private class MyPagerAdapter extends PagerAdapter {
-		@Override
-		public boolean isViewFromObject(View arg0, Object arg1) {
-			return arg0 == arg1;
+	private class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+		private MyPagerAdapter(FragmentManager fm) {
+			super(fm);
+			notifyDataSetChanged();
 		}
 
 		@Override
@@ -238,30 +275,13 @@ public class PdfTitleActivity extends BaseActivity implements OnClickListener {
 		}
 
 		@Override
-		public void destroyItem(View container, int position, Object object) {
-			((ViewPager) container).removeView(fragments.get(position).getView());
+		public Fragment getItem(int arg0) {
+			return fragments.get(arg0);
 		}
 
 		@Override
-		public Object instantiateItem(ViewGroup container, int position) {
-			Fragment fragment = fragments.get(position);
-			if (!fragment.isAdded()) { // 如果fragment还没有added
-				FragmentTransaction ft = getFragmentManager().beginTransaction();
-				ft.add(fragment, fragment.getClass().getSimpleName());
-				ft.commit();
-				/**
-				 * 在用FragmentTransaction.commit()方法提交FragmentTransaction对象后
-				 * 会在进程的主线程中,用异步的方式来执行。
-				 * 如果想要立即执行这个等待中的操作,就要调用这个方法(只能在主线程中调用)。
-				 * 要注意的是,所有的回调和相关的行为都会在这个调用中被执行完成,因此要仔细确认这个方法的调用位置。
-				 */
-				getFragmentManager().executePendingTransactions();
-			}
-
-			if (fragment.getView().getParent() == null) {
-				container.addView(fragment.getView()); // 为viewpager增加布局
-			}
-			return fragment.getView();
+		public int getItemPosition(Object object) {
+			return PagerAdapter.POSITION_NONE;
 		}
 	}
 	

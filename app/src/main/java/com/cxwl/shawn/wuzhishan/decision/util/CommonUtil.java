@@ -12,6 +12,7 @@ import android.text.TextUtils;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.maps.model.Text;
@@ -149,61 +150,101 @@ public class CommonUtil {
     }
 
     /**
-     * 绘制行政区划
+     * 回执区域
      * @param context
      * @param aMap
      */
-    public static void drawAllDistrict(Context context, final AMap aMap, final int color, final List<Text> cityNames, final List<Polyline> polylines) {
+    public static void drawAllDistrict(Context context, AMap aMap, List<Polyline> polyLineList) {
         if (aMap == null) {
             return;
         }
-
-        String[] stations = context.getResources().getStringArray(R.array.wuzhishan_hotCity);
-        for (int i = 0; i < stations.length; i++) {
-            String[] value = stations[i].split(",");
-            CityDto dto = new CityDto();
-            dto.cityId = value[0];
-            if (TextUtils.equals(dto.cityId, "101310222")) {
-                dto.disName = value[1];
-                dto.lat = Double.valueOf(value[3]);
-                dto.lng = Double.valueOf(value[2]);
-                TextOptions options = new TextOptions();
-                options.position(new LatLng(dto.lat, dto.lng));
-                options.fontColor(Color.BLACK);
-                options.fontSize(25);
-                options.text(dto.disName);
-                options.backgroundColor(Color.TRANSPARENT);
-                Text text = aMap.addText(options);
-                cityNames.add(text);
-            }
-        }
-
-        final String wuzhishan = CommonUtil.getFromAssets(context, "json/469001.json");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (!TextUtils.isEmpty(wuzhishan)) {
-                    try {
-                        JSONArray array = new JSONArray(wuzhishan);
-                        for (int i = 0; i < array.length(); i++) {
-                            JSONArray itemArray = array.getJSONArray(i);
-                            PolylineOptions polylineOption = new PolylineOptions();
-                            polylineOption.width(3).color(color);
-                            for (int m = 0; m < itemArray.length(); m++) {
-                                JSONObject itemObj = itemArray.getJSONObject(m);
-                                double lat = itemObj.getDouble("lat");
-                                double lng = itemObj.getDouble("lng");
-                                polylineOption.add(new LatLng(lat, lng));
-                                Polyline polyLine = aMap.addPolyline(polylineOption);
-                                polylines.add(polyLine);
-                            }
+        String result = CommonUtil.getFromAssets(context, "json/hnGeo.json");
+        if (!TextUtils.isEmpty(result)) {
+            try {
+                JSONObject obj = new JSONObject(result);
+                if (!obj.isNull("polyline")) {
+                    String[] polylines = obj.getString("polyline").split("\\|");
+                    for (int i = 0; i < polylines.length; i++) {
+                        PolylineOptions polylineOption = new PolylineOptions();
+                        polylineOption.width(2).color(0xff999999);
+                        String[] array = polylines[i].split(";");
+                        for (int j = 0; j < array.length; j++) {
+                            String[] latLng = array[j].split(",");
+                            double lng = Double.valueOf(latLng[0]);
+                            double lat = Double.valueOf(latLng[1]);
+                            polylineOption.add(new LatLng(lat, lng));
+                            polylineOption.zIndex(1000);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        Polyline polyLine = aMap.addPolyline(polylineOption);
+                        polyLineList.add(polyLine);
                     }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        }).start();
+        }
+    }
+
+    /**
+     * 回执区域
+     * @param context
+     * @param aMap
+     */
+    public static void drawWarningDistrict(Context context, AMap aMap, String cityName, int color) {
+        if (aMap == null) {
+            return;
+        }
+        String result = CommonUtil.getFromAssets(context, "json/hai_nan.geo.json");
+        if (!TextUtils.isEmpty(result)) {
+            try {
+                JSONObject obj = new JSONObject(result);
+                JSONArray array = obj.getJSONArray("features");
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject itemObj = array.getJSONObject(i);
+
+                    JSONObject properties = itemObj.getJSONObject("properties");
+                    String name = properties.getString("name");
+                    if (TextUtils.equals(cityName, name)) {
+//						JSONArray cp = properties.getJSONArray("cp");
+//						for (int m = 0; m < cp.length(); m++) {
+//							double lat = cp.getDouble(1);
+//							double lng = cp.getDouble(0);
+//
+//							LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//							View view = inflater.inflate(R.layout.rainfall_fact_marker_view2, null);
+//							TextView tvName = (TextView) view.findViewById(R.id.tvName);
+//							if (!TextUtils.isEmpty(name)) {
+//								tvName.setText(name);
+//							}
+//							MarkerOptions options = new MarkerOptions();
+//							options.anchor(0.5f, 0.5f);
+//							options.position(new LatLng(lat, lng));
+//							options.icon(BitmapDescriptorFactory.fromView(view));
+//							aMap.addMarker(options);
+//						}
+
+                        JSONObject geometry = itemObj.getJSONObject("geometry");
+                        JSONArray coordinates = geometry.getJSONArray("coordinates");
+                        for (int m = 0; m < coordinates.length(); m++) {
+                            JSONArray array2 = coordinates.getJSONArray(m);
+                            PolygonOptions polylineOption = new PolygonOptions();
+                            polylineOption.fillColor(color);
+                            polylineOption.strokeColor(color).strokeWidth(6);
+                            for (int j = 0; j < array2.length(); j++) {
+                                JSONArray itemArray = array2.getJSONArray(j);
+                                double lng = itemArray.getDouble(0);
+                                double lat = itemArray.getDouble(1);
+                                polylineOption.add(new LatLng(lat, lng));
+                            }
+                            aMap.addPolygon(polylineOption);
+                        }
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**

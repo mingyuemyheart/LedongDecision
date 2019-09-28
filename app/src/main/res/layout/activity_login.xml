@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-    <ImageView
-        android:id="@+id/ivBg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg_login"
-        android:layout_centerInParent="true"
-        android:scaleType="centerCrop"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_login"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
+        android:orientation="vertical"
         android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:orientation="vertical">
+        android:paddingRight="40dp">
 
         <ImageView
             android:id="@+id/ivLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
-            android:src="@drawable/iv_logo"/>
+            android:src="@drawable/iv_logo" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +30,7 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/iv_user"/>
+                android:src="@drawable/iv_user" />
 
             <EditText
                 android:id="@+id/etUserName"
@@ -49,13 +42,13 @@
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
-                android:textSize="@dimen/level_4"/>
+                android:textSize="@dimen/level_4" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#30ffffff"/>
+            android:background="#30ffffff" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,7 +59,7 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:src="@drawable/iv_pwd"/>
+                android:src="@drawable/iv_pwd" />
 
             <EditText
                 android:id="@+id/etPwd"
@@ -79,25 +72,41 @@
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white"
-                android:textSize="@dimen/level_4"/>
+                android:textSize="@dimen/level_4" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="#30ffffff"/>
+            android:background="#30ffffff" />
 
         <TextView
             android:id="@+id/tvLogin"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:text="登  录"
-            android:textSize="@dimen/level_2"
-            android:textColor="@color/text_color3"
             android:layout_marginTop="30dp"
             android:background="@drawable/selector_login"
             android:gravity="center_vertical|center"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal"
+            android:text="登  录"
+            android:textColor="@color/text_color3"
+            android:textSize="@dimen/level_2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="海南省决策气象服务"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/level_1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="海南省气象局"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/level_3"/>
 
 
     </LinearLayout>

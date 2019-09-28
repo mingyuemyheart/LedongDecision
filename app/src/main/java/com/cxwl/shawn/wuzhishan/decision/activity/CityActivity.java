@@ -106,12 +106,12 @@ public class CityActivity extends BaseActivity implements OnClickListener {
 			cityList.clear();
 			if (arg0.toString().trim().equals("")) {
 				mListView.setVisibility(View.GONE);
-				llGroup.setVisibility(View.VISIBLE);
+//				llGroup.setVisibility(View.VISIBLE);
 				llGridView.setVisibility(View.VISIBLE);
 			}else {
 				mListView.setVisibility(View.VISIBLE);
 				llGridView.setVisibility(View.GONE);
-				llGroup.setVisibility(View.GONE);
+//				llGroup.setVisibility(View.GONE);
 				getCityInfo(arg0.toString().trim());
 			}
 		}

@@ -4,91 +4,72 @@
     android:background="@color/white"
     android:orientation="vertical" >
 
-    <com.amap.api.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/reTitle" />
-
-    <RelativeLayout
-        android:id="@+id/reList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/reTitle"
-        android:background="@color/white"
-        android:visibility="gone" >
-
-        <LinearLayout
-            android:id="@+id/llSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#EFEFEF" >
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/corner_edittext2"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp" >
-
-                <ImageView
-                    android:id="@+id/ivSearch"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/iv_search" />
-
-                <EditText
-                    android:id="@+id/etSearch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/ivSearch"
-                    android:background="@color/transparent"
-                    android:hint="请输入关键字"
-                    android:textColor="@color/text_color3"
-                    android:textColorHint="@color/text_color2"
-                    android:textSize="@dimen/level_4" />
-            </RelativeLayout>
-        </LinearLayout>
-
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/llSearch"
-            android:cacheColorHint="@color/transparent"
-            android:divider="#10000000"
-            android:dividerHeight="0.5dp"
-            android:listSelector="@color/transparent"
-            android:overScrollMode="never"
-            android:scrollbars="none" />
-    </RelativeLayout>
-
     <include
         android:id="@+id/reTitle"
         layout="@layout/layout_title" />
 
-    <ImageView
-        android:id="@+id/ivList"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/reTitle"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/iv_warning_list_unselected" />
+    <com.amap.api.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/reTitle" />
+
+    <TextView
+        android:id="@+id/tvMapNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="70dp"
+        android:layout_alignBottom="@+id/mapView"
+        android:textColor="#6990A9"
+        android:textSize="@dimen/level_5" />
 
     <ImageView
-        android:id="@+id/ivRefresh"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/ivList"
+        android:id="@+id/ivExpand"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/mapView"
+        android:layout_alignRight="@+id/mapView"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/iv_warning_refresh_unselected" />
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/iv_expand"/>
+
+    <HorizontalScrollView
+        android:id="@+id/hScrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mapView"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llContainer1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <com.cxwl.shawn.wuzhishan.decision.view.MainViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/hScrollView1"
+        android:overScrollMode="never"/>
 
 </RelativeLayout>

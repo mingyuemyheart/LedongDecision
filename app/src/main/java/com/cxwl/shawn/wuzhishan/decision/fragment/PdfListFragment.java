@@ -1,8 +1,8 @@
 package com.cxwl.shawn.wuzhishan.decision.fragment;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -138,15 +138,17 @@ public class PdfListFragment extends Fragment {
 	}
 
 	private void OkHttpList(final String url) {
+		if (TextUtils.isEmpty(url)) {
+			refreshLayout.setRefreshing(false);
+			return;
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
 					@Override
 					public void onFailure(Call call, IOException e) {
-
 					}
-
 					@Override
 					public void onResponse(Call call, Response response) throws IOException {
 						if (!response.isSuccessful()) {

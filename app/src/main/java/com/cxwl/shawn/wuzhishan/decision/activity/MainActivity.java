@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +57,7 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, AMapLocationListener, MyApplication.NavigationListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener, AMapLocationListener {
 
     private Context mContext;
     private RelativeLayout reTitle,reFact;
@@ -84,79 +85,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         initRefreshLayout();
         initWidget();
         initGridView();
-        MyApplication.setNavigationListener(this);
-    }
-
-    @Override
-    public void showNavigation(boolean show) {
-        if (show) {
-            narrowAnimation(gridView);
-        }else {
-            enlargeAnimation(gridView);
-        }
-        onLayoutMeasure();
-    }
-
-    /**
-     * 缩小动画
-     */
-    private void narrowAnimation(View view) {
-        if (view == null) {
-            return;
-        }
-
-        android.view.animation.ScaleAnimation animation = new android.view.animation.ScaleAnimation(
-                1.0f, 1.0f, 1.0f, 1.0f,
-                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
-                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        animation.setDuration(500);
-        animation.setFillAfter(true);
-        view.startAnimation(animation);
-    }
-
-    /**
-     * 放大动画
-     */
-    private void enlargeAnimation(View view) {
-        if (view == null) {
-            return;
-        }
-        float fromY = 1.0f-1.0f*CommonUtil.navigationBarHeight(mContext)/gridViewHeight;
-        android.view.animation.ScaleAnimation animation = new android.view.animation.ScaleAnimation(
-                1.0f, 1.0f, fromY, 1.0f,
-                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
-                android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
-        );
-        animation.setDuration(500);
-        animation.setFillAfter(true);
-        view.startAnimation(animation);
-    }
-
-    /**
-     * 判断navigation是否显示，重新计算页面布局
-     */
-    private void onLayoutMeasure() {
-        getDeviceWidthHeight();
-
-        int statusBarHeight = -1;//状态栏高度
-        //获取status_bar_height资源的ID
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            //根据资源ID获取响应的尺寸值
-            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-        }
-        reTitle.measure(0, 0);
-        int height1 = reTitle.getMeasuredHeight();
-        reFact.measure(0, 0);
-        int height2 = reFact.getMeasuredHeight();
-
-        gridViewHeight = height-statusBarHeight-height1-height2;
-
-        if (mAdapter != null) {
-            mAdapter.height = gridViewHeight;
-            mAdapter.notifyDataSetChanged();
-        }
     }
 
     /**
@@ -181,13 +109,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     private void initWidget() {
-        AutoUpdateUtil.checkUpdate(MainActivity.this, mContext, "95", getString(R.string.app_name), true);
+        AutoUpdateUtil.checkUpdate(MainActivity.this, mContext, "120", getString(R.string.app_name), true);
 
         reTitle = findViewById(R.id.reTitle);
         reFact = findViewById(R.id.reFact);
-        TextView tvCity = findViewById(R.id.tvCity);
-        tvCity.setOnClickListener(this);
-        tvCity.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+        LinearLayout llLocation = findViewById(R.id.llLocation);
+        llLocation.setOnClickListener(this);
         tvLocation = findViewById(R.id.tvLocation);
         tvPhe = findViewById(R.id.tvPhe);
         tvTemp = findViewById(R.id.tvTemp);
@@ -211,38 +138,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         height = dm.heightPixels;
-    }
-
-    /**
-     * 申请权限
-     */
-    private void checkAuthority() {
-        if (Build.VERSION.SDK_INT < 23) {
-            startLocation();
-        }else {
-            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, AuthorityUtil.AUTHOR_LOCATION);
-            }else {
-                startLocation();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case AuthorityUtil.AUTHOR_LOCATION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startLocation();
-                }else {
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                        AuthorityUtil.intentAuthorSetting(this, "\""+getString(R.string.app_name)+"\""+"需要使用定位权限，是否前往设置？");
-                    }
-//                    refresh();
-                }
-                break;
-        }
     }
 
     /**
@@ -272,7 +167,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onLocationChanged(AMapLocation amapLocation) {
         if (amapLocation != null && amapLocation.getErrorCode() == 0) {
-            cityName = amapLocation.getCity()+amapLocation.getDistrict()+amapLocation.getStreet()+amapLocation.getStreetNum();
+            cityName = amapLocation.getDistrict();
             lat = amapLocation.getLatitude();
             lng = amapLocation.getLongitude();
             refresh();
@@ -474,48 +369,60 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 ColumnData dto = channelList.get(arg2);
                 Intent intent;
-                if (TextUtils.equals(dto.showType, CONST.LOCAL)) {
-                    if (TextUtils.equals(dto.id, "1000")) {//pdf
-                        intent = new Intent(mContext, PdfTitleActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("data", dto);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }else if (TextUtils.equals(dto.id, "1")) {//灾害预警
-                        intent = new Intent(mContext, WarningActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        intent.putExtra(CONST.WEB_URL, dto.dataUrl);
-                        startActivity(intent);
-                    }else if (TextUtils.equals(dto.id, "4")) {//台风路径
-                        intent = new Intent(mContext, TyphoonRouteActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        startActivity(intent);
-                    }else if (TextUtils.equals(dto.id, "5")) {//全省预报
-                        intent = new Intent(mContext, ProvinceActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("data", dto);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }else if (TextUtils.equals(dto.id, "7") || TextUtils.equals(dto.id, "8")) {//雷达图、云图
-                        intent = new Intent(mContext, RadarActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("data", dto);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }else if (TextUtils.equals(dto.id, "9")) {//实况资料
-                        intent = new Intent(mContext, FactActivity.class);
-                        intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("data", dto);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                    }
+                if (TextUtils.equals(dto.id, "586")) {//灾害预警
+                    intent = new Intent(mContext, WarningActivity.class);
+                    intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("data", dto);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }else if (TextUtils.equals(dto.id, "578")) {//台风路径
+                    intent = new Intent(mContext, TyphoonRouteActivity.class);
+                    intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
+                    startActivity(intent);
+                }else if (TextUtils.equals(dto.id, "613")) {//实况资料
+                    intent = new Intent(mContext, FactActivity.class);
+                    intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("data", dto);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }else {//农气情报、生态气象、全省预报、灾害监测、橡胶气象、卫星云图
+                    intent = new Intent(mContext, PdfTitleActivity.class);
+                    intent.putExtra(CONST.ACTIVITY_NAME, dto.name);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("data", dto);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
             }
         });
+    }
+
+    /**
+     * 判断navigation是否显示，重新计算页面布局
+     */
+    private void onLayoutMeasure() {
+        getDeviceWidthHeight();
+
+        int statusBarHeight = -1;//状态栏高度
+        //获取status_bar_height资源的ID
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            //根据资源ID获取响应的尺寸值
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        reTitle.measure(0, 0);
+        int height1 = reTitle.getMeasuredHeight();
+        reFact.measure(0, 0);
+        int height2 = reFact.getMeasuredHeight();
+
+        gridViewHeight = height-statusBarHeight-height1-height2;
+
+        if (mAdapter != null) {
+            mAdapter.height = gridViewHeight;
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -537,7 +444,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.ivControl:
                 startActivity(new Intent(mContext, SettingActivity.class));
                 break;
-            case R.id.tvCity:
+            case R.id.llLocation:
                 startActivity(new Intent(mContext, CityActivity.class));
                 break;
             case R.id.tvFifth:
@@ -550,4 +457,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
         }
     }
+
+    /**
+     * 申请权限
+     */
+    private void checkAuthority() {
+        if (Build.VERSION.SDK_INT < 23) {
+            startLocation();
+        }else {
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, AuthorityUtil.AUTHOR_LOCATION);
+            }else {
+                startLocation();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case AuthorityUtil.AUTHOR_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startLocation();
+                }else {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                        AuthorityUtil.intentAuthorSetting(this, "\""+getString(R.string.app_name)+"\""+"需要使用定位权限，是否前往设置？");
+                    }
+//                    refresh();
+                }
+                break;
+        }
+    }
+
 }

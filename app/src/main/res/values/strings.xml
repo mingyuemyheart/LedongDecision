@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">五指山气象</string>
+    <string name="app_name">海南农气</string>
 
     <!-- 天气表 -->
     <string name="weather0">晴</string>
@@ -155,5 +155,13 @@
     <string name="lx_no_fall">连续无降水日数</string>
     <string name="lx_no_mai">连续霾日数</string>
     <string name="lx_gaowen">连续高温日数</string>
+
+    <string name="year">年</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="hour">时</string>
+    <string name="minute">分</string>
+    <string name="period">旬</string>
+    <string name="week">周</string>
 
 </resources>

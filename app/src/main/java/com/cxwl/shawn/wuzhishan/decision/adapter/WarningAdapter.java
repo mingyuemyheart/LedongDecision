@@ -1,24 +1,25 @@
 package com.cxwl.shawn.wuzhishan.decision.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cxwl.shawn.wuzhishan.decision.R;
+import com.cxwl.shawn.wuzhishan.decision.activity.WarningDetailActivity;
 import com.cxwl.shawn.wuzhishan.decision.common.CONST;
 import com.cxwl.shawn.wuzhishan.decision.dto.WarningDto;
 import com.cxwl.shawn.wuzhishan.decision.util.CommonUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 预警信息
@@ -27,20 +28,18 @@ public class WarningAdapter extends BaseAdapter {
 	
 	private Context mContext;
 	private LayoutInflater mInflater;
-	private List<WarningDto> mArrayList;
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
-	private boolean isMarkerCell;
-	
+	private List<String> mArrayList;
+	private List<WarningDto> dataList;
+
 	private final class ViewHolder {
-		ImageView imageView;//预警icon
-		TextView tvName,tvTime;
+		TextView tvCity;
+		LinearLayout llContainer;
 	}
 	
-	public WarningAdapter(Context context, List<WarningDto> mArrayList, boolean isMarkerCell) {
+	public WarningAdapter(Context context, List<String> mArrayList, List<WarningDto> dataList) {
 		mContext = context;
-		this.isMarkerCell = isMarkerCell;
 		this.mArrayList = mArrayList;
+		this.dataList = dataList;
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
 
@@ -63,46 +62,48 @@ public class WarningAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder mHolder;
 		if (convertView == null) {
-			if (!isMarkerCell) {
-				convertView = mInflater.inflate(R.layout.adapter_warning, null);
-			}else {
-				convertView = mInflater.inflate(R.layout.adapter_warning_marker_info, null);
-			}
 			mHolder = new ViewHolder();
-			mHolder.imageView = convertView.findViewById(R.id.imageView);
-			mHolder.tvName = convertView.findViewById(R.id.tvName);
-			mHolder.tvTime = convertView.findViewById(R.id.tvTime);
+			convertView = mInflater.inflate(R.layout.adapter_warning, null);
+			mHolder.llContainer = convertView.findViewById(R.id.llContainer);
+			mHolder.tvCity = convertView.findViewById(R.id.tvCity);
 			convertView.setTag(mHolder);
 		}else {
 			mHolder = (ViewHolder) convertView.getTag();
 		}
-		
-		WarningDto dto = mArrayList.get(position);
-		
-        Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+dto.type+dto.color+CONST.imageSuffix);
-		if (bitmap == null) {
-			bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+"default"+dto.color+CONST.imageSuffix);
-		}
-		mHolder.imageView.setImageBitmap(bitmap);
-		
-		if (!TextUtils.isEmpty(dto.name)) {
-			if (!isMarkerCell) {
-				mHolder.tvName.setText(dto.name);
-			}else {
-				if (dto.name.contains("解除")) {
-					mHolder.tvName.setText(dto.name.replace("解除", "解除"+"\n"));
-				}else if (dto.name.contains("发布")) {
-					mHolder.tvName.setText(dto.name.replace("发布", "发布"+"\n"));
+
+		String name = mArrayList.get(position);
+		mHolder.tvCity.setText(name);
+
+		if (mHolder.llContainer != null) {
+			mHolder.llContainer.removeAllViews();
+			for (int i = 0; i < dataList.size(); i++) {
+				final WarningDto data = dataList.get(i);
+				if (TextUtils.equals(name, data.w2)) {
+					ImageView imageView = new ImageView(mContext);
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)CommonUtil.dip2px(mContext, 30), (int)CommonUtil.dip2px(mContext, 30));
+					params.rightMargin = 10;
+					imageView.setLayoutParams(params);
+					Bitmap bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+data.type+data.color+CONST.imageSuffix);
+					if (bitmap == null) {
+						bitmap = CommonUtil.getImageFromAssetsFile(mContext,"warning/"+"default"+data.color+CONST.imageSuffix);
+					}
+					imageView.setImageBitmap(bitmap);
+					mHolder.llContainer.addView(imageView);
+
+					imageView.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							Intent intent = new Intent(mContext, WarningDetailActivity.class);
+							Bundle bundle = new Bundle();
+							bundle.putParcelable("data", data);
+							intent.putExtras(bundle);
+							mContext.startActivity(intent);
+						}
+					});
 				}
 			}
 		}
-		
-		try {
-			mHolder.tvTime.setText(sdf2.format(sdf1.parse(dto.time)));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
+
 		return convertView;
 	}
 
