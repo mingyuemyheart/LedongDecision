@@ -1,17 +1,30 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 28
     buildToolsVersion '27.0.3'
     //png图片命名带有数字则编译不通过使用一下声明
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
+
+    //支持Java8
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         applicationId "com.cxwl.shawn.hainan.nq"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 2
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -51,4 +64,5 @@ dependencies {
     implementation 'com.amap.api:3dmap:5.7.0'
     implementation 'com.amap.api:search:5.7.0'
     implementation 'com.amap.api:location:4.7.0'
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

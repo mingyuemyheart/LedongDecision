@@ -34,13 +34,8 @@ public class AuthorityUtil {
     //需要申请的所有权限
     public static String[] allPermissions = new String[] {
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-
-    //拒绝的权限集合
-    public static List<String> deniedList = new ArrayList<>();
 
     /**
      * 前往权限设置界面

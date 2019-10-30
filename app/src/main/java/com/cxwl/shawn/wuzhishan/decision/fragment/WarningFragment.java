@@ -33,8 +33,8 @@ import okhttp3.Response;
 public class WarningFragment extends Fragment {
 
 	private WarningAdapter mAdapter;
-	private List<WarningDto> dataList = new ArrayList<>();
-	private List<String> cityNames = new ArrayList<>();
+	private ArrayList<WarningDto> dataList = new ArrayList<>();
+	private ArrayList<String> cityNames = new ArrayList<>();
 	private TextView tvPrompt = null;
 
 	@Override

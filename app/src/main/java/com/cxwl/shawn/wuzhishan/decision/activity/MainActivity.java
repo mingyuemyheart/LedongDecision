@@ -465,7 +465,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         if (Build.VERSION.SDK_INT < 23) {
             startLocation();
         }else {
-            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, AuthorityUtil.AUTHOR_LOCATION);
             }else {
                 startLocation();
@@ -484,7 +484,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                         AuthorityUtil.intentAuthorSetting(this, "\""+getString(R.string.app_name)+"\""+"需要使用定位权限，是否前往设置？");
                     }
-//                    refresh();
                 }
                 break;
         }

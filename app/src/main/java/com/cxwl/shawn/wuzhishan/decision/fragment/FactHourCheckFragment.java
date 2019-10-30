@@ -24,7 +24,6 @@ import android.widget.TimePicker.OnTimeChangedListener;
 import android.widget.Toast;
 
 import com.cxwl.shawn.wuzhishan.decision.R;
-import com.cxwl.shawn.wuzhishan.decision.activity.FactActivity;
 import com.cxwl.shawn.wuzhishan.decision.activity.FactStationListDetailActivity;
 import com.cxwl.shawn.wuzhishan.decision.adapter.FactStationListAdapter;
 import com.cxwl.shawn.wuzhishan.decision.dto.ShawnRainDto;

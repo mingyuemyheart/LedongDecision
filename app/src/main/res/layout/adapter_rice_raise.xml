@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvStationName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+    <TextView
+        android:id="@+id/tvCropClass"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+    <TextView
+        android:id="@+id/tvCropName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+    <TextView
+        android:id="@+id/tvCropType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+    <TextView
+        android:id="@+id/tvCropMature"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+    <TextView
+        android:id="@+id/tvCropDev"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/text_color3"
+        android:textSize="@dimen/level_4" />
+
+</LinearLayout>

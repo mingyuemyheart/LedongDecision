@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.LocationManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
@@ -47,6 +48,16 @@ public class CommonUtil {
     public static float px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return pxValue / scale;
+    }
+
+    public static int widthPixels(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
+    }
+
+    public static int heightPixels(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
     }
 
     /**

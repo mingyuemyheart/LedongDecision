@@ -1,7 +1,6 @@
 package com.cxwl.shawn.wuzhishan.decision.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,11 +60,6 @@ public class CityFragmentAdapter extends BaseAdapter {
 		
 		CityDto dto = mArrayList.get(position);
 
-		if (TextUtils.equals(dto.cityId, "101310222")) {
-			mHolder.tvName.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
-		}else {
-			mHolder.tvName.setTextColor(mContext.getResources().getColor(R.color.text_color3));
-		}
 		mHolder.tvName.setText(dto.disName);
 		
 		return convertView;
