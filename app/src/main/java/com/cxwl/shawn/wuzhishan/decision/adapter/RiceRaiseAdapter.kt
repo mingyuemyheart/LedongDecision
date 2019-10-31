@@ -1,0 +1,70 @@
+package com.cxwl.shawn.wuzhishan.decision.adapter;
+
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.TextView
+import com.cxwl.shawn.wuzhishan.decision.R
+import com.cxwl.shawn.wuzhishan.decision.dto.RiceRaiseDto
+
+/**
+ * 生态气象-水稻长势
+ */
+class RiceRaiseAdapter constructor(context: Context, private var mArrayList : ArrayList<RiceRaiseDto>?): BaseAdapter() {
+
+	private val mInflater : LayoutInflater? = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+	class ViewHolder{
+		var tvStationName : TextView? = null
+		var tvCropClass : TextView? = null
+		var tvCropName : TextView? = null
+		var tvCropType : TextView? = null
+		var tvCropMature : TextView? = null
+		var tvCropDev : TextView? = null
+	}
+
+	override fun getItem(p0: Int): Any {
+		return p0
+	}
+
+	override fun getItemId(p0: Int): Long {
+		return p0.toLong()
+	}
+
+	override fun getCount(): Int {
+		return mArrayList!!.size
+	}
+
+	override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+		val mHolder : ViewHolder
+		val view : View
+		if (convertView == null) {
+			view = mInflater!!.inflate(R.layout.adapter_rice_raise, null)
+			mHolder = ViewHolder()
+			mHolder.tvStationName = view.findViewById(R.id.tvStationName)
+			mHolder.tvCropClass = view.findViewById(R.id.tvCropClass)
+			mHolder.tvCropName = view.findViewById(R.id.tvCropName)
+			mHolder.tvCropType = view.findViewById(R.id.tvCropType)
+			mHolder.tvCropMature = view.findViewById(R.id.tvCropMature)
+			mHolder.tvCropDev = view.findViewById(R.id.tvCropDev)
+			view.tag = mHolder
+		}else {
+			view = convertView
+			mHolder = view.tag as ViewHolder
+		}
+
+		val dto = mArrayList!![position]
+
+		mHolder.tvStationName!!.text = dto.C_Stat_Name
+		mHolder.tvCropClass!!.text = dto.C_Crop
+		mHolder.tvCropName!!.text = dto.C_CropName
+		mHolder.tvCropType!!.text = dto.C_CropVirteties
+		mHolder.tvCropMature!!.text = dto.C_CropMature
+		mHolder.tvCropDev!!.text = dto.C_CorpDev
+
+		return view
+	}
+
+}

@@ -93,7 +93,7 @@ class RiceRaiseFragment : Fragment(), OnClickListener {
 	}
 
 	private fun initListView() {
-		mAdapter = RiceRaiseAdapter(activity, dataList)
+		mAdapter = RiceRaiseAdapter(activity!!, dataList)
 		listView.adapter = mAdapter
 	}
 
