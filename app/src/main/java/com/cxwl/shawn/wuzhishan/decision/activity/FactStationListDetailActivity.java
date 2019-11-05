@@ -160,7 +160,7 @@ public class FactStationListDetailActivity extends BaseActivity implements OnCli
 			TextView tvBar = new TextView(mContext);
 			tvBar.setGravity(Gravity.CENTER);
 
-			if (TextUtils.equals(childId, "9011") || TextUtils.equals(childId, "9012") || TextUtils.equals(childId, "9013") || TextUtils.equals(childId, "648")) {//降水
+			if (TextUtils.equals(childId, "631") || TextUtils.equals(childId, "648") || TextUtils.equals(childId, "630") || TextUtils.equals(childId, "632")) {//降水
 				if (j == 0) {
 					tvName.setText("降水");
 					tvName.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -174,7 +174,7 @@ public class FactStationListDetailActivity extends BaseActivity implements OnCli
 					tvName.setTextColor(getResources().getColor(R.color.text_color3));
 					tvBar.setBackgroundColor(getResources().getColor(R.color.transparent));
 				}
-			}else if (TextUtils.equals(childId, "9021") || TextUtils.equals(childId, "9022") || TextUtils.equals(childId, "9023") || TextUtils.equals(childId, "657") || TextUtils.equals(childId, "658")) {//温度
+			}else if (TextUtils.equals(childId, "636") || TextUtils.equals(childId, "656") || TextUtils.equals(childId, "657") || TextUtils.equals(childId, "658") || TextUtils.equals(childId, "637") || TextUtils.equals(childId, "638")) {//温度
 				if (j == 0) {
 					tvName.setText("降水");
 					tvName.setTextColor(getResources().getColor(R.color.text_color3));
@@ -188,7 +188,7 @@ public class FactStationListDetailActivity extends BaseActivity implements OnCli
 					tvName.setTextColor(getResources().getColor(R.color.text_color3));
 					tvBar.setBackgroundColor(getResources().getColor(R.color.transparent));
 				}
-			}else if (TextUtils.equals(childId, "9031") || TextUtils.equals(childId, "9032") || TextUtils.equals(childId, "9033") || TextUtils.equals(childId, "655")) {//风速
+			}else if (TextUtils.equals(childId, "634") || TextUtils.equals(childId, "655") || TextUtils.equals(childId, "633") || TextUtils.equals(childId, "635")) {//风速
 				if (j == 0) {
 					tvName.setText("降水");
 					tvName.setTextColor(getResources().getColor(R.color.text_color3));

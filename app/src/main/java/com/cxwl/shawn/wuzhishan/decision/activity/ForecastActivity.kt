@@ -72,7 +72,7 @@ class ForecastActivity : BaseActivity(), OnClickListener {
 		lng = intent.getDoubleExtra("lng", 0.0)
 		val cityId = intent.getStringExtra("cityId")
 		if (!TextUtils.isEmpty(cityId)) {
-			OkHttpWeatherInfo(cityId)
+			okHttpWeatherInfo(cityId)
 		}
 	}
 
@@ -87,7 +87,7 @@ class ForecastActivity : BaseActivity(), OnClickListener {
 	/**
 	 * 获取天气数据
 	 */
-	private fun OkHttpWeatherInfo(cityId : String) {
+	private fun okHttpWeatherInfo(cityId : String) {
 		Thread(Runnable {
 			val url : String?
 			if (cityId.startsWith("10131")) {
@@ -95,7 +95,7 @@ class ForecastActivity : BaseActivity(), OnClickListener {
 				if (lat != 0.0 && lng != 0.0) {
 					url = String.format("http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID=%s&lonlat=%s,%s", cityId, lng, lat)
 				}else {
-					url = "http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID="+cityId
+					url = "http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID=$cityId"
 				}
 			}else {
 				llFactButton.visibility = View.GONE
@@ -104,7 +104,7 @@ class ForecastActivity : BaseActivity(), OnClickListener {
 			OkHttpUtil.enqueue(Request.Builder().url(url!!).build(), object : Callback {
 				override fun onFailure(call: Call, e: IOException) {
 					if (url.startsWith("http://data-fusion.tianqi.cn/datafusion/")) {
-						OkHttpWeatherInfo(FetchWeather.weather2Url(cityId, "all"))
+						okHttpWeatherInfo(FetchWeather.weather2Url(cityId, "all"))
 					}
 				}
 				override fun onResponse(call: Call, response: Response) {

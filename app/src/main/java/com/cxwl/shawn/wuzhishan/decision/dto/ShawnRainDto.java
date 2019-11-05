@@ -16,7 +16,7 @@ public class ShawnRainDto implements Parcelable {
 	public String stationCode;
 	public String stationName;
 	public String area;
-	public double val;
+	public double value;
 	public String cityName;
 	public double lng;
 	public double lat;
@@ -49,7 +49,7 @@ public class ShawnRainDto implements Parcelable {
 		dest.writeString(this.stationCode);
 		dest.writeString(this.stationName);
 		dest.writeString(this.area);
-		dest.writeDouble(this.val);
+		dest.writeDouble(this.value);
 		dest.writeString(this.cityName);
 		dest.writeDouble(this.lng);
 		dest.writeDouble(this.lat);
@@ -79,7 +79,7 @@ public class ShawnRainDto implements Parcelable {
 		this.stationCode = in.readString();
 		this.stationName = in.readString();
 		this.area = in.readString();
-		this.val = in.readDouble();
+		this.value = in.readDouble();
 		this.cityName = in.readString();
 		this.lng = in.readDouble();
 		this.lat = in.readDouble();

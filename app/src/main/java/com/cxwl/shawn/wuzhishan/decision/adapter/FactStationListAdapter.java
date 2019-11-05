@@ -71,7 +71,7 @@ public class FactStationListAdapter extends BaseAdapter {
 			mHolder.tvArea.setText(dto.area);
 		}
 		
-		mHolder.tvValue.setText(dto.val+"");
+		mHolder.tvValue.setText(dto.value+"");
 		
 		if (position % 2 == 0) {
 			convertView.setBackgroundColor(0xffeaeaea);

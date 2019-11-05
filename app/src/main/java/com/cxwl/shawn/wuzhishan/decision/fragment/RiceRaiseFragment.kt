@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.dialog_select_date.*
 import kotlinx.android.synthetic.main.dialog_select_date.view.*
 import kotlinx.android.synthetic.main.dialog_select_string.view.*
 import kotlinx.android.synthetic.main.fragment_rice_raise.*
-import kotlinx.android.synthetic.main.fragment_rice_raise.view.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -33,7 +32,6 @@ import wheelview.WheelView
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlinx.android.synthetic.main.fragment_rice_raise.view.listView as listView1
 
 /**
  * 生态气象-水稻长势
@@ -330,12 +328,39 @@ class RiceRaiseFragment : Fragment(), OnClickListener {
 							for (i in 0 until array.length()) {
 								val itemObj = array.getJSONObject(i)
 								val dto = RiceRaiseDto()
-								dto.C_Stat_Name = itemObj.getString("C_Stat_Name")
-								dto.C_Crop = itemObj.getString("C_Crop")
-								dto.C_CropName = itemObj.getString("C_CropName")
-								dto.C_CropVirteties = itemObj.getString("C_CropVirteties")
-								dto.C_CropMature = itemObj.getString("C_CropMature")
-								dto.C_CorpDev = itemObj.getString("C_CorpDev")
+								if (!itemObj.isNull("C_Stat_Name")) {
+									dto.C_Stat_Name = itemObj.getString("C_Stat_Name")
+								}
+								if (!itemObj.isNull("C_Crop")) {
+									dto.C_Crop = itemObj.getString("C_Crop")
+								}
+								if (!itemObj.isNull("C_CropName")) {
+									dto.C_CropName = itemObj.getString("C_CropName")
+								}
+								if (!itemObj.isNull("C_CropVirteties")) {
+									dto.C_CropVirteties = itemObj.getString("C_CropVirteties")
+								}
+								if (!itemObj.isNull("C_CropMature")) {
+									dto.C_CropMature = itemObj.getString("C_CropMature")
+								}
+								if (!itemObj.isNull("C_CorpDev")) {
+									dto.C_CorpDev = itemObj.getString("C_CorpDev")
+								}
+								if (!itemObj.isNull("v56007")) {
+									dto.v56007 = itemObj.getString("v56007")
+								}
+								if (!itemObj.isNull("v56006")) {
+									dto.v56006 = itemObj.getString("v56006")
+								}
+								if (!itemObj.isNull("v56008")) {
+									dto.v56008 = itemObj.getString("v56008")
+								}
+								if (!itemObj.isNull("v56005")) {
+									dto.v56005 = itemObj.getString("v56005")
+								}
+								if (!itemObj.isNull("v56004")) {
+									dto.v56004 = itemObj.getString("v56004")
+								}
 								dataList.add(dto)
 							}
 							if (mAdapter != null) {

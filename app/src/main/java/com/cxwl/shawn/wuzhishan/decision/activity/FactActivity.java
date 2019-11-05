@@ -725,7 +725,7 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 													dto.area = itemObj.getString("area");
 												}
 												if (!itemObj.isNull("val")) {
-													dto.val = itemObj.getDouble("val");
+													dto.value = itemObj.getDouble("val");
 												}
 
 												if (!TextUtils.isEmpty(dto.stationName) && !TextUtils.isEmpty(dto.area)) {

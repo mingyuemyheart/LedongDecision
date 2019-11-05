@@ -1,4 +1,4 @@
-package com.cxwl.shawn.wuzhishan.decision.adapter;
+package com.cxwl.shawn.wuzhishan.decision.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -23,6 +23,11 @@ class RiceRaiseAdapter constructor(context: Context, private var mArrayList : Ar
 		var tvCropType : TextView? = null
 		var tvCropMature : TextView? = null
 		var tvCropDev : TextView? = null
+		var tvv56007 : TextView? = null
+		var tvv56006 : TextView? = null
+		var tvv56008 : TextView? = null
+		var tvv56005 : TextView? = null
+		var tvv56004 : TextView? = null
 	}
 
 	override fun getItem(p0: Int): Any {
@@ -49,6 +54,11 @@ class RiceRaiseAdapter constructor(context: Context, private var mArrayList : Ar
 			mHolder.tvCropType = view.findViewById(R.id.tvCropType)
 			mHolder.tvCropMature = view.findViewById(R.id.tvCropMature)
 			mHolder.tvCropDev = view.findViewById(R.id.tvCropDev)
+			mHolder.tvv56007 = view.findViewById(R.id.tvv56007)
+			mHolder.tvv56006 = view.findViewById(R.id.tvv56006)
+			mHolder.tvv56008 = view.findViewById(R.id.tvv56008)
+			mHolder.tvv56005 = view.findViewById(R.id.tvv56005)
+			mHolder.tvv56004 = view.findViewById(R.id.tvv56004)
 			view.tag = mHolder
 		}else {
 			view = convertView
@@ -63,6 +73,11 @@ class RiceRaiseAdapter constructor(context: Context, private var mArrayList : Ar
 		mHolder.tvCropType!!.text = dto.C_CropVirteties
 		mHolder.tvCropMature!!.text = dto.C_CropMature
 		mHolder.tvCropDev!!.text = dto.C_CorpDev
+		mHolder.tvv56007!!.text = dto.v56007
+		mHolder.tvv56006!!.text = dto.v56006
+		mHolder.tvv56008!!.text = dto.v56008
+		mHolder.tvv56005!!.text = dto.v56005
+		mHolder.tvv56004!!.text = dto.v56004
 
 		return view
 	}

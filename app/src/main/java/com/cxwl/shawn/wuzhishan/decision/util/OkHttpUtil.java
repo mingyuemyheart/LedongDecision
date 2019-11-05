@@ -14,17 +14,13 @@ import okhttp3.Response;
 /**
  * Created by shawn on 2017/8/3.
  */
-
 public class OkHttpUtil {
 
     private final static OkHttpClient.Builder builder = new OkHttpClient.Builder();
     private final static OkHttpClient okHttpClient = builder.build();
-    private static int timeOut = 30;//超时时间
 
     static{
-//        builder.connectTimeout(timeOut, TimeUnit.SECONDS);//设置请求超时时间
-//        builder.readTimeout(timeOut, TimeUnit.SECONDS);//设置读取超时时间
-//        builder.writeTimeout(timeOut, TimeUnit.SECONDS);//设置写入超时时间
+        int timeOut = 30;//超时时间
         setConnectTimeOut(timeOut);
         setReadTimeOut(timeOut);
         setWriteTimeOut(timeOut);

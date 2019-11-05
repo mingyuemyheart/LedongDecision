@@ -107,8 +107,8 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="站点号"
                 android:gravity="end"
+                android:text="站点号"
                 android:textColor="@color/text_color3"
                 android:textSize="@dimen/level_4" />
 
@@ -157,80 +157,158 @@
             android:layout_height="10dp"
             android:background="@color/light_gray" />
 
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#6C6B88"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:gravity="center_vertical">
+            android:scrollbars="none">
 
-            <TextView
-                android:text="站点"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                android:orientation="vertical">
 
-            <TextView
-                android:text="作物种类"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#6C6B88"
+                    android:gravity="center_vertical">
 
-            <TextView
-                android:text="作物名称"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:minWidth="60dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="站点"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
 
-            <TextView
-                android:text="作物品种"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="作物种类"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
 
-            <TextView
-                android:text="作物熟性"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="作物名称"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
 
-            <TextView
-                android:text="发育期"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="@dimen/level_4"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="作物品种"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="作物熟性"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:cacheColorHint="@color/transparent"
-            android:divider="@color/light_gray"
-            android:dividerHeight="0.5dp"
-            android:listSelector="@color/transparent"
-            android:overScrollMode="never"
-            android:scrollbars="none"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="发育期"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="生长状况"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="植株高度"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="植株密度"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="发育期距平"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="90dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:gravity="center"
+                        android:text="发育期百分率"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/level_4" />
+
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:cacheColorHint="@color/transparent"
+                    android:divider="@color/light_gray"
+                    android:dividerHeight="0.5dp"
+                    android:listSelector="@color/transparent"
+                    android:overScrollMode="never"
+                    android:scrollbars="none" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </LinearLayout>
 

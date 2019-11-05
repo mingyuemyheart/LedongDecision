@@ -1,6 +1,5 @@
 package com.cxwl.shawn.wuzhishan.decision.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -11,12 +10,11 @@ import android.widget.TextView
 import com.cxwl.shawn.wuzhishan.decision.R
 import com.cxwl.shawn.wuzhishan.decision.dto.CityDto
 
-class CityAdapter constructor(context : Context?, mArrayList : ArrayList<CityDto>): BaseAdapter() {
+class CityAdapter constructor(context : Context?, private val mArrayList : ArrayList<CityDto>): BaseAdapter() {
 
     private var mInflater : LayoutInflater? = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
-    private var mArrayList : ArrayList<CityDto>? = mArrayList
 
-    override fun getCount(): Int = mArrayList!!.size
+    override fun getCount(): Int = mArrayList.size
 
     override fun getItem(p0: Int): Any = p0
 
@@ -26,7 +24,6 @@ class CityAdapter constructor(context : Context?, mArrayList : ArrayList<CityDto
         var tvName : TextView? = null
     }
 
-    @SuppressLint("InflateParams")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val viewHolder : ViewHolder
         val view : View
@@ -40,7 +37,7 @@ class CityAdapter constructor(context : Context?, mArrayList : ArrayList<CityDto
             viewHolder = view.tag as ViewHolder
         }
 
-        val dto = mArrayList!![position]
+        val dto = mArrayList[position]
         if (TextUtils.equals(dto.provinceName, dto.cityName))  {
             viewHolder.tvName!!.text = dto.cityName + "-" +dto.disName
         }else {

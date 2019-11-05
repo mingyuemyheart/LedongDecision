@@ -235,7 +235,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 														dto.area = itemObj.getString("area");
 													}
 													if (!itemObj.isNull("val")) {
-														dto.val = itemObj.getDouble("val");
+														dto.value = itemObj.getDouble("val");
 													}
 													if (!TextUtils.isEmpty(dto.area)) {
 														checkList.add(dto);
@@ -255,7 +255,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 														dto.area = itemObj.getString("area");
 													}
 													if (!itemObj.isNull("val")) {
-														dto.val = itemObj.getDouble("val");
+														dto.value = itemObj.getDouble("val");
 													}
 													if (!TextUtils.isEmpty(dto.area)) {
 														checkList.add(dto);
@@ -690,7 +690,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 				Collections.sort(checkList, new Comparator<ShawnRainDto>() {
 					@Override
 					public int compare(ShawnRainDto arg0, ShawnRainDto arg1) {
-						return Double.valueOf(arg0.val).compareTo(Double.valueOf(arg1.val));
+						return Double.valueOf(arg0.value).compareTo(Double.valueOf(arg1.value));
 					}
 				});
 			}else {//将序
@@ -702,7 +702,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 				Collections.sort(checkList, new Comparator<ShawnRainDto>() {
 					@Override
 					public int compare(ShawnRainDto arg0, ShawnRainDto arg1) {
-						return Double.valueOf(arg1.val).compareTo(Double.valueOf(arg0.val));
+						return Double.valueOf(arg1.value).compareTo(Double.valueOf(arg0.value));
 					}
 				});
 			}
