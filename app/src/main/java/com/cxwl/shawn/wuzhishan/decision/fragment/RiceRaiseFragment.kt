@@ -2,6 +2,7 @@ package com.cxwl.shawn.wuzhishan.decision.fragment;
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
@@ -21,6 +22,8 @@ import kotlinx.android.synthetic.main.dialog_select_date.*
 import kotlinx.android.synthetic.main.dialog_select_date.view.*
 import kotlinx.android.synthetic.main.dialog_select_string.view.*
 import kotlinx.android.synthetic.main.fragment_rice_raise.*
+import kotlinx.android.synthetic.main.fragment_rice_raise.tvStationName
+import kotlinx.android.synthetic.main.layout_rice_raise.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -79,6 +82,19 @@ class RiceRaiseFragment : Fragment(), OnClickListener {
 		llEndDate.setOnClickListener(this)
 		llStationName.setOnClickListener(this)
 		tvCheck.setOnClickListener(this)
+		llTitle.setBackgroundColor(-0x939478)
+		tvStation.setTextColor(Color.WHITE)
+		tvCropClass.setTextColor(Color.WHITE)
+		tvCropName.setTextColor(Color.WHITE)
+		tvCropType.setTextColor(Color.WHITE)
+		tvCropMature.setTextColor(Color.WHITE)
+		tvCropDev.setTextColor(Color.WHITE)
+		tvv56007.setTextColor(Color.WHITE)
+		tvv56006.setTextColor(Color.WHITE)
+		tvv56008.setTextColor(Color.WHITE)
+		tvv56005.setTextColor(Color.WHITE)
+		tvv56004.setTextColor(Color.WHITE)
+		tvTime.setTextColor(Color.WHITE)
 
 		val calendar : Calendar = Calendar.getInstance()
 		calendar.add(Calendar.DAY_OF_MONTH, -30)
@@ -360,6 +376,9 @@ class RiceRaiseFragment : Fragment(), OnClickListener {
 								}
 								if (!itemObj.isNull("v56004")) {
 									dto.v56004 = itemObj.getString("v56004")
+								}
+								if (!itemObj.isNull("D5603")) {
+									dto.D5603 = itemObj.getString("D5603")
 								}
 								dataList.add(dto)
 							}
