@@ -122,106 +122,112 @@
             android:layout_height="10dp"
             android:background="@color/light_gray" />
 
-        <LinearLayout
-            android:id="@+id/llContent"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:scrollbars="none">
 
             <LinearLayout
-                android:id="@+id/llType"
-                android:layout_width="wrap_content"
+                android:id="@+id/llContent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/llType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="灾害种类"
+                        android:textColor="@color/text_color3"
+                        android:textSize="@dimen/level_4" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/bg_select_time"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp">
+
+                        <TextView
+                            android:id="@+id/tvType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_color3"
+                            android:textSize="@dimen/level_5" />
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginStart="20dp"
+                            android:src="@drawable/skzl_pic_more" />
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <TextView
-                    android:layout_width="60dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="灾害种类"
+                    android:layout_marginStart="20dp"
+                    android:text="说明"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_3" />
+
+                <TextView
+                    android:id="@+id/tvInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
                     android:textColor="@color/text_color3"
                     android:textSize="@dimen/level_4" />
 
-                <LinearLayout
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:background="@drawable/bg_select_time"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp">
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="说明"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_3" />
 
-                    <TextView
-                        android:id="@+id/tvType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_color3"
-                        android:textSize="@dimen/level_5" />
+                <TextView
+                    android:id="@+id/tvMark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_4" />
 
-                    <ImageView
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_marginStart="20dp"
-                        android:src="@drawable/skzl_pic_more" />
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY" />
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="说明"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_3" />
-
-            <TextView
-                android:id="@+id/tvInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:text="说明"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_3" />
-
-            <TextView
-                android:id="@+id/tvMark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <ImageView
-                android:layout_marginTop="10dp"
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:scaleType="fitXY"
-                android:adjustViewBounds="true"/>
-
-        </LinearLayout>
+        </ScrollView>
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/tvPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -229,7 +235,8 @@
             android:layout_marginTop="10dp"
             android:text="暂无数据~~~"
             android:textColor="@color/text_color3"
-            android:textSize="@dimen/level_4" />
+            android:textSize="@dimen/level_4"
+            android:visibility="gone" />
 
     </LinearLayout>
 

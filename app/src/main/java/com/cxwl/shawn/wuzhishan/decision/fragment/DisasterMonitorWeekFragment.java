@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +55,7 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 	private LinearLayout llContent;
 	private ImageView imageView;
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy", Locale.CHINA);
-	private String selectYear, selectWeek;
+	private String selectYear = "", selectWeek = "";
 	private List<String> weeks = new ArrayList<>();
 	private Map<String, JSONObject> dataMap = new LinkedHashMap<>();
 	private List<String> types = new ArrayList<>();//灾害种类
@@ -122,11 +123,6 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		llYear.setOnClickListener(this);
 		LinearLayout llWeek = view.findViewById(R.id.llWeek);
 		llWeek.setOnClickListener(this);
-
-		selectYear = sdf2.format(new Date());
-		tvYear.setText(selectYear+getString(R.string.year));
-		selectWeek = "1";
-		tvWeek.setText(selectWeek+getString(R.string.week));
 
 		refresh();
 	}
@@ -341,6 +337,10 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 													dataMap.put(criterName, itemObj);
 													types.add(criterName);
 													if (i == 0) {
+														selectYear = itemObj.getString("OYEAR");
+														tvYear.setText(selectYear+getString(R.string.year));
+														selectWeek = itemObj.getString("OWEEK");
+														tvWeek.setText(selectWeek+getString(R.string.week));
 														setValue(criterName);
 													}
 												}

@@ -97,6 +97,11 @@
             android:layout_height="10dp"
             android:background="@color/light_gray" />
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
         <LinearLayout
             android:id="@+id/llContent"
             android:layout_width="match_parent"
@@ -194,6 +199,8 @@
                 android:adjustViewBounds="true"/>
 
         </LinearLayout>
+
+        </ScrollView>
 
         <TextView
             android:visibility="gone"

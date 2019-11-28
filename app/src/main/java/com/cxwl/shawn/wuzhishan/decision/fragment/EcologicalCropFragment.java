@@ -54,7 +54,7 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 	private LinearLayout llContent;
 	private ImageView imageView;
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMM", Locale.CHINA);
-	private String selectYear,selectMonth, selectPeriod;
+	private String selectYear = "",selectMonth = "", selectPeriod = "";
 	private List<String> periods = new ArrayList<>();
 	private Map<String, JSONObject> dataMap = new LinkedHashMap<>();
 	private List<String> types = new ArrayList<>();//灾害种类
@@ -126,14 +126,6 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 		llMonth.setOnClickListener(this);
 		LinearLayout llPeriod = view.findViewById(R.id.llPeriod);
 		llPeriod.setOnClickListener(this);
-
-		String date = sdf2.format(new Date());
-		selectYear = date.substring(0, 4);
-		selectMonth = date.substring(4, 6);
-		tvYear.setText(selectYear+getString(R.string.year));
-		tvMonth.setText(selectMonth+getString(R.string.month));
-		selectPeriod = "1";
-		tvPeriod.setText(selectPeriod+getString(R.string.period));
 
 		refresh();
 	}
@@ -350,6 +342,12 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 													dataMap.put(criterName, itemObj);
 													types.add(criterName);
 													if (i == 0) {
+														selectYear = itemObj.getString("OYEAR");
+														selectMonth = itemObj.getString("OMONTH");
+														tvYear.setText(selectYear+getString(R.string.year));
+														tvMonth.setText(selectMonth+getString(R.string.month));
+														selectPeriod = itemObj.getString("OXUN");
+														tvPeriod.setText(selectPeriod+getString(R.string.period));
 														setValue(criterName);
 													}
 												}
