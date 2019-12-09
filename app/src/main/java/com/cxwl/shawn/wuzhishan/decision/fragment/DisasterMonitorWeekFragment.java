@@ -124,7 +124,28 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		LinearLayout llWeek = view.findViewById(R.id.llWeek);
 		llWeek.setOnClickListener(this);
 
+		initParameters();
 		refresh();
+	}
+
+	/**
+	 * 初始化接口参数
+	 */
+	private void initParameters() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setFirstDayOfWeek(Calendar.MONDAY);
+		int year = calendar.get(Calendar.YEAR);
+		int week = calendar.get(Calendar.WEEK_OF_YEAR);
+		if (week == 1) {
+			year = year-1;
+			week = 52;
+		} else {
+			week = week-1;
+		}
+		selectYear = year+"";
+		tvYear.setText(selectYear+getString(R.string.year));
+		selectWeek = week+"";
+		tvWeek.setText(selectWeek+getString(R.string.week));
 	}
 	
     private void selectDateDialog() {
@@ -337,10 +358,6 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 													dataMap.put(criterName, itemObj);
 													types.add(criterName);
 													if (i == 0) {
-														selectYear = itemObj.getString("OYEAR");
-														tvYear.setText(selectYear+getString(R.string.year));
-														selectWeek = itemObj.getString("OWEEK");
-														tvWeek.setText(selectWeek+getString(R.string.week));
 														setValue(criterName);
 													}
 												}

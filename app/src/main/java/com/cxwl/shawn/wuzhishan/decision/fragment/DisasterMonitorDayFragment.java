@@ -27,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,9 +53,8 @@ public class DisasterMonitorDayFragment extends Fragment implements OnClickListe
 	private TextView tvStartDay,tvType,tvInfo,tvMark,tvPrompt;
 	private LinearLayout llContent;
 	private ImageView imageView;
-	private SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.0", Locale.CHINA);
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-	private String startTimeCheck = "";
+	private String startTimeCheck;
 	private Map<String, JSONObject> dataMap = new LinkedHashMap<>();
 	private List<String> types = new ArrayList<>();//灾害种类
 	private SwipeRefreshLayout refreshLayout;//下拉刷新布局
@@ -114,9 +112,11 @@ public class DisasterMonitorDayFragment extends Fragment implements OnClickListe
 		llContent = view.findViewById(R.id.llContent);
 		imageView = view.findViewById(R.id.imageView);
 
+		startTimeCheck = sdf2.format(new Date().getTime()-1000*60*60*24);
+		tvStartDay.setText(startTimeCheck);
 		refresh();
 	}
-	
+
     private void selectDateDialog() {
     	LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View dialogView = inflater.inflate(R.layout.dialog_select_date, null);
@@ -302,12 +302,6 @@ public class DisasterMonitorDayFragment extends Fragment implements OnClickListe
 													dataMap.put(criterName, itemObj);
 													types.add(criterName);
 													if (i == 0) {
-														try {
-															startTimeCheck = sdf2.format(sdf1.parse(itemObj.getString("DT")));
-															tvStartDay.setText(startTimeCheck);
-														} catch (ParseException e) {
-															e.printStackTrace();
-														}
 														setValue(criterName);
 													}
 												}

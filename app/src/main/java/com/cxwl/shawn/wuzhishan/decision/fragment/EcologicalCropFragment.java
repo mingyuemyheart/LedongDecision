@@ -27,13 +27,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -53,8 +50,7 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 	private TextView tvYear,tvMonth,tvPeriod,tvType,tvInfo,tvMark,tvPrompt;
 	private LinearLayout llContent;
 	private ImageView imageView;
-	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMM", Locale.CHINA);
-	private String selectYear = "",selectMonth = "", selectPeriod = "";
+	private String selectYear,selectMonth, selectPeriod;
 	private List<String> periods = new ArrayList<>();
 	private Map<String, JSONObject> dataMap = new LinkedHashMap<>();
 	private List<String> types = new ArrayList<>();//灾害种类
@@ -127,7 +123,49 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 		LinearLayout llPeriod = view.findViewById(R.id.llPeriod);
 		llPeriod.setOnClickListener(this);
 
+		initParameters();
 		refresh();
+	}
+
+	/**
+	 * 初始化接口参数
+	 */
+	private void initParameters() {
+		Calendar calendar = Calendar.getInstance();
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
+		int period;
+		if (day < 11) {
+			period = 1;
+		} else if (day < 21) {
+			period = 2;
+		} else {
+			period = 3;
+		}
+
+		if (period == 1) {//1月份上旬
+			if (month == 1) {
+				year = year-1;
+				month = 12;
+			} else {
+				month = month-1;
+			}
+			period = 3;
+		} else if (period == 2) {
+			month = month-1;
+			period = 1;
+		} else {
+			month = month-1;
+			period = 2;
+		}
+
+		selectYear = year+"";
+		selectMonth = month+"";
+		tvYear.setText(selectYear+getString(R.string.year));
+		tvMonth.setText(selectMonth+getString(R.string.month));
+		selectPeriod = period+"";
+		tvPeriod.setText(selectPeriod+getString(R.string.period));
 	}
 	
     private void selectDateDialog() {
@@ -342,12 +380,6 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 													dataMap.put(criterName, itemObj);
 													types.add(criterName);
 													if (i == 0) {
-														selectYear = itemObj.getString("OYEAR");
-														selectMonth = itemObj.getString("OMONTH");
-														tvYear.setText(selectYear+getString(R.string.year));
-														tvMonth.setText(selectMonth+getString(R.string.month));
-														selectPeriod = itemObj.getString("OXUN");
-														tvPeriod.setText(selectPeriod+getString(R.string.period));
 														setValue(criterName);
 													}
 												}
