@@ -153,10 +153,8 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 			}
 			period = 3;
 		} else if (period == 2) {
-			month = month-1;
 			period = 1;
 		} else {
-			month = month-1;
 			period = 2;
 		}
 

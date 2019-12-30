@@ -135,9 +135,12 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		Calendar calendar = Calendar.getInstance();
 		calendar.setFirstDayOfWeek(Calendar.MONDAY);
 		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH)+1;
 		int week = calendar.get(Calendar.WEEK_OF_YEAR);
 		if (week == 1) {
-			year = year-1;
+			if (month == 1) {
+				year = year-1;
+			}
 			week = 52;
 		} else {
 			week = week-1;
