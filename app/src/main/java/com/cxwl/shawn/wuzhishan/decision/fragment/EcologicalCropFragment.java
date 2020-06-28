@@ -445,7 +445,7 @@ public class EcologicalCropFragment extends Fragment implements OnClickListener 
 							tvMark.setText(obj.getString("Mark"));
 						}
 						if (!obj.isNull("Url")) {
-							Picasso.with(getActivity()).load(obj.getString("Url")).into(imageView);
+							Picasso.get().load(obj.getString("Url")).into(imageView);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();

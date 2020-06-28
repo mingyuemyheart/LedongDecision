@@ -51,7 +51,7 @@ import wheelview.WheelView;
  */
 public class DisasterMonitorWeekFragment extends Fragment implements OnClickListener {
 	
-	private TextView tvYear,tvWeek,tvType,tvInfo,tvMark,tvPrompt;
+	private TextView tvYear,tvWeek,tvCityName,tvType,tvInfo,tvMark,tvPrompt;
 	private LinearLayout llContent;
 	private ImageView imageView;
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy", Locale.CHINA);
@@ -59,6 +59,7 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 	private List<String> weeks = new ArrayList<>();
 	private Map<String, JSONObject> dataMap = new LinkedHashMap<>();
 	private List<String> types = new ArrayList<>();//灾害种类
+	private List<String> citys = new ArrayList<>();//选择市县
 	private SwipeRefreshLayout refreshLayout;//下拉刷新布局
 	private WheelView year,month,day,hour,minute;
 
@@ -97,11 +98,12 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		}
 
 		types.clear();
+		citys.clear();
 		dataMap.clear();
 		if (!refreshLayout.isRefreshing()) {
 			refreshLayout.setRefreshing(true);
 		}
-		OkHttpList();
+		okHttpCitys();
 	}
 
 	private void initWidget(View view) {
@@ -109,10 +111,13 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		tvYear.setOnClickListener(this);
 		tvWeek = view.findViewById(R.id.tvWeek);
 		tvWeek.setOnClickListener(this);
+		tvCityName = view.findViewById(R.id.tvCityName);
 		TextView tvCheck = view.findViewById(R.id.tvCheck);
 		tvCheck.setOnClickListener(this);
 		LinearLayout llType = view.findViewById(R.id.llType);
 		llType.setOnClickListener(this);
+		LinearLayout llCity = view.findViewById(R.id.llCity);
+		llCity.setOnClickListener(this);
 		tvType = view.findViewById(R.id.tvType);
 		tvInfo = view.findViewById(R.id.tvInfo);
 		tvMark = view.findViewById(R.id.tvMark);
@@ -124,6 +129,7 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		LinearLayout llWeek = view.findViewById(R.id.llWeek);
 		llWeek.setOnClickListener(this);
 
+		tvCityName.setText("海南省");
 		initParameters();
 		refresh();
 	}
@@ -332,11 +338,11 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 		});
 	}
 
-	private void OkHttpList() {
+	private void okHttpCitys() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				final String url = String.format("http://59.50.130.88:8888/decision-admin/ny/zozk?Y=%s&Z=%s", selectYear, selectWeek);
+				final String url = "http://59.50.130.88:8888/decision-admin/ny/gezrdz";
 				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
 					@Override
 					public void onFailure(Call call, IOException e) {
@@ -350,6 +356,51 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
+								if (!TextUtils.isEmpty(result)) {
+									try {
+										JSONArray array = new JSONArray(result);
+										for (int i = 0; i < array.length(); i++) {
+											JSONObject itemObj = array.getJSONObject(i);
+											if (!itemObj.isNull("CityName")) {
+												String cityName = itemObj.getString("CityName");
+												if (!TextUtils.isEmpty(cityName)) {
+													citys.add(cityName);
+												}
+											}
+										}
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+								}
+							}
+						});
+					}
+				});
+
+				OkHttpList();
+			}
+		}).start();
+	}
+
+	private void OkHttpList() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final String url = String.format("http://59.50.130.88:8888/decision-admin/ny/zozk?Y=%s&Z=%s&CityName=%s", selectYear, selectWeek, tvCityName.getText().toString());
+				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
+					@Override
+					public void onFailure(Call call, IOException e) {
+					}
+					@Override
+					public void onResponse(Call call, Response response) throws IOException {
+						if (!response.isSuccessful()) {
+							return;
+						}
+						final String result = response.body().string();
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								refreshLayout.setRefreshing(false);
 								if (!TextUtils.isEmpty(result)) {
 									try {
 										JSONArray array = new JSONArray(result);
@@ -377,9 +428,6 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 										e.printStackTrace();
 									}
 								}
-
-								refreshLayout.setRefreshing(false);
-
 							}
 						});
 					}
@@ -428,7 +476,7 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 							tvMark.setText(obj.getString("Mark"));
 						}
 						if (!obj.isNull("Url")) {
-							Picasso.with(getActivity()).load(obj.getString("Url")).into(imageView);
+							Picasso.get().load(obj.getString("Url")).into(imageView);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -436,6 +484,31 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 				}
 			}
 		}
+	}
+
+	/**
+	 * 选择市县
+	 */
+	private void dialogCity() {
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View dialogView = inflater.inflate(R.layout.dialog_select_string, null);
+		TextView tvContent = dialogView.findViewById(R.id.tvContent);
+		tvContent.setText("选择市县");
+
+		final Dialog dialog = new Dialog(getActivity(), R.style.CustomProgressDialog);
+		dialog.setContentView(dialogView);
+		dialog.show();
+
+		ListView listView = dialogView.findViewById(R.id.listView);
+		DisasterMonitorAdapter monitorAdapter = new DisasterMonitorAdapter(getActivity(), citys);
+		listView.setAdapter(monitorAdapter);
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				dialog.dismiss();
+				tvCityName.setText(citys.get(i));
+			}
+		});
 	}
 
 	@Override
@@ -448,6 +521,9 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 			case R.id.llWeek:
 			case R.id.tvWeek:
 				selectWeekDialog();
+				break;
+			case R.id.llCity:
+				dialogCity();
 				break;
 			case R.id.tvCheck:
 				refresh();

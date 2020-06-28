@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <!--//添加允许安装未知应用市场权限，这个权限不是动态权限，所以不用进行动态申请，否则自动更新功能失效-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
@@ -70,6 +71,10 @@
                   android:screenOrientation="portrait"
                   android:launchMode="singleTask"/>
 
+        <activity android:name=".activity.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
+
         <activity android:name=".activity.MainActivity"
                   android:screenOrientation="portrait"/>
 
@@ -111,6 +116,15 @@
 
         <activity android:name=".activity.StaticsActivity"
                   android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.WebviewActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.SelectPictureActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.DisasterActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

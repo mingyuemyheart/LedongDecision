@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scrollbars="none">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/addrStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="地址位置："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tvAddr"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:padding="10dp"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toEndOf="@+id/addrStr"
+                app:layout_constraintTop_toTopOf="@+id/addrStr"
+                app:layout_constraintBottom_toBottomOf="@+id/addrStr"/>
+
+            <TextView
+                android:id="@+id/divider0"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/tvAddr" />
+
+            <TextView
+                android:id="@+id/nameStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="农田名称："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider0"/>
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:hint="请输入农田名称"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/nameStr"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/nameStr"
+                app:layout_constraintBottom_toBottomOf="@+id/nameStr"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/etName" />
+
+            <TextView
+                android:id="@+id/typeStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="作物类型："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider1"/>
+
+            <EditText
+                android:id="@+id/etType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:hint="请输入作物类型"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/typeStr"
+                app:layout_constraintTop_toTopOf="@+id/typeStr"
+                app:layout_constraintBottom_toBottomOf="@+id/typeStr"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/etType" />
+
+            <TextView
+                android:id="@+id/eventStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="农事活动："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider2"/>
+
+            <EditText
+                android:id="@+id/etEvent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:hint="请输入农事活动"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/eventStr"
+                app:layout_constraintTop_toTopOf="@+id/eventStr"
+                app:layout_constraintBottom_toBottomOf="@+id/eventStr"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/etEvent" />
+
+            <TextView
+                android:id="@+id/bornStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="作物生育期："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider3"/>
+
+            <EditText
+                android:id="@+id/etBorn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:hint="请输入作物生育期"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/bornStr"
+                app:layout_constraintTop_toTopOf="@+id/bornStr"
+                app:layout_constraintBottom_toBottomOf="@+id/bornStr"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/etBorn" />
+
+            <TextView
+                android:id="@+id/disasterStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="灾害类型："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider4"/>
+
+            <EditText
+                android:id="@+id/etDisaster"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:hint="请输入灾害类型"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/disasterStr"
+                app:layout_constraintTop_toTopOf="@+id/disasterStr"
+                app:layout_constraintBottom_toBottomOf="@+id/disasterStr"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/etDisaster" />
+
+            <TextView
+                android:id="@+id/timeStr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="记载时间："
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider5"/>
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:padding="10dp"
+                app:layout_constraintStart_toEndOf="@+id/timeStr"
+                app:layout_constraintTop_toTopOf="@+id/timeStr"
+                app:layout_constraintBottom_toBottomOf="@+id/timeStr"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/divider6"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/light_gray"
+                app:layout_constraintTop_toBottomOf="@+id/tvTime" />
+
+            <TextView
+                android:id="@+id/tvPic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="添加图片"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider6" />
+
+            <com.cxwl.shawn.wuzhishan.decision.view.ScrollviewGridview
+                android:id="@+id/gridView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cacheColorHint="@color/transparent"
+                android:fadingEdge="none"
+                android:gravity="center"
+                android:horizontalSpacing="2dp"
+                android:listSelector="@color/transparent"
+                android:numColumns="3"
+                android:overScrollMode="never"
+                android:padding="10dp"
+                android:scrollbars="none"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="2dp"
+                app:layout_constraintTop_toBottomOf="@+id/tvPic" />
+
+            <TextView
+                android:id="@+id/tvSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                app:layout_constraintTop_toBottomOf="@+id/gridView"
+                android:background="@drawable/selector_login"
+                android:gravity="center_vertical|center"
+                android:orientation="horizontal"
+                android:text="立即上传"
+                android:textColor="@color/white"
+                android:textSize="@dimen/level_2" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/clViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/level_3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/layoutDate"
+        layout="@layout/layout_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

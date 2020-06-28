@@ -1,5 +1,6 @@
 package com.cxwl.shawn.wuzhishan.decision.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
@@ -46,17 +47,21 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 		if (!TextUtils.isEmpty(title)) {
 			tvTitle.text = title
 		}
-
 	}
 	
 	/**
 	 * 初始化viewPager
 	 */
-	@Suppress("DEPRECATION")
 	private fun initViewPager() {
 		if (intent.hasExtra("data")) {
 			val data = intent.getParcelableExtra<ColumnData>("data")
 			if (data != null) {
+				if (TextUtils.equals(data.id, "678")) {//农情上报
+					tvControl.visibility = View.VISIBLE
+					tvControl.text = "历史查询"
+					tvControl.setOnClickListener(this)
+					tvControl.tag = "679"//农事记载
+				}
 				val columnList : ArrayList<ColumnData> = ArrayList(data.child)
 				val columnSize = columnList.size
 				if (columnSize <= 1) {
@@ -86,14 +91,12 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 					if (!TextUtils.isEmpty(dto.name)) {
 						tvName.text = dto.name
 					}
+					tvName.tag = dto.id
+
+					tvName.measure(0, 0)
 					val params = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-					params.weight = 1.0f
-					when (columnSize) {
-						1 -> params.width = width
-						2 -> params.width = width/2
-						3 -> params.width = width/3
-						else -> params.width = width/4
-					}
+					params.width = tvName.measuredWidth
+					params.setMargins(CommonUtil.dip2px(this, 10f).toInt(), 0, CommonUtil.dip2px(this, 10f).toInt(), 0)
 					tvName.layoutParams = params
 					llContainer.addView(tvName, i)
 
@@ -110,22 +113,14 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 						tvBar.setBackgroundColor(ContextCompat.getColor(this, R.color.transparent))
 					}
 					val params1 = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-					params1.weight = 1.0f
-					when (columnSize) {
-						1 -> params1.width = width
-						2 -> params1.width = width/2-CommonUtil.dip2px(this, 20.0f).toInt()
-						3 -> params1.width = width/3-CommonUtil.dip2px(this, 20.0f).toInt()
-						else -> params1.width = width/4-CommonUtil.dip2px(this, 20.0f).toInt()
-					}
+					params1.width = tvName.measuredWidth
 					params1.height = CommonUtil.dip2px(this, 2.0f).toInt()
 					params1.setMargins(CommonUtil.dip2px(this, 10.0f).toInt(), 0, CommonUtil.dip2px(this, 10.0f).toInt(), 0)
 					tvBar.layoutParams = params1
 					llContainer1.addView(tvBar, i)
 
 					var fragment : Fragment? = null
-					if (TextUtils.equals(dto.showType, CONST.DOCUMENT)) {
-						fragment = PdfListFragment()
-					}else if (TextUtils.equals(dto.id, "673")) {
+					if (TextUtils.equals(dto.id, "673")) {
 						//生态气象-水稻长势
 						fragment = RiceRaiseFragment()
 					}else if (TextUtils.equals(dto.id, "674")) {
@@ -137,7 +132,8 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 					}else if (TextUtils.equals(dto.id, "651")) {
 						//全省预报-2小时降水预测
 						fragment = MinuteFragment()
-					}else if (TextUtils.equals(dto.id, "671")) {
+					}else if (TextUtils.equals(dto.id, "58601") || TextUtils.equals(dto.id, "58602")|| TextUtils.equals(dto.id, "58603") || TextUtils.equals(dto.id, "671")) {
+						//灾害预警-病虫害气象条件预报、气象灾害、农气灾害
 						//灾害监测-逐日监测
 						fragment = DisasterMonitorDayFragment()
 					}else if (TextUtils.equals(dto.id, "672")) {
@@ -146,12 +142,24 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 					}else if (TextUtils.equals(dto.id, "641") || TextUtils.equals(dto.id, "642")) {
 						//卫星云图
 						fragment = RadarFragment()
+					}else if (TextUtils.equals(dto.id, "679")) {
+						//农情上报-农事记载
+						fragment = DisasterUploadFragment()
+					}else if (TextUtils.equals(dto.id, "680")) {
+						//农情上报-灾情上报
+						fragment = DisasterUploadFragment()
+					}else if (TextUtils.equals(dto.showType, CONST.DOCUMENT)) {
+						fragment = PdfListFragment()
+					} else if (TextUtils.equals(dto.showType, CONST.URL_DATA)) {
+						fragment = WebviewFragment()
 					}
 					val bundle = Bundle()
 					bundle.putString(CONST.WEB_URL, dto.dataUrl)
 					bundle.putString(CONST.COLUMN_ID, dto.id)
-					fragment!!.arguments = bundle
-					fragments.add(fragment)
+					if (fragment != null) {
+						fragment.arguments = bundle
+						fragments.add(fragment)
+					}
 				}
 
 				if (TextUtils.equals(data.id, "649")) {//全省预报
@@ -172,6 +180,7 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 								val tvName = llContainer.getChildAt(i) as TextView
 								if (i == arg0) {
 									tvName.setTextColor(ContextCompat.getColor(this@PdfTitleActivity, R.color.colorPrimary))
+									tvControl.tag = tvName.tag
 								} else {
 									tvName.setTextColor(ContextCompat.getColor(this@PdfTitleActivity, R.color.text_color3))
 								}
@@ -228,6 +237,16 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 	override fun onClick(view: View?) {
 		when(view!!.id) {
 			R.id.llBack -> finish()
+			R.id.tvControl -> {
+				val intent = Intent(this, DisasterActivity::class.java)
+				intent.putExtra(CONST.COLUMN_ID, tvControl.tag.toString())
+				if (TextUtils.equals(tvControl.tag.toString(), "679")) {//农事记载
+					intent.putExtra(CONST.ACTIVITY_NAME, "农事记载${tvControl.text}")
+				} else if (TextUtils.equals(tvControl.tag.toString(), "680")) {//灾情上报
+					intent.putExtra(CONST.ACTIVITY_NAME, "灾情上报${tvControl.text}")
+				}
+				startActivity(intent)
+			}
 		}
 	}
 

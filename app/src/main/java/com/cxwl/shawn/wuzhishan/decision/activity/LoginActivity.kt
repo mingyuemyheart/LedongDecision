@@ -34,6 +34,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private fun initWidget() {
         tvLogin.setOnClickListener(this)
+        tvRegister.setOnClickListener(this)
 
         val param = LinearLayout.LayoutParams(CommonUtil.widthPixels(this)/3, LinearLayout.LayoutParams.WRAP_CONTENT)
         param.gravity = Gravity.CENTER_HORIZONTAL
@@ -58,6 +59,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         param1.put("username", etUserName.text.toString())
         param1.put("password", etPwd.text.toString())
         param1.put("type", "1")
+        param1.put("code", "1")
         param.put("object", param1)
         val json : String = param.toString()
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
@@ -138,7 +140,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                                                     if (!childObj2.isNull("dataUrl")) {
                                                         dto2.dataUrl = childObj2.getString("dataUrl")
                                                     }
-                                                    dto.child.add(dto2)
+
+                                                    //过滤掉实况资料里部分内容
+//                                                    if (!TextUtils.equals(dto2.id, "631") && !TextUtils.equals(dto2.id, "648")
+//                                                            && !TextUtils.equals(dto2.id, "657") && !TextUtils.equals(dto2.id, "658")
+//                                                            && !TextUtils.equals(dto2.id, "634") && !TextUtils.equals(dto2.id, "655")) {
+                                                        dto.child.add(dto2)
+//                                                    }
                                                 }
                                             }
                                             data.child.add(dto)
@@ -183,6 +191,23 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(view: View?) {
         when(view!!.id) {
             R.id.tvLogin -> okHttpLogin()
+            R.id.tvRegister -> startActivityForResult(Intent(this, RegisterActivity::class.java), 1001)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                1001 -> {
+                    val bundle = data.extras
+                    val userName = bundle.getString("userName")
+                    val pwd = bundle.getString("pwd")
+                    etUserName.setText(userName)
+                    etPwd.setText(pwd)
+                    okHttpLogin()
+                }
+            }
         }
     }
 

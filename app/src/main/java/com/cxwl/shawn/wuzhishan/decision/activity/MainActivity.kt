@@ -277,11 +277,35 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
         onLayoutMeasure()
         gridView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, arg2, l ->
             val dto = channelList[arg2]
-            var intent : Intent? = null
+            var intent : Intent?
             when(dto.id) {
                 "586" -> {//灾害预警
-                    intent = Intent(mContext, WarningActivity::class.java)
+                    intent = Intent(mContext, PdfTitleActivity::class.java)
                     intent.putExtra(CONST.ACTIVITY_NAME, dto.name)
+                    dto.child.clear()
+                    for (i in 0 .. 2) {
+                        val data = ColumnData()
+                        when(i) {
+                            0 -> {
+                                data.name = "病虫害气象条件预报"
+                                data.dataUrl = ""
+                                data.id = "58601"
+                                dto.child.add(data)
+                            }
+                            1 -> {
+                                data.name = "气象灾害"
+                                data.dataUrl = ""
+                                data.id = "58602"
+                                dto.child.add(data)
+                            }
+                            2 -> {
+                                data.name = "农气灾害"
+                                data.dataUrl = ""
+                                data.id = "58603"
+                                dto.child.add(data)
+                            }
+                        }
+                    }
                     val bundle = Bundle()
                     bundle.putParcelable("data", dto)
                     intent.putExtras(bundle)
@@ -361,17 +385,34 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
         }
     }
 
+    //需要申请的所有权限
+    private val allPermissions = arrayOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
+    //拒绝的权限集合
+    private var deniedList: MutableList<String> = ArrayList()
+
     /**
-     * 申请权限
+     * 申请定位权限
      */
     private fun checkAuthority() {
         if (Build.VERSION.SDK_INT < 23) {
-            startLocation()
+            refresh()
         } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), AuthorityUtil.AUTHOR_LOCATION)
+            deniedList.clear()
+            for (permission in allPermissions) {
+                if (ContextCompat.checkSelfPermission(mContext!!, permission) !== PackageManager.PERMISSION_GRANTED) {
+                    deniedList.add(permission)
+                }
+            }
+            if (deniedList.isEmpty()) { //所有权限都授予
+                refresh()
             } else {
-                startLocation()
+                val permissions = deniedList.toTypedArray() //将list转成数组
+                ActivityCompat.requestPermissions(this, permissions, AuthorityUtil.AUTHOR_LOCATION)
             }
         }
     }
@@ -383,7 +424,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
                 startLocation()
             } else {
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    AuthorityUtil.intentAuthorSetting(this, "\"" + getString(R.string.app_name) + "\"" + "需要使用定位权限，是否前往设置？")
+                    AuthorityUtil.intentAuthorSetting(this, "\"" + getString(R.string.app_name) + "\"" + "需要使用定位权限、存储权限，是否前往设置？")
                 }
             }
         }

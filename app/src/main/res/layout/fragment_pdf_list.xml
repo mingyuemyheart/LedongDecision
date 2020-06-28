@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="暂无数据~~~"
-        android:textColor="@color/text_color4"
+        android:textColor="@color/text_color3"
         android:textSize="@dimen/level_4"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

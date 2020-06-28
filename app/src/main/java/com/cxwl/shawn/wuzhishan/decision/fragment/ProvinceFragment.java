@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import com.cxwl.shawn.wuzhishan.decision.common.CONST;
 import com.cxwl.shawn.wuzhishan.decision.dto.WeatherDto;
 import com.cxwl.shawn.wuzhishan.decision.util.FetchWeather;
 import com.cxwl.shawn.wuzhishan.decision.util.OkHttpUtil;
-import com.cxwl.shawn.wuzhishan.decision.view.MyDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +47,7 @@ import okhttp3.Response;
 /**
  * 全省预报
  */
-public class ProvinceFragment extends Fragment implements OnMarkerClickListener {
+public class ProvinceFragment extends BaseFragment implements OnMarkerClickListener {
 	
 	private TextView tvTitle,tvMapNumber;
 	private TextureMapView mMapView;
@@ -58,12 +56,10 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 	private SimpleDateFormat sdf1 = new SimpleDateFormat("HH", Locale.CHINA);
 	private SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
 	private SimpleDateFormat sdf3 = new SimpleDateFormat("yyyy年MM月dd日HH时", Locale.CHINA);
-	private MyDialog mDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_province, null);
-		return view;
+		return inflater.inflate(R.layout.fragment_province, null);
 	}
 	
 	@Override
@@ -72,19 +68,6 @@ public class ProvinceFragment extends Fragment implements OnMarkerClickListener 
 		showDialog();
 		initMap(savedInstanceState, view);
 		initWidget(view);
-	}
-
-	private void showDialog() {
-		if (mDialog == null) {
-			mDialog = new MyDialog(getActivity());
-		}
-		mDialog.show();
-	}
-
-	private void cancelDialog() {
-		if (mDialog != null) {
-			mDialog.dismiss();
-		}
 	}
 
 	private void initWidget(View view){

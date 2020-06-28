@@ -13,7 +13,7 @@
         <com.amap.api.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="1000dp" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvMapNumber"
@@ -63,6 +63,7 @@
     </RelativeLayout>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tvIntro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,6 +76,7 @@
         android:textSize="@dimen/level_5" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/listTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -112,6 +114,7 @@
     </LinearLayout>
 
     <com.cxwl.shawn.wuzhishan.decision.view.ScrollviewListview
+        android:visibility="gone"
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,12 +126,14 @@
         android:scrollbars="none" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/divider1"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/light_gray" />
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/llBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

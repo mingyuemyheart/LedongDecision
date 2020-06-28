@@ -528,18 +528,26 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 				}
 				llContainer.addView(tvName);
 				LayoutParams params = tvName.getLayoutParams();
-				if (dto.child.size() <= 3) {
+				if (dto.child.size() <= 1) {
+					params.width = width;
+				}else if (dto.child.size() <= 2) {
+					params.width = width/2;
+				}else if (dto.child.size() <= 3) {
 					params.width = width/3;
-				}else {
+				} else {
 					params.width = width/4;
 				}
 				tvName.setLayoutParams(params);
 
 				llContainer1.addView(tvBar);
 				LayoutParams params1 = tvBar.getLayoutParams();
-				if (dto.child.size() <= 3) {
+				if (dto.child.size() <= 1) {
+					params.width = width;
+				}else if (dto.child.size() <= 2) {
+					params1.width = width/2;
+				}else if (dto.child.size() <= 3) {
 					params1.width = width/3;
-				}else {
+				} else {
 					params1.width = width/4;
 				}
 				params1.height = (int) (density*2);
@@ -681,7 +689,7 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 										}
 
 										if (!obj.isNull("cutlineUrl")) {
-											Picasso.with(mContext).load(obj.getString("cutlineUrl")).into(ivChart);
+											Picasso.get().load(obj.getString("cutlineUrl")).into(ivChart);
 										}
 
 										if (!obj.isNull("times")) {
@@ -774,9 +782,9 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 												mAdapter.startTime = startTime;
 												mAdapter.endTime = endTime;
 												mAdapter.notifyDataSetChanged();
-												tvIntro.setVisibility(View.VISIBLE);
-												listTitle.setVisibility(View.VISIBLE);
-												listView.setVisibility(View.VISIBLE);
+//												tvIntro.setVisibility(View.VISIBLE);
+//												listTitle.setVisibility(View.VISIBLE);
+//												listView.setVisibility(View.VISIBLE);
 											}
 										}else {
 											tvIntro.setVisibility(View.GONE);

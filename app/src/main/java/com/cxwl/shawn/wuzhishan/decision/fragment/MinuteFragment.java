@@ -733,7 +733,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 										if (!obj.isNull("cutlineUrl")) {//图例
 											String imgUrl = obj.getString("cutlineUrl");
 											if (!TextUtils.isEmpty(imgUrl)) {
-												Picasso.with(getActivity()).load(imgUrl).into(ivChart);
+												Picasso.get().load(imgUrl).into(ivChart);
 												if (proName.contains("海南")) {
 													ivChart.setVisibility(View.VISIBLE);
 												}

@@ -12,6 +12,7 @@ import android.widget.AbsListView
 import android.widget.AdapterView.OnItemClickListener
 import com.cxwl.shawn.wuzhishan.decision.R
 import com.cxwl.shawn.wuzhishan.decision.activity.PDFActivity
+import com.cxwl.shawn.wuzhishan.decision.activity.WebviewActivity
 import com.cxwl.shawn.wuzhishan.decision.adapter.PDFListAdapter
 import com.cxwl.shawn.wuzhishan.decision.common.CONST
 import com.cxwl.shawn.wuzhishan.decision.dto.ColumnData
@@ -89,7 +90,11 @@ class PdfListFragment : Fragment() {
         listView.adapter = mAdapter
         listView.onItemClickListener = OnItemClickListener { adapterView, view, i, l ->
             val dto = dataList[i]
-            val intent = Intent(activity, PDFActivity::class.java)
+            val intent = if (dto.detailUrl.endsWith(".pdf") || dto.detailUrl.endsWith(".PDF")) {
+                Intent(activity, PDFActivity::class.java)
+            } else {
+                Intent(activity, WebviewActivity::class.java)
+            }
             intent.putExtra(CONST.ACTIVITY_NAME, dto.title)
             intent.putExtra(CONST.WEB_URL, dto.detailUrl)
             startActivity(intent)
@@ -100,13 +105,13 @@ class PdfListFragment : Fragment() {
                     onload()
                 }
             }
-
             override fun onScroll(view: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {}
         })
     }
 
     private fun okHttpList(url: String) {
         if (TextUtils.isEmpty(url)) {
+            tvPrompt.visibility = View.VISIBLE
             refreshLayout.isRefreshing = false
             return
         }

@@ -23,8 +23,8 @@ android {
         applicationId "com.cxwl.shawn.hainan.nq"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.0.6"
+        versionCode 8
+        versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'com.squareup.okio:okio:2.2.2'
-    implementation files('libs/picasso-2.5.2.jar')
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation files('libs/commons-codec-1.7.jar')
     implementation project(':android-pdf-viewer')
     implementation files('libs/uk-co-senab-photoview.jar')

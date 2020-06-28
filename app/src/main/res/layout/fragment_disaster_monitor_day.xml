@@ -1,114 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/llStart"
+        <TextView
+            android:id="@+id/dateStr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="查询日期"
+            android:textColor="@color/text_color3"
+            android:textSize="@dimen/level_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/llDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_select_time"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="10dp">
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/dateStr"
+            app:layout_constraintStart_toEndOf="@+id/dateStr"
+            app:layout_constraintTop_toTopOf="@+id/dateStr">
 
             <TextView
+                android:id="@+id/tvStartDay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="查询日期"
                 android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:background="@drawable/bg_select_time"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp">
-
-                <TextView
-                    android:id="@+id/tvStartDay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_color3"
-                    android:textSize="@dimen/level_5" />
-
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_marginStart="20dp"
-                    android:src="@drawable/skzl_pic_more" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tvCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:background="@drawable/bg_check"
-                android:paddingStart="15dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="5dp"
-                android:text="开始查询"
-                android:textColor="@color/white"
                 android:textSize="@dimen/level_5" />
 
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/skzl_pic_more" />
         </LinearLayout>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@color/light_gray" />
-
-        <ScrollView
-            android:layout_width="match_parent"
+            android:id="@+id/cityStr"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="选择市县"
+            android:textColor="@color/text_color3"
+            android:textSize="@dimen/level_4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateStr" />
 
         <LinearLayout
-            android:id="@+id/llContent"
-            android:layout_width="match_parent"
+            android:id="@+id/llCity"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_select_time"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cityStr"
+            app:layout_constraintStart_toEndOf="@+id/cityStr"
+            app:layout_constraintTop_toTopOf="@+id/cityStr">
 
-            <LinearLayout
-                android:id="@+id/llType"
+            <TextView
+                android:id="@+id/tvCityName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_5" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/skzl_pic_more" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:background="@drawable/bg_check"
+            android:paddingStart="15dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="15dp"
+            android:paddingBottom="5dp"
+            android:text="开始查询"
+            android:textColor="@color/white"
+            android:textSize="@dimen/level_5"
+            app:layout_constraintBottom_toBottomOf="@+id/llDate"
+            app:layout_constraintStart_toEndOf="@+id/llDate"
+            app:layout_constraintTop_toTopOf="@+id/llDate" />
+
+        <TextView
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/light_gray"
+            app:layout_constraintTop_toBottomOf="@+id/cityStr" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="灾害种类"
-                    android:textColor="@color/text_color3"
-                    android:textSize="@dimen/level_4" />
-
-                <LinearLayout
+                    android:id="@+id/typeStr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="灾害种类"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:background="@drawable/bg_select_time"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp">
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/typeStr"
+                    app:layout_constraintStart_toEndOf="@+id/typeStr"
+                    app:layout_constraintTop_toTopOf="@+id/typeStr">
 
                     <TextView
                         android:id="@+id/tvType"
@@ -124,70 +172,58 @@
                         android:src="@drawable/skzl_pic_more" />
                 </LinearLayout>
 
-            </LinearLayout>
+                <TextView
+                    android:id="@+id/tvInfo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/typeStr" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="说明"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_3" />
+                <TextView
+                    android:id="@+id/tvMark"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="@color/text_color3"
+                    android:textSize="@dimen/level_4"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
 
-            <TextView
-                android:id="@+id/tvInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
+                <LinearLayout
+                    android:id="@+id/llContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMark"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:text="说明"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_3" />
-
-            <TextView
-                android:id="@+id/tvMark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="3dp"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <ImageView
-                android:layout_marginTop="10dp"
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:scaleType="fitXY"
-                android:adjustViewBounds="true"/>
-
-        </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
         </ScrollView>
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/tvPrompt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
             android:text="暂无数据~~~"
             android:textColor="@color/text_color3"
-            android:textSize="@dimen/level_4" />
+            android:textSize="@dimen/level_4"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
+    </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

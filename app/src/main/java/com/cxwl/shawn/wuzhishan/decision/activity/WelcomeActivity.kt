@@ -58,6 +58,7 @@ class WelcomeActivity : BaseActivity() {
         param1.put("username", userName)
         param1.put("password", pwd)
         param1.put("type", "1")
+        param1.put("code", "1")
         param.put("object", param1)
         val json : String = param.toString()
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
@@ -137,7 +138,13 @@ class WelcomeActivity : BaseActivity() {
                                                     if (!childObj2.isNull("dataUrl")) {
                                                         dto2.dataUrl = childObj2.getString("dataUrl")
                                                     }
-                                                    dto.child.add(dto2)
+
+                                                    //过滤掉实况资料里部分内容
+//                                                    if (!TextUtils.equals(dto2.id, "631") && !TextUtils.equals(dto2.id, "648")
+//                                                            && !TextUtils.equals(dto2.id, "657") && !TextUtils.equals(dto2.id, "658")
+//                                                            && !TextUtils.equals(dto2.id, "634") && !TextUtils.equals(dto2.id, "655")) {
+                                                        dto.child.add(dto2)
+//                                                    }
                                                 }
                                             }
                                             data.child.add(dto)
