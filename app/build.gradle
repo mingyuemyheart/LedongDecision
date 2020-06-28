@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 android {
@@ -65,5 +62,5 @@ dependencies {
     implementation 'com.amap.api:3dmap:5.7.0'
     implementation 'com.amap.api:search:5.7.0'
     implementation 'com.amap.api:location:4.7.0'
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
