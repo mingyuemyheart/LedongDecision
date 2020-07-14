@@ -102,4 +102,13 @@
 		<item>洋浦,109.19,19.74</item>
 	</string-array>
 
+	<!-- 公司类型 -->
+	<string-array name="unit_type">
+		<item>专业大户</item>
+		<item>家庭农场</item>
+		<item>农民合作社</item>
+		<item>农业企业</item>
+		<item>个体户</item>
+	</string-array>
+
 </resources>

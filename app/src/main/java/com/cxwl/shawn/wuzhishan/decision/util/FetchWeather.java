@@ -62,13 +62,11 @@ public class FetchWeather {
 					public void onFailure(Call call, IOException e) {
 						OkHttpWeather2(weather2Url(cityId, type));
 					}
-
 					@Override
 					public void onResponse(Call call, Response response) throws IOException {
 						if (!response.isSuccessful()) {
 							return;
 						}
-
 						String result = response.body().string();
 						if (!TextUtils.isEmpty(result)) {
 							try {
@@ -81,7 +79,6 @@ public class FetchWeather {
 								OkHttpWeather2(weather2Url(cityId, type));
 							}
 						}
-
 					}
 				});
 			}
@@ -99,8 +96,7 @@ public class FetchWeather {
 		map.put("areaid", cityId);
 		map.put("type", type);
 		map.put("date", sdf1.format(new Date()));
-		String url = getAuthUrl("http://hfapi.tianqi.cn/data/?", map);
-		return url;
+		return getAuthUrl("http://hfapi.tianqi.cn/data/?", map);
 	}
 
 	/**
@@ -114,9 +110,7 @@ public class FetchWeather {
 				OkHttpUtil.enqueue(new Request.Builder().url(url).build(), new Callback() {
 					@Override
 					public void onFailure(Call call, IOException e) {
-
 					}
-
 					@Override
 					public void onResponse(Call call, Response response) throws IOException {
 						if (!response.isSuccessful()) {

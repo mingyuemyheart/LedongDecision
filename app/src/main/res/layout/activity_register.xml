@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -12,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/reTitle"
+        app:layout_constraintTop_toBottomOf="@+id/reTitle"
         android:orientation="vertical">
 
         <LinearLayout
@@ -136,6 +137,77 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:gravity="end"
+                android:text="公司名称*"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4" />
+
+            <EditText
+                android:id="@+id/etUnit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@color/transparent"
+                android:hint="请输入公司名称"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginEnd="35dp"
+            android:background="@color/gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="35dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="公司类型*"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4" />
+
+            <TextView
+                android:id="@+id/tvUnitType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:hint="请选择公司类型"
+                android:textColor="@color/text_color3"
+                android:textColorHint="@color/text_color2"
+                android:textSize="@dimen/level_4" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginEnd="35dp"
+            android:background="@color/gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="35dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
                 android:text="手机号*"
                 android:textColor="@color/text_color3"
                 android:textSize="@dimen/level_4" />
@@ -174,53 +246,16 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:gravity="end"
-                android:text="所在单位*"
+                android:text="市县*"
                 android:textColor="@color/text_color3"
                 android:textSize="@dimen/level_4" />
-
-            <EditText
-                android:id="@+id/etUnit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@color/transparent"
-                android:hint="请输入所在单位"
-                android:textColor="@color/text_color3"
-                android:textColorHint="@color/text_color2"
-                android:textSize="@dimen/level_4" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginStart="120dp"
-            android:layout_marginEnd="35dp"
-            android:background="@color/gray" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="35dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
 
             <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="邮箱*"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <EditText
-                android:id="@+id/etEmail"
+                android:id="@+id/tvCityName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:background="@color/transparent"
-                android:hint="请输入邮箱"
+                android:hint="请选择市县"
                 android:textColor="@color/text_color3"
                 android:textColorHint="@color/text_color2"
                 android:textSize="@dimen/level_4" />
@@ -249,4 +284,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

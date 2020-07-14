@@ -195,17 +195,21 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 1001 -> {
-                    val bundle = data.extras
-                    val userName = bundle.getString("userName")
-                    val pwd = bundle.getString("pwd")
-                    etUserName.setText(userName)
-                    etPwd.setText(pwd)
-                    okHttpLogin()
+                    if (data != null) {
+                        if (data.extras != null) {
+                            val bundle = data.extras
+                            val userName = bundle.getString("userName")
+                            val pwd = bundle.getString("pwd")
+                            etUserName.setText(userName)
+                            etPwd.setText(pwd)
+                            okHttpLogin()
+                        }
+                    }
                 }
             }
         }
