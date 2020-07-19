@@ -113,13 +113,13 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
             cityName = amapLocation.district
             lat = amapLocation.latitude
             lng = amapLocation.longitude
-            refresh()
+            tvLocation.text = cityName
+            okHttpGeo(lng, lat)
         }
     }
 
     private fun refresh() {
-        tvLocation.text = cityName
-        okHttpGeo(lng, lat)
+        startLocation()
     }
 
     /**

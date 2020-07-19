@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -33,7 +32,8 @@ import java.util.regex.Pattern
  */
 class RegisterActivity : BaseActivity(), OnClickListener {
 
-    private val citys: MutableList<String> = ArrayList() //选择市县
+    private val units: MutableList<String> = ArrayList()//公司类型
+    private val citys: MutableList<String> = ArrayList()//选择市县
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +50,16 @@ class RegisterActivity : BaseActivity(), OnClickListener {
         tvUnitType.setOnClickListener(this)
         tvCityName.setOnClickListener(this)
         tvRegister.setOnClickListener(this)
+
+        val array = resources.getStringArray(R.array.unit_type)
+        for (i in array.indices) {
+            if (i == 0) {
+                tvUnitType.text = array[i]
+            }
+            units.add(array[i])
+        }
+
+        okHttpCitys()
     }
 
     private fun register() {
@@ -90,14 +100,6 @@ class RegisterActivity : BaseActivity(), OnClickListener {
             Toast.makeText(this, "密码要求8位以上字母、数字、特殊字符组合", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(etPwdConfirm.text.toString())) {
-            Toast.makeText(this, "请再次输入密码", Toast.LENGTH_SHORT).show()
-            return false
-        }
-        if (!TextUtils.equals(etPwd.text.toString(), etPwdConfirm.text.toString())) {
-            Toast.makeText(this, "密码不一致", Toast.LENGTH_SHORT).show()
-            return false
-        }
         if (TextUtils.isEmpty(etUnit.text.toString())) {
             Toast.makeText(this, "请输入公司名称", Toast.LENGTH_SHORT).show()
             return false
@@ -106,12 +108,12 @@ class RegisterActivity : BaseActivity(), OnClickListener {
             Toast.makeText(this, "请选择公司类型", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(etPhone!!.text.toString())) {
-            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show()
+        if (TextUtils.isEmpty(tvCityName.text.toString())) {
+            Toast.makeText(this, "请选择所在市县", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (TextUtils.isEmpty(tvCityName.text.toString())) {
-            Toast.makeText(this, "请选择市县", Toast.LENGTH_SHORT).show()
+        if (TextUtils.isEmpty(etPhone!!.text.toString())) {
+            Toast.makeText(this, "请输入手机号", Toast.LENGTH_SHORT).show()
             return false
         }
         return true
@@ -122,7 +124,6 @@ class RegisterActivity : BaseActivity(), OnClickListener {
      */
     private fun okHttpRegister() {
         val url = "http://59.50.130.88:8888/decision-admin/ny/useradd?username=${etUserName!!.text}&pwd=${etPwd.text}&department=${etUnit.text}&email=${tvUnitType.text}&mobile=${etPhone.text}&sx=${tvCityName.text}"
-        Log.e("url", url)
         Thread(Runnable {
             OkHttpUtil.enqueue(Request.Builder().url(url).build(), object : Callback {
                 override fun onFailure(call: Call, e: IOException) {}
@@ -170,11 +171,6 @@ class RegisterActivity : BaseActivity(), OnClickListener {
      * 选择公司
      */
     private fun dialogUnit() {
-        val array = resources.getStringArray(R.array.unit_type)
-        val units: MutableList<String> = ArrayList()
-        for (i in array.indices) {
-            units.add(array[i])
-        }
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_select_string, null)
         dialogView.tvContent.text = "选择公司类型"
@@ -192,7 +188,6 @@ class RegisterActivity : BaseActivity(), OnClickListener {
 
     private fun okHttpCitys() {
         citys.clear()
-        showDialog()
         Thread(Runnable {
             val url = "http://59.50.130.88:8888/decision-admin/ny/gezrdz"
             OkHttpUtil.enqueue(Request.Builder().url(url).build(), object : Callback {
@@ -213,12 +208,13 @@ class RegisterActivity : BaseActivity(), OnClickListener {
                                     if (!itemObj.isNull("CityName")) {
                                         val cityName = itemObj.getString("CityName")
                                         if (!TextUtils.isEmpty(cityName)) {
+                                            if (i == 0) {
+                                                tvCityName.text = cityName
+                                            }
                                             citys.add(cityName)
                                         }
                                     }
                                 }
-                                cancelDialog()
-                                dialogCity()
                             } catch (e: JSONException) {
                                 e.printStackTrace()
                             }
@@ -253,11 +249,7 @@ class RegisterActivity : BaseActivity(), OnClickListener {
             R.id.llBack -> finish()
             R.id.tvUnitType -> dialogUnit()
             R.id.tvCityName -> {
-                if (citys.size <= 0) {
-                    okHttpCitys()
-                } else {
-                    dialogCity()
-                }
+                dialogCity()
             }
             R.id.tvRegister -> register()
         }

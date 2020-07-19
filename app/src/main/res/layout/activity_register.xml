@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -13,8 +13,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/reTitle"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/reTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -101,42 +101,6 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:gravity="end"
-                android:text="确认密码*"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <EditText
-                android:id="@+id/etPwdConfirm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@color/transparent"
-                android:hint="请再次输入密码"
-                android:textColor="@color/text_color3"
-                android:textColorHint="@color/text_color2"
-                android:textSize="@dimen/level_4" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginStart="120dp"
-            android:layout_marginEnd="35dp"
-            android:background="@color/gray" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="35dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
                 android:text="公司名称*"
                 android:textColor="@color/text_color3"
                 android:textSize="@dimen/level_4" />
@@ -177,23 +141,79 @@
                 android:textColor="@color/text_color3"
                 android:textSize="@dimen/level_4" />
 
-            <TextView
-                android:id="@+id/tvUnitType"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:hint="请选择公司类型"
-                android:textColor="@color/text_color3"
-                android:textColorHint="@color/text_color2"
-                android:textSize="@dimen/level_4" />
+                android:gravity="center_vertical"
+                android:paddingStart="5dp"
+                android:paddingEnd="10dp"
+                android:background="@drawable/bg_select_time"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvUnitType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/text_color3"
+                    android:textColorHint="@color/text_color2"
+                    android:textSize="@dimen/level_4" />
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/skzl_pic_more" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginStart="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="35dp"
-            android:background="@color/gray" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="所在市县*"
+                android:textColor="@color/text_color3"
+                android:textSize="@dimen/level_4" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="10dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_select_time"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvCityName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/text_color3"
+                    android:textColorHint="@color/text_color2"
+                    android:textSize="@dimen/level_4" />
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:src="@drawable/skzl_pic_more" />
+
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -233,41 +253,6 @@
             android:layout_marginEnd="35dp"
             android:background="@color/gray" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="35dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:text="市县*"
-                android:textColor="@color/text_color3"
-                android:textSize="@dimen/level_4" />
-
-            <TextView
-                android:id="@+id/tvCityName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:hint="请选择市县"
-                android:textColor="@color/text_color3"
-                android:textColorHint="@color/text_color2"
-                android:textSize="@dimen/level_4" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginStart="120dp"
-            android:layout_marginEnd="35dp"
-            android:background="@color/gray" />
-
         <TextView
             android:id="@+id/tvRegister"
             android:layout_width="match_parent"
@@ -279,8 +264,8 @@
             android:gravity="center_vertical|center"
             android:orientation="horizontal"
             android:text="注  册"
-            android:textSize="@dimen/level_3"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/level_3" />
 
     </LinearLayout>
 
