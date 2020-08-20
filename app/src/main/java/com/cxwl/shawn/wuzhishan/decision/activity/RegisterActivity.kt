@@ -51,14 +51,7 @@ class RegisterActivity : BaseActivity(), OnClickListener {
         tvCityName.setOnClickListener(this)
         tvRegister.setOnClickListener(this)
 
-        val array = resources.getStringArray(R.array.unit_type)
-        for (i in array.indices) {
-            if (i == 0) {
-                tvUnitType.text = array[i]
-            }
-            units.add(array[i])
-        }
-
+        okHttpUnit()
         okHttpCitys()
     }
 
@@ -101,7 +94,7 @@ class RegisterActivity : BaseActivity(), OnClickListener {
             return false
         }
         if (TextUtils.isEmpty(etUnit.text.toString())) {
-            Toast.makeText(this, "请输入公司名称", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "请输入公司名称，无公司请写无", Toast.LENGTH_SHORT).show()
             return false
         }
         if (TextUtils.isEmpty(tvUnitType!!.text.toString())) {
@@ -184,6 +177,48 @@ class RegisterActivity : BaseActivity(), OnClickListener {
             dialog.dismiss()
             tvUnitType.text = units[i]
         }
+    }
+
+    /**
+     * 获取公司类型
+     */
+    private fun okHttpUnit() {
+        units.clear()
+        Thread(Runnable {
+            val url = "http://decision-admin.tianqi.cn/Home/work2019/hnny_getgslx"
+            OkHttpUtil.enqueue(Request.Builder().url(url).build(), object : Callback {
+                override fun onFailure(call: Call, e: IOException) {}
+
+                @Throws(IOException::class)
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) {
+                        return
+                    }
+                    val result = response.body!!.string()
+                    runOnUiThread {
+                        if (!TextUtils.isEmpty(result)) {
+                            try {
+                                val array = JSONArray(result)
+                                for (i in 0 until array.length()) {
+                                    val itemObj = array.getJSONObject(i)
+                                    if (!itemObj.isNull("GName")) {
+                                        val unitName = itemObj.getString("GName")
+                                        if (!TextUtils.isEmpty(unitName)) {
+                                            if (i == 0) {
+                                                tvUnitType.text = unitName
+                                            }
+                                            units.add(unitName)
+                                        }
+                                    }
+                                }
+                            } catch (e: JSONException) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                }
+            })
+        }).start()
     }
 
     private fun okHttpCitys() {

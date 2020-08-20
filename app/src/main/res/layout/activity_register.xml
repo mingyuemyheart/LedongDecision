@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:background="@color/transparent"
-                android:hint="请输入公司名称"
+                android:hint="请输入公司名称，无公司请写无"
                 android:textColor="@color/text_color3"
                 android:textColorHint="@color/text_color2"
                 android:textSize="@dimen/level_4" />
