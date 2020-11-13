@@ -274,7 +274,7 @@ class DisasterMonitorDayFragment : Fragment(), OnClickListener {
                                                 dataMap[criterName] = itemObj
                                                 types.add(criterName)
                                             }
-                                            if (i <= 1) {
+                                            if (i == 0) {
                                                 setValue(criterName)
                                             }
                                         }
@@ -328,10 +328,17 @@ class DisasterMonitorDayFragment : Fragment(), OnClickListener {
                             tvInfo.text = "说明\n${obj.getString("CriterionInfo")}"
                         } else if (!obj.isNull("CDATE")) {
                             tvInfo.text = "时间\n${obj.getString("CDATE")}"
+                        } else {
+                            tvInfo.text = "说明"
                         }
+
                         if (!obj.isNull("Mark")) {
                             tvMark.text = "说明\n${obj.getString("Mark")}"
+                        } else {
+                            tvMark.text = "说明"
                         }
+
+                        llContainer.removeAllViews()
                         if (!obj.isNull("DAYS")) {
                             if (!obj.isNull("Url")) {
                                 val textView = TextView(activity)

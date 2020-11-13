@@ -470,13 +470,21 @@ public class DisasterMonitorWeekFragment extends Fragment implements OnClickList
 				if (obj != null) {
 					try {
 						if (!obj.isNull("CriterionInfo")) {
-							tvInfo.setText(obj.getString("CriterionInfo"));
+							tvInfo.setText("说明\n"+obj.getString("CriterionInfo"));
+						} else {
+							tvInfo.setText("说明");
 						}
+
 						if (!obj.isNull("Mark")) {
-							tvMark.setText(obj.getString("Mark"));
+							tvMark.setText("说明\n"+obj.getString("Mark"));
+						} else {
+							tvMark.setText("说明");
 						}
+
+						imageView.setVisibility(View.GONE);
 						if (!obj.isNull("Url")) {
 							Picasso.get().load(obj.getString("Url")).into(imageView);
+							imageView.setVisibility(View.VISIBLE);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
