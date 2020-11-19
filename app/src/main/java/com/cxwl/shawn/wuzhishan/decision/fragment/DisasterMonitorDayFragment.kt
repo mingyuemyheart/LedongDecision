@@ -274,7 +274,7 @@ class DisasterMonitorDayFragment : Fragment(), OnClickListener {
                                                 dataMap[criterName] = itemObj
                                                 types.add(criterName)
                                             }
-                                            if (i == 0) {
+                                            if (i <= 1) {
                                                 setValue(criterName)
                                             }
                                         }
@@ -338,11 +338,15 @@ class DisasterMonitorDayFragment : Fragment(), OnClickListener {
                             tvMark.text = "说明"
                         }
 
-                        llContainer.removeAllViews()
                         if (!obj.isNull("DAYS")) {
                             if (!obj.isNull("Url")) {
                                 val textView = TextView(activity)
-                                textView.text = "三天预报图"
+                                val days = obj.getString("DAYS")
+                                if (TextUtils.equals(days, "3")) {
+                                    textView.text = "三天预报图"
+                                } else {
+                                    textView.text = "七天预报图"
+                                }
                                 textView.setTextColor(ContextCompat.getColor(activity!!, R.color.text_color3))
                                 textView.setPadding(0, CommonUtil.dip2px(activity, 10f).toInt(), 0, CommonUtil.dip2px(activity, 10f).toInt())
                                 llContainer.addView(textView)
