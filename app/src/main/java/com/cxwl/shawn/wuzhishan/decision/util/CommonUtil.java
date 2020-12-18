@@ -14,7 +14,9 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.PolygonOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
@@ -23,6 +25,7 @@ import com.amap.api.maps.model.TextOptions;
 import com.cxwl.shawn.wuzhishan.decision.R;
 import com.cxwl.shawn.wuzhishan.decision.dto.CityDto;
 import com.cxwl.shawn.wuzhishan.decision.dto.DisasterDto;
+import com.cxwl.shawn.wuzhishan.decision.dto.ShawnRainDto;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,19 +173,43 @@ public class CommonUtil {
      * @param context
      * @param aMap
      */
-    public static void drawAllDistrict(Context context, AMap aMap, List<Polyline> polyLineList) {
+    public static void drawAllDistrict(Context context, AMap aMap, ArrayList<Polyline> polyLineList) {
         if (aMap == null) {
             return;
         }
-        String result = CommonUtil.getFromAssets(context, "json/hnGeo.json");
+        String result = CommonUtil.getFromAssets(context, "json/ld.json");
         if (!TextUtils.isEmpty(result)) {
             try {
                 JSONObject obj = new JSONObject(result);
+                if (!obj.isNull("districts")) {
+                    JSONArray array = obj.getJSONArray("districts");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject itemObj = array.getJSONObject(i);
+                        ShawnRainDto dto = new ShawnRainDto();
+                        if (!itemObj.isNull("name")) {
+                            dto.cityName = itemObj.getString("name");
+                        }
+                        if (!itemObj.isNull("center")) {
+                            String[] latLng = itemObj.getString("center").split(",");
+                            dto.lng = Double.valueOf(latLng[0]);
+                            dto.lat = Double.valueOf(latLng[1]);
+                        }
+
+                        TextOptions options = new TextOptions();
+                        options.position(new LatLng(dto.lat+0.05, dto.lng));
+                        options.fontColor(Color.BLACK);
+                        options.fontSize(20);
+                        options.text(dto.cityName);
+                        options.backgroundColor(Color.TRANSPARENT);
+                        aMap.addText(options);
+                    }
+                }
                 if (!obj.isNull("polyline")) {
+                    LatLngBounds.Builder builder = LatLngBounds.builder();
                     String[] polylines = obj.getString("polyline").split("\\|");
                     for (int i = 0; i < polylines.length; i++) {
                         PolylineOptions polylineOption = new PolylineOptions();
-                        polylineOption.width(2).color(0xff999999);
+                        polylineOption.width(4).color(0xff999999);
                         String[] array = polylines[i].split(";");
                         for (int j = 0; j < array.length; j++) {
                             String[] latLng = array[j].split(",");
@@ -190,9 +217,13 @@ public class CommonUtil {
                             double lat = Double.valueOf(latLng[1]);
                             polylineOption.add(new LatLng(lat, lng));
                             polylineOption.zIndex(1000);
+                            builder.include(new LatLng(lat, lng));
                         }
                         Polyline polyLine = aMap.addPolyline(polylineOption);
                         polyLineList.add(polyLine);
+                    }
+                    if (polylines.length > 0) {
+                        aMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 50));
                     }
                 }
             } catch (JSONException e) {

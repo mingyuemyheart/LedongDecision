@@ -52,14 +52,13 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         }
 
         showDialog()
-        val url = "http://59.50.130.88:8888/decision-api/api/Json"
+        val url = "http://59.50.130.88:8888/pyapi170/ld/login"
         val param  = JSONObject()
         param.put("command", "6001")
         val param1 = JSONObject()
         param1.put("username", etUserName.text.toString())
         param1.put("password", etPwd.text.toString())
         param1.put("type", "1")
-        param1.put("code", "1")
         param.put("object", param1)
         val json : String = param.toString()
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
@@ -80,79 +79,96 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                             val status = objects.getString("status")
                             if (TextUtils.equals(status, "true")) {//成功
                                 val obj  = JSONObject(objects.getString("object"))
-                                val array = obj.getJSONArray("channels")
-                                dataList.clear()
-                                for (i in 0 until array.length()) {
-                                    val itemObj = array.getJSONObject(i)
-                                    val data = ColumnData()
-                                    if (!itemObj.isNull("id")) {
-                                        data.id = itemObj.getString("id")
-                                    }
-                                    if (!itemObj.isNull("title")) {
-                                        data.name = itemObj.getString("title")
-                                    }
-                                    if (!itemObj.isNull("icon")) {
-                                        data.icon = itemObj.getString("icon")
-                                    }
-                                    if (!itemObj.isNull("columnType")) {
-                                        data.showType = itemObj.getString("columnType")
-                                    }
-                                    if (!itemObj.isNull("dataUrl")) {
-                                        data.dataUrl = itemObj.getString("dataUrl")
-                                    }
-                                    if (!itemObj.isNull("child")) {
-                                        val childArray = itemObj.getJSONArray("child")
-                                        for (j in 0 until childArray.length()) {
-                                            val childObj = childArray.getJSONObject(j)
-                                            val dto = ColumnData()
-                                            if (!childObj.isNull("id")) {
-                                                dto.id = childObj.getString("id")
+                                if (!obj.isNull("channels")) {
+                                    val array = obj.getJSONArray("channels")
+                                    dataList.clear()
+                                    for (i in 0 until array.length()) {
+                                        val itemObj = array.getJSONObject(i)
+                                        val data = ColumnData()
+                                        if (!itemObj.isNull("id")) {
+                                            data.id = itemObj.getString("id")
+                                        }
+                                        if (!itemObj.isNull("title")) {
+                                            data.name = itemObj.getString("title")
+                                        }
+                                        if (!itemObj.isNull("icon")) {
+                                            data.icon = itemObj.getString("icon")
+                                        }
+                                        if (!itemObj.isNull("columnType")) {
+                                            data.showType = itemObj.getString("columnType")
+                                        }
+                                        if (!itemObj.isNull("dataUrl")) {
+                                            data.dataUrl = itemObj.getString("dataUrl")
+                                            if (!data.dataUrl.startsWith("http")) {
+                                                if (!itemObj.isNull("listUrl")) {
+                                                    data.dataUrl = itemObj.getString("listUrl")
+                                                }
                                             }
-                                            if (!childObj.isNull("title")) {
-                                                dto.name = childObj.getString("title")
-                                            }
-                                            if (!childObj.isNull("icon")) {
-                                                dto.icon = childObj.getString("icon")
-                                            }
-                                            if (!childObj.isNull("columnType")) {
-                                                dto.showType = childObj.getString("columnType")
-                                            }
-                                            if (!childObj.isNull("dataUrl")) {
-                                                dto.dataUrl = childObj.getString("dataUrl")
-                                            }
-                                            if (!childObj.isNull("child")) {
-                                                val childArray2 = childObj.getJSONArray("child")
-                                                for (m in 0 until childArray2.length()) {
-                                                    val childObj2 = childArray2.getJSONObject(m)
-                                                    val dto2 = ColumnData()
-                                                    if (!childObj2.isNull("id")) {
-                                                        dto2.id = childObj2.getString("id")
+                                        }
+                                        if (!itemObj.isNull("child")) {
+                                            val childArray = itemObj.getJSONArray("child")
+                                            for (j in 0 until childArray.length()) {
+                                                val childObj = childArray.getJSONObject(j)
+                                                val dto = ColumnData()
+                                                if (!childObj.isNull("id")) {
+                                                    dto.id = childObj.getString("id")
+                                                }
+                                                if (!childObj.isNull("title")) {
+                                                    dto.name = childObj.getString("title")
+                                                }
+                                                if (!childObj.isNull("icon")) {
+                                                    dto.icon = childObj.getString("icon")
+                                                }
+                                                if (!childObj.isNull("columnType")) {
+                                                    dto.showType = childObj.getString("columnType")
+                                                }
+                                                if (!childObj.isNull("dataUrl")) {
+                                                    dto.dataUrl = childObj.getString("dataUrl")
+                                                    if (!dto.dataUrl.startsWith("http")) {
+                                                        if (!childObj.isNull("listUrl")) {
+                                                            dto.dataUrl = childObj.getString("listUrl")
+                                                        }
                                                     }
-                                                    if (!childObj2.isNull("title")) {
-                                                        dto2.name = childObj2.getString("title")
-                                                    }
-                                                    if (!childObj2.isNull("icon")) {
-                                                        dto2.icon = childObj2.getString("icon")
-                                                    }
-                                                    if (!childObj2.isNull("columnType")) {
-                                                        dto2.showType = childObj2.getString("columnType")
-                                                    }
-                                                    if (!childObj2.isNull("dataUrl")) {
-                                                        dto2.dataUrl = childObj2.getString("dataUrl")
-                                                    }
+                                                }
+                                                if (!childObj.isNull("child")) {
+                                                    val childArray2 = childObj.getJSONArray("child")
+                                                    for (m in 0 until childArray2.length()) {
+                                                        val childObj2 = childArray2.getJSONObject(m)
+                                                        val dto2 = ColumnData()
+                                                        if (!childObj2.isNull("id")) {
+                                                            dto2.id = childObj2.getString("id")
+                                                        }
+                                                        if (!childObj2.isNull("title")) {
+                                                            dto2.name = childObj2.getString("title")
+                                                        }
+                                                        if (!childObj2.isNull("icon")) {
+                                                            dto2.icon = childObj2.getString("icon")
+                                                        }
+                                                        if (!childObj2.isNull("columnType")) {
+                                                            dto2.showType = childObj2.getString("columnType")
+                                                        }
+                                                        if (!childObj2.isNull("dataUrl")) {
+                                                            dto2.dataUrl = childObj2.getString("dataUrl")
+                                                            if (!dto2.dataUrl.startsWith("http")) {
+                                                                if (!childObj2.isNull("listUrl")) {
+                                                                    dto2.dataUrl = childObj2.getString("listUrl")
+                                                                }
+                                                            }
+                                                        }
 
-                                                    //过滤掉实况资料里部分内容
+                                                        //过滤掉实况资料里部分内容
 //                                                    if (!TextUtils.equals(dto2.id, "631") && !TextUtils.equals(dto2.id, "648")
 //                                                            && !TextUtils.equals(dto2.id, "657") && !TextUtils.equals(dto2.id, "658")
 //                                                            && !TextUtils.equals(dto2.id, "634") && !TextUtils.equals(dto2.id, "655")) {
                                                         dto.child.add(dto2)
 //                                                    }
+                                                    }
                                                 }
+                                                data.child.add(dto)
                                             }
-                                            data.child.add(dto)
                                         }
+                                        dataList.add(data)
                                     }
-                                    dataList.add(data)
                                 }
 
                                 if (!obj.isNull("uid")) {

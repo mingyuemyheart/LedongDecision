@@ -102,7 +102,7 @@ class SettingActivity : BaseActivity(), View.OnClickListener {
             R.id.llFeedBack -> startActivity(Intent(this, FeedbackActivity::class.java))
             R.id.llAbout -> {}
             R.id.llClearCache -> dialogCache()
-            R.id.llVersion -> AutoUpdateUtil.checkUpdate(this, this, "120", getString(R.string.app_name), false)
+            R.id.llVersion -> AutoUpdateUtil.checkUpdate(this, this, "136", getString(R.string.app_name), false)
             R.id.tvLogout -> dialogLogout()
         }
     }

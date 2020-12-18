@@ -35,7 +35,6 @@ import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.OnCameraChangeListener;
-import com.amap.api.maps.AMap.OnMapTouchListener;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
@@ -96,7 +95,7 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 	private List<Text> valueTexts = new ArrayList<>();//等值线
 	private List<Polygon> factPolygons = new ArrayList<>();//实况图层
 	private List<Text> cityNames = new ArrayList<>();//城市名称
-	private List<Polyline> adcodePolylines = new ArrayList<>();//行政区划边界线
+	private ArrayList<Polyline> adcodePolylines = new ArrayList<>();//行政区划边界线
 
 	private List<ShawnRainDto> times = new ArrayList<>();
 	private List<ShawnRainDto> realDatas = new ArrayList<>();
@@ -380,40 +379,32 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 			aMap = mapView.getMap();
 		}
 
-		aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10f));
+//		aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.834362424286152,109.52166572213174), 10f));
 		aMap.getUiSettings().setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.setOnCameraChangeListener(this);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
-		aMap.showMapText(false);
-		aMap.setOnMapLoadedListener(new AMap.OnMapLoadedListener() {
-			@Override
-			public void onMapLoaded() {
-				drawCityNameAndDistrict();
-			}
+		aMap.setOnMapLoadedListener(() -> {
+			aMap.showMapText(false);
+			CommonUtil.drawAllDistrict(mContext, aMap, adcodePolylines);
 		});
 
 		TextView tvMapNumber = findViewById(R.id.tvMapNumber);
 		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
 
-		aMap.setOnMapTouchListener(new OnMapTouchListener() {
-			@Override
-			public void onTouch(MotionEvent arg0) {
-				if (scrollView != null) {
-					if (arg0.getAction() == MotionEvent.ACTION_UP) {
-						scrollView.requestDisallowInterceptTouchEvent(false);
-					}else {
-						scrollView.requestDisallowInterceptTouchEvent(true);
-					}
+		aMap.setOnMapTouchListener(arg0 -> {
+			if (scrollView != null) {
+				if (arg0.getAction() == MotionEvent.ACTION_UP) {
+					scrollView.requestDisallowInterceptTouchEvent(false);
+				}else {
+					scrollView.requestDisallowInterceptTouchEvent(true);
 				}
 			}
 		});
 
 		LatLngBounds bounds = new LatLngBounds.Builder()
-//		.include(new LatLng(57.9079, 71.9282))
-//		.include(new LatLng(3.9079, 134.8656))
-		.include(new LatLng(1, 66))
-		.include(new LatLng(60, 153))
+		.include(new LatLng(-90.0, -179.9))
+		.include(new LatLng(90.0, 179.9))
 		.build();
 		aMap.addGroundOverlay(new GroundOverlayOptions()
 			.anchor(0.5f, 0.5f)
@@ -421,61 +412,6 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 			.image(BitmapDescriptorFactory.fromResource(R.drawable.bg_empty))
 			.transparency(0.0f));
 		aMap.runOnDrawFrame();
-
-	}
-
-	/**
-	 * 绘制城市名称及行政边界
-	 */
-	private void drawCityNameAndDistrict() {
-		if (aMap == null) {
-			return;
-		}
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				removeCityNames();
-				removePolylines();
-				String result = CommonUtil.getFromAssets(mContext, "json/all_citys.json");
-				if (!TextUtils.isEmpty(result)) {
-					try {
-						JSONObject obj = new JSONObject(result);
-						if (!obj.isNull("districts")) {
-							JSONArray array = obj.getJSONArray("districts");
-							for (int i = 0; i < array.length(); i++) {
-								JSONObject itemObj = array.getJSONObject(i);
-								ShawnRainDto dto = new ShawnRainDto();
-								if (!itemObj.isNull("name")) {
-									String name = itemObj.getString("name");
-									if (name.contains("五指山")) {
-										dto.cityName = name.substring(0, 3);
-									}else {
-										dto.cityName = name.substring(0, 2);
-									}
-								}
-								if (!itemObj.isNull("center")) {
-									String[] latLng = itemObj.getString("center").split(",");
-									dto.lng = Double.valueOf(latLng[0]);
-									dto.lat = Double.valueOf(latLng[1]);
-								}
-
-								TextOptions options = new TextOptions();
-								options.position(new LatLng(dto.lat+0.05, dto.lng));
-								options.fontColor(Color.BLACK);
-								options.fontSize(20);
-								options.text(dto.cityName);
-								options.backgroundColor(Color.TRANSPARENT);
-								aMap.addText(options);
-							}
-
-							CommonUtil.drawAllDistrict(mContext, aMap, adcodePolylines);
-						}
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
 
 	}
 
@@ -810,21 +746,21 @@ public class FactActivity extends FragmentActivity implements OnClickListener, O
 										if (listView.getVisibility() == View.VISIBLE) {
 											mapParams.height = height-statusBarHeight-reTitle.getMeasuredHeight()-llContainer2.getMeasuredHeight()
 													-llContainer.getMeasuredHeight()-listTitle.getMeasuredHeight()*8;
-											new Handler().postDelayed(new Runnable() {
-												@Override
-												public void run() {
-													aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(19.211397,109.795324), 7.8f));
-												}
-											}, 500);
+//											new Handler().postDelayed(new Runnable() {
+//												@Override
+//												public void run() {
+//													aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(19.211397,109.795324), 7.8f));
+//												}
+//											}, 500);
 										}else {
 											mapParams.height = height-statusBarHeight-reTitle.getMeasuredHeight()-llContainer2.getMeasuredHeight()
 													-llContainer.getMeasuredHeight()-llBottom.getMeasuredHeight();
-											new Handler().postDelayed(new Runnable() {
-												@Override
-												public void run() {
-													aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(19.211397,109.795324), 8.2f));
-												}
-											}, 500);
+//											new Handler().postDelayed(new Runnable() {
+//												@Override
+//												public void run() {
+//													aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(19.211397,109.795324), 8.2f));
+//												}
+//											}, 500);
 										}
 										mapView.setLayoutParams(mapParams);
 

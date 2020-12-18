@@ -63,15 +63,17 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 					tvControl.tag = "679"//农事记载
 				}
 				val columnList : ArrayList<ColumnData> = ArrayList(data.child)
-				val columnSize = columnList.size
-				if (columnSize <= 1) {
+				if (columnList.size == 0) {
+					columnList.add(data)
+				}
+				if (columnList.size <= 1) {
 					llContainer.visibility = View.GONE
 					llContainer1.visibility = View.GONE
 				}
 				llContainer.removeAllViews()
 				llContainer1.removeAllViews()
 				val width = CommonUtil.widthPixels(this)
-				for (i in 0 until columnSize) {
+				for (i in 0 until columnList.size) {
 					val dto = columnList[i]
 
 					val tvName = TextView(this)
@@ -139,8 +141,9 @@ class PdfTitleActivity : FragmentActivity(), OnClickListener {
 					}else if (TextUtils.equals(dto.id, "672")) {
 						//灾害监测-逐周监测
 						fragment = DisasterMonitorWeekFragment()
-					}else if (TextUtils.equals(dto.id, "641") || TextUtils.equals(dto.id, "642")) {
-						//卫星云图
+					}else if (TextUtils.equals(dto.id, "641") || TextUtils.equals(dto.id, "642") || TextUtils.equals(dto.id, "685")
+							|| TextUtils.equals(dto.id, "609") || TextUtils.equals(dto.id, "610") || TextUtils.equals(dto.id, "611") || TextUtils.equals(dto.id, "639") || TextUtils.equals(dto.id, "629")) {
+						//雷达图、卫星云图
 						fragment = RadarFragment()
 					}else if (TextUtils.equals(dto.id, "679")) {
 						//农情上报-农事记载

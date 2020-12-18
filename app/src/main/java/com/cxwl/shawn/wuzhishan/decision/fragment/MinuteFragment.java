@@ -106,7 +106,7 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 	private List<Text> valueTexts = new ArrayList<>();//等值线
 	private List<Polygon> rainPolygons = new ArrayList<>();//降水图层
 	private List<Text> cityNames = new ArrayList<>();//城市名称
-	private List<Polyline> adcodePolylines = new ArrayList<>();//行政区划边界线
+	private ArrayList<Polyline> adcodePolylines = new ArrayList<>();//行政区划边界线
 	private String layerResult;//降水图层数据
 	
 	@Override
@@ -132,6 +132,9 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 		aMap.getUiSettings().setZoomControlsEnabled(false);
 		aMap.getUiSettings().setRotateGesturesEnabled(false);
 		aMap.setOnMapClickListener(this);
+//		aMap.setOnMapLoadedListener(() -> {
+//			CommonUtil.drawAllDistrict(getActivity(), aMap, adcodePolylines);
+//		});
 
 		TextView tvMapNumber = view.findViewById(R.id.tvMapNumber);
 		tvMapNumber.setText(aMap.getMapContentApprovalNumber());
@@ -800,7 +803,6 @@ public class MinuteFragment extends Fragment implements OnClickListener, OnMapCl
 
 		removeCityNames();
 		removePolylines();
-		CommonUtil.drawAllDistrict(getActivity(), aMap, adcodePolylines);
 	}
 
 	/**

@@ -44,8 +44,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
     private var mExitTime : Long = 0//记录点击完返回按钮后的long型时间
     private var mLocationOption : AMapLocationClientOption? = null//声明mLocationOption对象
     private var mLocationClient : AMapLocationClient? = null//声明AMapLocationClient类对象
-    private var cityName = "五指山"
-    private var cityId = "101310222"
+    private var cityName = "乐东"
+    private var cityId = "101310221"
     private var lat = CONST.DEFAULT_LAT
     private var lng = CONST.DEFAULT_LNG
     private val sdf2 = SimpleDateFormat("HH", Locale.CHINA)
@@ -75,7 +75,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
     }
 
     private fun initWidget() {
-        AutoUpdateUtil.checkUpdate(this@MainActivity, mContext, "120", getString(R.string.app_name), true)
+        AutoUpdateUtil.checkUpdate(this@MainActivity, mContext, "136", getString(R.string.app_name), true)
 
         llLocation.setOnClickListener(this)
         tvFifth.setOnClickListener(this)
@@ -277,7 +277,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
         onLayoutMeasure()
         gridView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, arg2, l ->
             val dto = channelList[arg2]
-            var intent : Intent?
+            val intent : Intent?
             when(dto.id) {
                 "586" -> {//灾害预警
                     intent = Intent(mContext, PdfTitleActivity::class.java)
@@ -352,7 +352,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
         reFact.measure(0, 0)
         val height2 = reFact.measuredHeight
         if (mAdapter != null) {
-            mAdapter!!.height = CommonUtil.heightPixels(this)-statusBarHeight-height1-height2
+            mAdapter!!.setHeight(CommonUtil.heightPixels(this)-statusBarHeight-height1-height2)
             mAdapter!!.notifyDataSetChanged()
         }
     }

@@ -40,7 +40,7 @@ public class FetchWeather {
 		this.cityId = cityId;
 		this.type = type;
 		if (!TextUtils.isEmpty(cityId) && cityId.startsWith("10131")) {//海南
-			String url = "http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID="+cityId;
+			String url = "http://hainan.welife100.com/Public/hnfusion?areaid="+cityId;
 			OkHttpHannan(url);
 		}else {
 			OkHttpWeather2(weather2Url(cityId, type));

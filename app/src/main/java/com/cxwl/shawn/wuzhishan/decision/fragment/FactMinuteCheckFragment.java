@@ -122,7 +122,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 		if (TextUtils.isEmpty(childId)) {
 			childId = "";
 		}
-		OkHttpList("http://59.50.130.88:8888/decision-admin/dates/newgetrainfall?city=五指山&start=&end=&cid="+childId, childId);
+		OkHttpList("http://59.50.130.88:8888/decision-admin/dates/newgetrainfall?city=乐东&start=&end=&cid="+childId, childId);
 	}
 	
 	private void initCheckListView(View view) {
@@ -601,7 +601,7 @@ public class FactMinuteCheckFragment extends Fragment implements OnClickListener
 				return;
 			}
 			progressBar.setVisibility(View.VISIBLE);
-			String url = String.format("http://59.50.130.88:8888/decision-admin/dates/newgetrainfall?city=五指山&start=%s&end=%s&cid=%s", startTimeCheck,endTimeCheck,childId);
+			String url = String.format("http://59.50.130.88:8888/decision-admin/dates/newgetrainfall?city=乐东&start=%s&end=%s&cid=%s", startTimeCheck,endTimeCheck,childId);
 			OkHttpList(url, childId);
 			break;
 		case R.id.ll1:

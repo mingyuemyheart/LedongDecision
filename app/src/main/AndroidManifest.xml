@@ -8,10 +8,10 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <!--//添加允许安装未知应用市场权限，这个权限不是动态权限，所以不用进行动态申请，否则自动更新功能失效-->
@@ -22,26 +22,28 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:networkSecurityConfig="@xml/network_security_config">
+        tools:ignore="LockedOrientationActivity">
 
         <!--解决android28以后无法使用apache http协议-->
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <!-- 自动更新 -->
         <receiver android:name=".util.AutoUpdateBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
-                <action android:name="android.intent.action.PACKAGE_INSTALL"/>
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.PACKAGE_INSTALL" />
             </intent-filter>
         </receiver>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:authorities="${applicationId}.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
@@ -51,80 +53,99 @@
         <!--高德地图-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="842e8645c94a93b5d14dfd194c0e9798"/>
+            android:value="c334ab64ee03177288d6392f29c534b7" />
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService" />
 
         <activity
             android:name=".activity.WelcomeActivity"
-            android:theme="@style/SplashTheme"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.LoginActivity"
-                  android:screenOrientation="portrait"
-                  android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.RegisterActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.MainActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.PdfTitleActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.PdfTitleActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.PDFActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.PDFActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.TyphoonRouteActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.TyphoonRouteActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.WarningActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.WarningActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.WarningDetailActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.WarningDetailActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.ForecastActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ForecastActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.CityActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.CityActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.SettingActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.FeedbackActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.FactActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.FactActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.FactStationListActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.FactStationListActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.FactStationListDetailActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.FactStationListDetailActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.StaticsActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.StaticsActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.WebviewActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.WebviewActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.SelectPictureActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.SelectPictureActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.DisasterActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.DisasterActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 

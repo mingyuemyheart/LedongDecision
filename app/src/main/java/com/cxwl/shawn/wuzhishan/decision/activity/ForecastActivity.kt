@@ -93,9 +93,9 @@ class ForecastActivity : BaseActivity(), OnClickListener {
 			if (cityId.startsWith("10131")) {
 				llFactButton.visibility = View.VISIBLE
 				if (lat != 0.0 && lng != 0.0) {
-					url = String.format("http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID=%s&lonlat=%s,%s", cityId, lng, lat)
+					url = String.format("http://hainan.welife100.com/Public/hnfusion?areaid=%s&lonlat=%s,%s", cityId, lng, lat)
 				}else {
-					url = "http://data-fusion.tianqi.cn/datafusion/test?type=HN&ID=$cityId"
+					url = "http://hainan.welife100.com/Public/hnfusion?areaid=$cityId"
 				}
 			}else {
 				llFactButton.visibility = View.GONE

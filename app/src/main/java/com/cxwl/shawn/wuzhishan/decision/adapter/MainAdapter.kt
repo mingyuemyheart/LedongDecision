@@ -1,6 +1,7 @@
 package com.cxwl.shawn.wuzhishan.decision.adapter;
 
 import android.content.Context
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,12 @@ import com.squareup.picasso.Picasso
  */
 class MainAdapter constructor(context: Context?, private var mArrayList: ArrayList<ColumnData>) : BaseAdapter() {
 
-	private val mContext : Context = context!!
 	private val mInflater : LayoutInflater? = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-	open var height = 0
+	private var height = 0
+
+	fun setHeight(height: Int) {
+		this.height = height
+	}
 	
 	class ViewHolder{
 		var tvName : TextView? = null
@@ -56,11 +60,11 @@ class MainAdapter constructor(context: Context?, private var mArrayList: ArrayLi
 
 		mHolder.tvName!!.text = dto.name
 
-//			if (!TextUtils.isEmpty(dto.icon)) {
-//				Picasso.get().load(dto.icon).into(mHolder.icon);
-//			}else {
-		Picasso.get().load(String.format("http://decision-admin.tianqi.cn/Public/images/hnny/%s.png", dto.id)).into(mHolder.icon)
-//			}
+		if (!TextUtils.isEmpty(dto.icon)) {
+			Picasso.get().load(dto.icon).into(mHolder.icon)
+		} else {
+			Picasso.get().load(String.format("http://decision-admin.tianqi.cn/Public/images/hnny/%s.png", dto.id)).into(mHolder.icon)
+		}
 
 		if (height > 0) {
 			val params = AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, height/3)

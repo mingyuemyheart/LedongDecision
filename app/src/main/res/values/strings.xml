@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">海南农气</string>
+    <string name="app_name">乐东天气</string>
 
     <!-- 天气表 -->
     <string name="weather0">晴</string>

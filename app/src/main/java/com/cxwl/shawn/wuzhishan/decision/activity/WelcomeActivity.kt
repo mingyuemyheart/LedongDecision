@@ -51,14 +51,13 @@ class WelcomeActivity : BaseActivity() {
     }
 
     private fun okHttpLogin(userName : String?, pwd : String?) {
-        val url = "http://59.50.130.88:8888/decision-api/api/Json"
+        val url = "http://59.50.130.88:8888/pyapi170/ld/login"
         val param  = JSONObject()
         param.put("command", "6001")
         val param1 = JSONObject()
         param1.put("username", userName)
         param1.put("password", pwd)
         param1.put("type", "1")
-        param1.put("code", "1")
         param.put("object", param1)
         val json : String = param.toString()
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
@@ -97,6 +96,11 @@ class WelcomeActivity : BaseActivity() {
                                     }
                                     if (!itemObj.isNull("dataUrl")) {
                                         data.dataUrl = itemObj.getString("dataUrl")
+                                        if (!data.dataUrl.startsWith("http")) {
+                                            if (!itemObj.isNull("listUrl")) {
+                                                data.dataUrl = itemObj.getString("listUrl")
+                                            }
+                                        }
                                     }
                                     if (!itemObj.isNull("child")) {
                                         val childArray = itemObj.getJSONArray("child")
@@ -117,6 +121,11 @@ class WelcomeActivity : BaseActivity() {
                                             }
                                             if (!childObj.isNull("dataUrl")) {
                                                 dto.dataUrl = childObj.getString("dataUrl")
+                                                if (!dto.dataUrl.startsWith("http")) {
+                                                    if (!childObj.isNull("listUrl")) {
+                                                        dto.dataUrl = childObj.getString("listUrl")
+                                                    }
+                                                }
                                             }
                                             if (!childObj.isNull("child")) {
                                                 val childArray2 = childObj.getJSONArray("child")
@@ -137,6 +146,11 @@ class WelcomeActivity : BaseActivity() {
                                                     }
                                                     if (!childObj2.isNull("dataUrl")) {
                                                         dto2.dataUrl = childObj2.getString("dataUrl")
+                                                        if (!dto2.dataUrl.startsWith("http")) {
+                                                            if (!childObj2.isNull("listUrl")) {
+                                                                dto2.dataUrl = childObj2.getString("listUrl")
+                                                            }
+                                                        }
                                                     }
 
                                                     //过滤掉实况资料里部分内容

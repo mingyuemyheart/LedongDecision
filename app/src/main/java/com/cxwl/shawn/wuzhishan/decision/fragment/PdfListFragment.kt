@@ -110,7 +110,7 @@ class PdfListFragment : Fragment() {
     }
 
     private fun okHttpList(url: String) {
-        if (TextUtils.isEmpty(url)) {
+        if (TextUtils.isEmpty(url.trim())) {
             tvPrompt.visibility = View.VISIBLE
             refreshLayout.isRefreshing = false
             return
