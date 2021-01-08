@@ -280,32 +280,34 @@ class MainActivity : BaseActivity(), View.OnClickListener, AMapLocationListener 
             val intent : Intent?
             when(dto.id) {
                 "586" -> {//灾害预警
-                    intent = Intent(mContext, PdfTitleActivity::class.java)
+                    intent = Intent(mContext, WarningActivity::class.java)
                     intent.putExtra(CONST.ACTIVITY_NAME, dto.name)
-                    dto.child.clear()
-                    for (i in 0 .. 2) {
-                        val data = ColumnData()
-                        when(i) {
-                            0 -> {
-                                data.name = "病虫害气象条件预报"
-                                data.dataUrl = ""
-                                data.id = "58601"
-                                dto.child.add(data)
-                            }
-                            1 -> {
-                                data.name = "气象灾害"
-                                data.dataUrl = ""
-                                data.id = "58602"
-                                dto.child.add(data)
-                            }
-                            2 -> {
-                                data.name = "农气灾害"
-                                data.dataUrl = ""
-                                data.id = "58603"
-                                dto.child.add(data)
-                            }
-                        }
-                    }
+//                    intent = Intent(mContext, PdfTitleActivity::class.java)
+//                    intent.putExtra(CONST.ACTIVITY_NAME, dto.name)
+//                    dto.child.clear()
+//                    for (i in 0 .. 2) {
+//                        val data = ColumnData()
+//                        when(i) {
+//                            0 -> {
+//                                data.name = "病虫害气象条件预报"
+//                                data.dataUrl = ""
+//                                data.id = "58601"
+//                                dto.child.add(data)
+//                            }
+//                            1 -> {
+//                                data.name = "气象灾害"
+//                                data.dataUrl = ""
+//                                data.id = "58602"
+//                                dto.child.add(data)
+//                            }
+//                            2 -> {
+//                                data.name = "农气灾害"
+//                                data.dataUrl = ""
+//                                data.id = "58603"
+//                                dto.child.add(data)
+//                            }
+//                        }
+//                    }
                     val bundle = Bundle()
                     bundle.putParcelable("data", dto)
                     intent.putExtras(bundle)

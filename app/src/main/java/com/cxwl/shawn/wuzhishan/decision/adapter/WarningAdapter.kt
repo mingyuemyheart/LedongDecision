@@ -61,7 +61,7 @@ class WarningAdapter constructor(private var context: Context, private var mArra
 				val data = dataList!![i]
 				if (TextUtils.equals(name, data.w2)) {
 					val imageView = ImageView(context)
-					val params = LinearLayout.LayoutParams(CommonUtil.dip2px(context, 20f).toInt(), CommonUtil.dip2px(context, 20f).toInt())
+					val params = LinearLayout.LayoutParams(CommonUtil.dip2px(context, 30f).toInt(), CommonUtil.dip2px(context, 30f).toInt())
 					params.rightMargin = 10
 					imageView.layoutParams = params
 					var bitmap = CommonUtil.getImageFromAssetsFile(context, "warning/"+data.type+data.color+CONST.imageSuffix)

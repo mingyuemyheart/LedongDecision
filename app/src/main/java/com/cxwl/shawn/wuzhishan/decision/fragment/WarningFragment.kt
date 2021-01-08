@@ -20,6 +20,7 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class WarningFragment : Fragment() {
 
@@ -71,7 +72,7 @@ class WarningFragment : Fragment() {
 							val obj = JSONObject(result)
 							if (!obj.isNull("w")) {
 								val jsonArray = obj.getJSONArray("w")
-								val map : HashMap<String, String> = HashMap()
+								val map : LinkedHashMap<String, String> = LinkedHashMap()
 								val length = if (jsonArray.length() > 50) 50 else jsonArray.length()
 								dataList.clear()
 								for (i in 0 until length) {
@@ -86,6 +87,10 @@ class WarningFragment : Fragment() {
 									val w8 = itemObj.getString("w8")
 									val w9 = itemObj.getString("w9")
 									dto.w11 = itemObj.getString("w11")
+
+									if (!TextUtils.isEmpty(dto.w11)) {
+										dto.w2 = dto.w2+dto.w11
+									}
 
 									dto.name = w1+dto.w2+"发布$w5$w7"+"预警"
 									dto.time = w8
